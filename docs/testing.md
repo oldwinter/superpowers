@@ -1,10 +1,10 @@
 # Testing Superpowers Skills
 
-This document describes how to test Superpowers skills, particularly the integration tests for complex skills like `subagent-driven-development`.
+本文描述如何测试 Superpowers skills，尤其是像 `subagent-driven-development` 这类复杂 skills 的 integration tests。
 
-## Overview
+## 概览
 
-Testing skills that involve subagents, workflows, and complex interactions requires running actual Claude Code sessions in headless mode and verifying their behavior through session transcripts.
+测试涉及 subagents、workflows 和复杂 interactions 的 skills，需要在 headless mode 中运行真实 Claude Code sessions，并通过 session transcripts 验证它们的 behavior。
 
 ## Test Structure
 
@@ -21,7 +21,7 @@ tests/
 
 ### Integration Tests
 
-Integration tests execute real Claude Code sessions with actual skills:
+Integration tests 会使用真实 skills 执行真实 Claude Code sessions：
 
 ```bash
 # Run the subagent-driven-development integration test
@@ -29,39 +29,39 @@ cd tests/claude-code
 ./test-subagent-driven-development-integration.sh
 ```
 
-**Note:** Integration tests can take 10-30 minutes as they execute real implementation plans with multiple subagents.
+**Note:** Integration tests 可能需要 10-30 分钟，因为它们会用多个 subagents 执行真实 implementation plans。
 
 ### Requirements
 
-- Must run from the **superpowers plugin directory** (not from temp directories)
-- Claude Code must be installed and available as `claude` command
-- Local dev marketplace must be enabled: `"superpowers@superpowers-dev": true` in `~/.claude/settings.json`
+- 必须从 **superpowers plugin directory** 运行（不要从 temp directories 运行）
+- 必须安装 Claude Code，并且 `claude` command 可用
+- 必须启用 local dev marketplace：`~/.claude/settings.json` 中有 `"superpowers@superpowers-dev": true`
 
 ## Integration Test: subagent-driven-development
 
 ### What It Tests
 
-The integration test verifies the `subagent-driven-development` skill correctly:
+Integration test 会验证 `subagent-driven-development` skill 正确做到：
 
-1. **Plan Loading**: Reads the plan once at the beginning
-2. **Full Task Text**: Provides complete task descriptions to subagents (doesn't make them read files)
-3. **Self-Review**: Ensures subagents perform self-review before reporting
-4. **Review Order**: Runs spec compliance review before code quality review
-5. **Review Loops**: Uses review loops when issues are found
-6. **Independent Verification**: Spec reviewer reads code independently, doesn't trust implementer reports
+1. **Plan Loading**：开始时只读取一次 plan
+2. **Full Task Text**：向 subagents 提供完整 task descriptions（不让它们读 files）
+3. **Self-Review**：确保 subagents 在 report 前执行 self-review
+4. **Review Order**：先运行 spec compliance review，再运行 code quality review
+5. **Review Loops**：发现 issues 时使用 review loops
+6. **Independent Verification**：Spec reviewer 独立读取 code，不信任 implementer reports
 
 ### How It Works
 
-1. **Setup**: Creates a temporary Node.js project with a minimal implementation plan
-2. **Execution**: Runs Claude Code in headless mode with the skill
-3. **Verification**: Parses the session transcript (`.jsonl` file) to verify:
-   - Skill tool was invoked
-   - Subagents were dispatched (Task tool)
-   - TodoWrite was used for tracking
-   - Implementation files were created
+1. **Setup**：创建带 minimal implementation plan 的临时 Node.js project
+2. **Execution**：用该 skill 在 headless mode 运行 Claude Code
+3. **Verification**：解析 session transcript（`.jsonl` file）以验证：
+   - Skill tool 被调用
+   - Subagents 被 dispatch（Task tool）
+   - TodoWrite 用于 tracking
+   - Implementation files 被创建
    - Tests pass
-   - Git commits show proper workflow
-4. **Token Analysis**: Shows token usage breakdown by subagent
+   - Git commits 展示 proper workflow
+4. **Token Analysis**：按 subagent 展示 token usage breakdown
 
 ### Test Output
 
@@ -138,7 +138,7 @@ STATUS: PASSED
 
 ### Usage
 
-Analyze token usage from any Claude Code session:
+分析任意 Claude Code session 的 token usage：
 
 ```bash
 python3 tests/claude-code/analyze-token-usage.py ~/.claude/projects/<project-dir>/<session-id>.jsonl
@@ -146,7 +146,7 @@ python3 tests/claude-code/analyze-token-usage.py ~/.claude/projects/<project-dir
 
 ### Finding Session Files
 
-Session transcripts are stored in `~/.claude/projects/` with the working directory path encoded:
+Session transcripts 存储在 `~/.claude/projects/`，working directory path 会被编码：
 
 ```bash
 # Example for /Users/yourname/Documents/GitHub/superpowers/superpowers
@@ -158,60 +158,60 @@ ls -lt "$SESSION_DIR"/*.jsonl | head -5
 
 ### What It Shows
 
-- **Main session usage**: Token usage by the coordinator (you or main Claude instance)
-- **Per-subagent breakdown**: Each Task invocation with:
+- **Main session usage**：Coordinator（你或 main Claude instance）的 token usage
+- **Per-subagent breakdown**：每个 Task invocation 包含：
   - Agent ID
-  - Description (extracted from prompt)
+  - Description（从 prompt 提取）
   - Message count
   - Input/output tokens
   - Cache usage
   - Estimated cost
-- **Totals**: Overall token usage and cost estimate
+- **Totals**：Overall token usage 和 cost estimate
 
 ### Understanding the Output
 
-- **High cache reads**: Good - means prompt caching is working
-- **High input tokens on main**: Expected - coordinator has full context
-- **Similar costs per subagent**: Expected - each gets similar task complexity
-- **Cost per task**: Typical range is $0.05-$0.15 per subagent depending on task
+- **High cache reads**：好事，表示 prompt caching 正常工作
+- **High input tokens on main**：预期行为，coordinator 有 full context
+- **Similar costs per subagent**：预期行为，每个 subagent 拿到类似 task complexity
+- **Cost per task**：典型范围是每个 subagent $0.05-$0.15，取决于 task
 
 ## Troubleshooting
 
 ### Skills Not Loading
 
-**Problem**: Skill not found when running headless tests
+**Problem**：运行 headless tests 时找不到 skill
 
-**Solutions**:
-1. Ensure you're running FROM the superpowers directory: `cd /path/to/superpowers && tests/...`
-2. Check `~/.claude/settings.json` has `"superpowers@superpowers-dev": true` in `enabledPlugins`
-3. Verify skill exists in `skills/` directory
+**Solutions**：
+1. 确保你从 superpowers directory 运行：`cd /path/to/superpowers && tests/...`
+2. 检查 `~/.claude/settings.json` 的 `enabledPlugins` 中有 `"superpowers@superpowers-dev": true`
+3. 验证 skill 存在于 `skills/` directory
 
 ### Permission Errors
 
-**Problem**: Claude blocked from writing files or accessing directories
+**Problem**：Claude 被阻止写 files 或访问 directories
 
-**Solutions**:
-1. Use `--permission-mode bypassPermissions` flag
-2. Use `--add-dir /path/to/temp/dir` to grant access to test directories
-3. Check file permissions on test directories
+**Solutions**：
+1. 使用 `--permission-mode bypassPermissions` flag
+2. 使用 `--add-dir /path/to/temp/dir` 授予 test directories 访问权限
+3. 检查 test directories 的 file permissions
 
 ### Test Timeouts
 
-**Problem**: Test takes too long and times out
+**Problem**：Test 耗时过长并 timeout
 
-**Solutions**:
-1. Increase timeout: `timeout 1800 claude ...` (30 minutes)
-2. Check for infinite loops in skill logic
+**Solutions**：
+1. 增加 timeout：`timeout 1800 claude ...`（30 分钟）
+2. 检查 skill logic 中是否有 infinite loops
 3. Review subagent task complexity
 
 ### Session File Not Found
 
-**Problem**: Can't find session transcript after test run
+**Problem**：Test run 后找不到 session transcript
 
-**Solutions**:
-1. Check the correct project directory in `~/.claude/projects/`
-2. Use `find ~/.claude/projects -name "*.jsonl" -mmin -60` to find recent sessions
-3. Verify test actually ran (check for errors in test output)
+**Solutions**：
+1. 检查 `~/.claude/projects/` 中正确的 project directory
+2. 使用 `find ~/.claude/projects -name "*.jsonl" -mmin -60` 查找 recent sessions
+3. 验证 test 确实运行了（检查 test output 中的 errors）
 
 ## Writing New Integration Tests
 
@@ -255,16 +255,16 @@ python3 "$SCRIPT_DIR/analyze-token-usage.py" "$SESSION_FILE"
 
 ### Best Practices
 
-1. **Always cleanup**: Use trap to cleanup temp directories
-2. **Parse transcripts**: Don't grep user-facing output - parse the `.jsonl` session file
-3. **Grant permissions**: Use `--permission-mode bypassPermissions` and `--add-dir`
-4. **Run from plugin dir**: Skills only load when running from the superpowers directory
-5. **Show token usage**: Always include token analysis for cost visibility
-6. **Test real behavior**: Verify actual files created, tests passing, commits made
+1. **Always cleanup**：使用 trap 清理 temp directories
+2. **Parse transcripts**：不要 grep user-facing output，要解析 `.jsonl` session file
+3. **Grant permissions**：使用 `--permission-mode bypassPermissions` 和 `--add-dir`
+4. **Run from plugin dir**：只有从 superpowers directory 运行时，skills 才会加载
+5. **Show token usage**：始终包含 token analysis，方便看 cost
+6. **Test real behavior**：验证实际 files created、tests passing、commits made
 
 ## Session Transcript Format
 
-Session transcripts are JSONL (JSON Lines) files where each line is a JSON object representing a message or tool result.
+Session transcripts 是 JSONL（JSON Lines）files，每一行都是代表 message 或 tool result 的 JSON object。
 
 ### Key Fields
 
@@ -300,4 +300,4 @@ Session transcripts are JSONL (JSON Lines) files where each line is a JSON objec
 }
 ```
 
-The `agentId` field links to subagent sessions, and the `usage` field contains token usage for that specific subagent invocation.
+`agentId` field 会关联到 subagent sessions，`usage` field 包含该 specific subagent invocation 的 token usage。

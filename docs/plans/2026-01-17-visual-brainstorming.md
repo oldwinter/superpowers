@@ -1,12 +1,12 @@
 # Visual Brainstorming Companion Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+> **For agentic workers:** REQUIRED SUB-SKILL: 使用 superpowers:executing-plans 逐 task 实现此 plan。
 
-**Goal:** Give Claude a browser-based visual companion for brainstorming sessions - show mockups, prototypes, and interactive choices alongside terminal conversation.
+**Goal:** 给 Claude 一个用于 brainstorming sessions 的 browser-based visual companion：在 terminal conversation 旁边展示 mockups、prototypes 和 interactive choices。
 
-**Architecture:** Claude writes HTML to a temp file. A local Node.js server watches that file and serves it with an auto-injected helper library. User interactions flow via WebSocket to server stdout, which Claude sees in background task output.
+**Architecture:** Claude 将 HTML 写入 temp file。本地 Node.js server watch 该文件，并通过 auto-injected helper library 提供服务。User interactions 通过 WebSocket 流向 server stdout，Claude 可在 background task output 中看到。
 
-**Tech Stack:** Node.js, Express, ws (WebSocket), chokidar (file watching)
+**Tech Stack:** Node.js、Express、ws（WebSocket）、chokidar（file watching）
 
 ---
 
@@ -129,7 +129,7 @@ Expected: Dependencies installed
 **Step 4: Test server starts**
 
 Run: `cd lib/brainstorm-server && timeout 3 node index.js || true`
-Expected: See JSON with `server-started` and port info
+Expected: 看到包含 `server-started` 和 port info 的 JSON
 
 **Step 5: Commit**
 
@@ -408,7 +408,7 @@ git commit -m "test: add brainstorm server integration tests"
 
 **Files:**
 - Modify: `skills/brainstorming/SKILL.md`
-- Create: `skills/brainstorming/visual-companion.md` (supporting doc)
+- Create: `skills/brainstorming/visual-companion.md`（supporting doc）
 
 **Step 1: Create the supporting documentation**
 
@@ -491,7 +491,7 @@ Event types:
 
 **Step 2: Add visual companion section to brainstorming skill**
 
-Add after "Key Principles" in `skills/brainstorming/SKILL.md`:
+在 `skills/brainstorming/SKILL.md` 的 “Key Principles” 后添加：
 
 ```markdown
 
@@ -519,7 +519,7 @@ The terminal remains the primary conversation interface. The browser is a visual
 **Step 3: Verify the edits**
 
 Run: `grep -A5 "Visual Companion" skills/brainstorming/SKILL.md`
-Expected: Shows the new section
+Expected: 显示 new section
 
 **Step 4: Commit**
 
@@ -541,7 +541,7 @@ Run: `cat .gitignore 2>/dev/null || echo "No .gitignore"`
 
 **Step 2: Add node_modules if needed**
 
-If not already present, add:
+如果尚未存在，添加：
 ```
 lib/brainstorm-server/node_modules/
 ```
@@ -557,12 +557,12 @@ git commit -m "chore: ignore brainstorm-server node_modules"
 
 ## Summary
 
-After completing all tasks:
+完成所有 tasks 后：
 
-1. **Server** at `lib/brainstorm-server/` - Node.js server that watches HTML file and relays events
-2. **Helper library** auto-injected - captures clicks, forms, inputs
-3. **Tests** at `tests/brainstorm-server/` - verifies server behavior
-4. **Brainstorming skill** updated with visual companion section and `visual-companion.md` reference doc
+1. **Server** at `lib/brainstorm-server/`：Node.js server，watch HTML file 并 relay events
+2. **Helper library** auto-injected：captures clicks、forms、inputs
+3. **Tests** at `tests/brainstorm-server/`：验证 server behavior
+4. **Brainstorming skill** 已更新 visual companion section 和 `visual-companion.md` reference doc
 
 **To use:**
 1. Start server as background job: `node lib/brainstorm-server/index.js &`

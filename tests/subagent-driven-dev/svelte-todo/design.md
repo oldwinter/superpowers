@@ -1,8 +1,8 @@
 # Svelte Todo List - Design
 
-## Overview
+## 概览
 
-A simple todo list application built with Svelte. Supports creating, completing, and deleting todos with localStorage persistence.
+一个用 Svelte 构建的 simple todo list application。支持创建、完成和删除 todos，并使用 localStorage persistence。
 
 ## Features
 
@@ -59,12 +59,12 @@ type Filter = 'all' | 'active' | 'completed';
 
 ## Acceptance Criteria
 
-1. Can add a todo by typing and pressing Enter or clicking Add
-2. Can toggle todo completion by clicking checkbox
-3. Can delete a todo by clicking X button
-4. Filter buttons show correct subset of todos
-5. "X items left" shows count of incomplete todos
-6. "Clear completed" removes all completed todos
-7. Todos persist across page refresh (localStorage)
-8. Empty state shows helpful message
+1. 可以通过 typing and pressing Enter 或 clicking Add 添加 todo
+2. 可以点击 checkbox toggle todo completion
+3. 可以点击 X button delete todo
+4. Filter buttons 显示正确 subset of todos
+5. "X items left" 显示 incomplete todos count
+6. "Clear completed" 移除所有 completed todos
+7. Todos 在 page refresh 后持久化（localStorage）
+8. Empty state 显示 helpful message
 9. All tests pass

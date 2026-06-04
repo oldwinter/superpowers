@@ -1,38 +1,37 @@
 # Codex Tool Mapping
 
-Skills use Claude Code tool names. When you encounter these in a skill, use your platform equivalent:
+Skills 使用 Claude Code tool names。当你在 skill 中遇到这些名称时，使用你平台上的 equivalent：
 
 | Skill references | Codex equivalent |
 |-----------------|------------------|
-| `Task` tool (dispatch subagent) | `spawn_agent` (see [Subagent dispatch requires multi-agent support](#subagent-dispatch-requires-multi-agent-support)) |
-| Multiple `Task` calls (parallel) | Multiple `spawn_agent` calls |
+| `Task` tool（dispatch subagent） | `spawn_agent`（见 [Subagent dispatch requires multi-agent support](#subagent-dispatch-requires-multi-agent-support)） |
+| 多个 `Task` calls（parallel） | 多个 `spawn_agent` calls |
 | Task returns result | `wait_agent` |
 | Task completes automatically | `close_agent` to free slot |
-| `TodoWrite` (task tracking) | `update_plan` |
-| `Skill` tool (invoke a skill) | Skills load natively — just follow the instructions |
-| `Read`, `Write`, `Edit` (files) | Use your native file tools |
-| `Bash` (run commands) | Use your native shell tools |
+| `TodoWrite`（task tracking） | `update_plan` |
+| `Skill` tool（invoke a skill） | Skills 原生加载，直接遵循 instructions |
+| `Read`, `Write`, `Edit`（files） | 使用 native file tools |
+| `Bash`（run commands） | 使用 native shell tools |
 
 ## Subagent dispatch requires multi-agent support
 
-Add to your Codex config (`~/.codex/config.toml`):
+添加到你的 Codex config（`~/.codex/config.toml`）：
 
 ```toml
 [features]
 multi_agent = true
 ```
 
-This enables `spawn_agent`, `wait_agent`, and `close_agent` for skills like `dispatching-parallel-agents` and `subagent-driven-development`.
+这会为 `dispatching-parallel-agents` 和 `subagent-driven-development` 等 skills 启用 `spawn_agent`、`wait_agent` 和 `close_agent`。
 
-Legacy note: Codex builds before `rust-v0.115.0` exposed spawned-agent
-waiting as `wait`. Current Codex uses `wait_agent` for spawned agents. The
-`wait` name now belongs to code-mode `exec/wait`, which resumes a yielded exec
-cell by `cell_id`; it is not the spawned-agent result tool.
+Legacy note: `rust-v0.115.0` 之前的 Codex builds 将 spawned-agent
+waiting 暴露为 `wait`。当前 Codex 对 spawned agents 使用 `wait_agent`。
+`wait` 这个名字现在属于 code-mode `exec/wait`，它通过 `cell_id` 恢复 yielded exec
+cell；它不是 spawned-agent result tool。
 
 ## Environment Detection
 
-Skills that create worktrees or finish branches should detect their
-environment with read-only git commands before proceeding:
+创建 worktrees 或 finish branches 的 skills 应在继续前使用 read-only git commands 检测 environment：
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
@@ -40,20 +39,16 @@ GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
 BRANCH=$(git branch --show-current)
 ```
 
-- `GIT_DIR != GIT_COMMON` → already in a linked worktree (skip creation)
-- `BRANCH` empty → detached HEAD (cannot branch/push/PR from sandbox)
+- `GIT_DIR != GIT_COMMON` → 已经在 linked worktree 中（跳过创建）
+- `BRANCH` empty → detached HEAD（不能从 sandbox branch/push/PR）
 
-See `using-git-worktrees` Step 0 and `finishing-a-development-branch`
-Step 1 for how each skill uses these signals.
+各 skill 如何使用这些 signals，见 `using-git-worktrees` Step 0 和 `finishing-a-development-branch` Step 1。
 
 ## Codex App Finishing
 
-When the sandbox blocks branch/push operations (detached HEAD in an
-externally managed worktree), the agent commits all work and informs
-the user to use the App's native controls:
+当 sandbox 阻止 branch/push operations（externally managed worktree 中的 detached HEAD）时，agent 会 commit 所有 work，并告知用户使用 App native controls：
 
-- **"Create branch"** — names the branch, then commit/push/PR via App UI
-- **"Hand off to local"** — transfers work to the user's local checkout
+- **"Create branch"** — 命名 branch，然后通过 App UI commit/push/PR
+- **"Hand off to local"** — 将工作转交到用户的 local checkout
 
-The agent can still run tests, stage files, and output suggested branch
-names, commit messages, and PR descriptions for the user to copy.
+Agent 仍然可以运行 tests、stage files，并输出建议的 branch names、commit messages 和 PR descriptions，供用户使用。

@@ -1,23 +1,23 @@
 # Persuasion Principles for Skill Design
 
-## Overview
+## 概览
 
-LLMs respond to the same persuasion principles as humans. Understanding this psychology helps you design more effective skills - not to manipulate, but to ensure critical practices are followed even under pressure.
+LLMs 会响应和 humans 相同的 persuasion principles。理解这种 psychology 有助于设计更有效的 skills：不是为了操纵，而是为了确保 critical practices 即使在压力下也会被遵循。
 
-**Research foundation:** Meincke et al. (2025) tested 7 persuasion principles with N=28,000 AI conversations. Persuasion techniques more than doubled compliance rates (33% → 72%, p < .001).
+**Research foundation:** Meincke et al. (2025) 用 N=28,000 AI conversations 测试了 7 个 persuasion principles。Persuasion techniques 让 compliance rates 翻倍以上（33% → 72%，p < .001）。
 
-## The Seven Principles
+## 七个原则
 
 ### 1. Authority
-**What it is:** Deference to expertise, credentials, or official sources.
+**What it is:** 对 expertise、credentials 或 official sources 的服从。
 
 **How it works in skills:**
 - Imperative language: "YOU MUST", "Never", "Always"
 - Non-negotiable framing: "No exceptions"
-- Eliminates decision fatigue and rationalization
+- 消除 decision fatigue 和 rationalization
 
 **When to use:**
-- Discipline-enforcing skills (TDD, verification requirements)
+- Discipline-enforcing skills（TDD、verification requirements）
 - Safety-critical practices
 - Established best practices
 
@@ -28,15 +28,15 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 ```
 
 ### 2. Commitment
-**What it is:** Consistency with prior actions, statements, or public declarations.
+**What it is:** 与先前 actions、statements 或 public declarations 保持一致。
 
 **How it works in skills:**
-- Require announcements: "Announce skill usage"
-- Force explicit choices: "Choose A, B, or C"
-- Use tracking: TodoWrite for checklists
+- 要求 announcements: "Announce skill usage"
+- 强制 explicit choices: "Choose A, B, or C"
+- 使用 tracking: TodoWrite for checklists
 
 **When to use:**
-- Ensuring skills are actually followed
+- 确保 skills 被实际遵循
 - Multi-step processes
 - Accountability mechanisms
 
@@ -47,17 +47,17 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 ```
 
 ### 3. Scarcity
-**What it is:** Urgency from time limits or limited availability.
+**What it is:** 来自 time limits 或 limited availability 的 urgency。
 
 **How it works in skills:**
 - Time-bound requirements: "Before proceeding"
 - Sequential dependencies: "Immediately after X"
-- Prevents procrastination
+- 防止 procrastination
 
 **When to use:**
 - Immediate verification requirements
 - Time-sensitive workflows
-- Preventing "I'll do it later"
+- 防止 "I'll do it later"
 
 **Example:**
 ```markdown
@@ -66,16 +66,16 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 ```
 
 ### 4. Social Proof
-**What it is:** Conformity to what others do or what's considered normal.
+**What it is:** 顺从他人做法或被视为 normal 的行为。
 
 **How it works in skills:**
 - Universal patterns: "Every time", "Always"
 - Failure modes: "X without Y = failure"
-- Establishes norms
+- 建立 norms
 
 **When to use:**
-- Documenting universal practices
-- Warning about common failures
+- 记录 universal practices
+- 警告 common failures
 - Reinforcing standards
 
 **Example:**
@@ -85,7 +85,7 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 ```
 
 ### 5. Unity
-**What it is:** Shared identity, "we-ness", in-group belonging.
+**What it is:** Shared identity、"we-ness"、in-group belonging。
 
 **How it works in skills:**
 - Collaborative language: "our codebase", "we're colleagues"
@@ -93,7 +93,7 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 
 **When to use:**
 - Collaborative workflows
-- Establishing team culture
+- 建立 team culture
 - Non-hierarchical practices
 
 **Example:**
@@ -103,25 +103,25 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 ```
 
 ### 6. Reciprocity
-**What it is:** Obligation to return benefits received.
+**What it is:** 回报所获 benefits 的 obligation。
 
 **How it works:**
-- Use sparingly - can feel manipulative
-- Rarely needed in skills
+- 谨慎使用，可能显得 manipulative
+- Skills 中很少需要
 
 **When to avoid:**
-- Almost always (other principles more effective)
+- 几乎总是避免（其他 principles 更有效）
 
 ### 7. Liking
-**What it is:** Preference for cooperating with those we like.
+**What it is:** 更愿意与喜欢的人合作。
 
 **How it works:**
-- **DON'T USE for compliance**
-- Conflicts with honest feedback culture
-- Creates sycophancy
+- **不要用于 compliance**
+- 与 honest feedback culture 冲突
+- 会制造 sycophancy
 
 **When to avoid:**
-- Always for discipline enforcement
+- Discipline enforcement 中始终避免
 
 ## Principle Combinations by Skill Type
 
@@ -135,34 +135,34 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 ## Why This Works: The Psychology
 
 **Bright-line rules reduce rationalization:**
-- "YOU MUST" removes decision fatigue
-- Absolute language eliminates "is this an exception?" questions
-- Explicit anti-rationalization counters close specific loopholes
+- "YOU MUST" 移除 decision fatigue
+- Absolute language 消除 "is this an exception?" 问题
+- Explicit anti-rationalization 封住具体 loopholes
 
 **Implementation intentions create automatic behavior:**
 - Clear triggers + required actions = automatic execution
-- "When X, do Y" more effective than "generally do Y"
-- Reduces cognitive load on compliance
+- "When X, do Y" 比 "generally do Y" 更有效
+- 降低 compliance 的 cognitive load
 
 **LLMs are parahuman:**
-- Trained on human text containing these patterns
-- Authority language precedes compliance in training data
-- Commitment sequences (statement → action) frequently modeled
-- Social proof patterns (everyone does X) establish norms
+- 训练自包含这些 patterns 的 human text
+- Authority language 在 training data 中先于 compliance 出现
+- Commitment sequences（statement → action）经常被建模
+- Social proof patterns（everyone does X）建立 norms
 
 ## Ethical Use
 
 **Legitimate:**
-- Ensuring critical practices are followed
-- Creating effective documentation
-- Preventing predictable failures
+- 确保 critical practices 被遵循
+- 创建有效 documentation
+- 防止 predictable failures
 
 **Illegitimate:**
-- Manipulating for personal gain
-- Creating false urgency
+- 为 personal gain 操纵
+- 制造 false urgency
 - Guilt-based compliance
 
-**The test:** Would this technique serve the user's genuine interests if they fully understood it?
+**The test:** 如果用户完全理解这项 technique，它是否仍服务于用户的 genuine interests？
 
 ## Research Citations
 
@@ -171,17 +171,17 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 - Empirical foundation for influence research
 
 **Meincke, L., Shapiro, D., Duckworth, A. L., Mollick, E., Mollick, L., & Cialdini, R. (2025).** Call Me A Jerk: Persuading AI to Comply with Objectionable Requests. University of Pennsylvania.
-- Tested 7 principles with N=28,000 LLM conversations
-- Compliance increased 33% → 72% with persuasion techniques
-- Authority, commitment, scarcity most effective
-- Validates parahuman model of LLM behavior
+- 用 N=28,000 LLM conversations 测试 7 个 principles
+- Persuasion techniques 让 compliance 从 33% 提升到 72%
+- Authority、commitment、scarcity 最有效
+- 验证 LLM behavior 的 parahuman model
 
 ## Quick Reference
 
-When designing a skill, ask:
+设计 skill 时，问：
 
-1. **What type is it?** (Discipline vs. guidance vs. reference)
-2. **What behavior am I trying to change?**
-3. **Which principle(s) apply?** (Usually authority + commitment for discipline)
-4. **Am I combining too many?** (Don't use all seven)
-5. **Is this ethical?** (Serves user's genuine interests?)
+1. **它是什么 type？**（Discipline vs. guidance vs. reference）
+2. **我想改变什么 behavior？**
+3. **哪些 principle(s) 适用？**（discipline 通常是 authority + commitment）
+4. **我是不是组合太多？**（不要七个全用）
+5. **这是否 ethical？**（服务用户 genuine interests 吗？）

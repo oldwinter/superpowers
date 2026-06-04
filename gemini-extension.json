@@ -1,6 +1,6 @@
 {
   "name": "superpowers",
-  "description": "Core skills library: TDD, debugging, collaboration patterns, and proven techniques",
+  "description": "核心 skills library：TDD、debugging、collaboration patterns 和经过验证的 techniques",
   "version": "5.1.0",
   "contextFileName": "GEMINI.md"
 }

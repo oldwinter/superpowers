@@ -1,23 +1,23 @@
 # Cross-Platform Polyglot Hooks for Claude Code
 
-Claude Code plugins need hooks that work on Windows, macOS, and Linux. This document explains the polyglot wrapper technique that makes this possible.
+Claude Code plugins 需要能在 Windows、macOS 和 Linux 上工作的 hooks。本文解释让它可行的 polyglot wrapper technique。
 
-## The Problem
+## 问题
 
-Claude Code runs hook commands through the system's default shell:
+Claude Code 通过系统默认 shell 运行 hook commands：
 - **Windows**: CMD.exe
 - **macOS/Linux**: bash or sh
 
-This creates several challenges:
+这会带来几个挑战：
 
-1. **Script execution**: Windows CMD can't execute `.sh` files directly - it tries to open them in a text editor
-2. **Path format**: Windows uses backslashes (`C:\path`), Unix uses forward slashes (`/path`)
-3. **Environment variables**: `$VAR` syntax doesn't work in CMD
-4. **No `bash` in PATH**: Even with Git Bash installed, `bash` isn't in the PATH when CMD runs
+1. **Script execution**: Windows CMD 不能直接执行 `.sh` files，它会尝试用 text editor 打开
+2. **Path format**: Windows 使用 backslashes（`C:\path`），Unix 使用 forward slashes（`/path`）
+3. **Environment variables**: `$VAR` syntax 在 CMD 中不工作
+4. **No `bash` in PATH**: 即使安装了 Git Bash，CMD 运行时 `bash` 也不在 PATH 中
 
-## The Solution: Polyglot `.cmd` Wrapper
+## 解决方案：Polyglot `.cmd` Wrapper
 
-A polyglot script is valid syntax in multiple languages simultaneously. Our wrapper is valid in both CMD and bash:
+Polyglot script 是能同时作为多种语言 valid syntax 的脚本。我们的 wrapper 同时适用于 CMD 和 bash：
 
 ```cmd
 : << 'CMDBLOCK'
@@ -34,20 +34,20 @@ CMDBLOCK
 
 #### On Windows (CMD.exe)
 
-1. `: << 'CMDBLOCK'` - CMD sees `:` as a label (like `:label`) and ignores `<< 'CMDBLOCK'`
-2. `@echo off` - Suppresses command echoing
-3. The bash.exe command runs with:
-   - `-l` (login shell) to get proper PATH with Unix utilities
-   - `cygpath -u` converts Windows path to Unix format (`C:\foo` → `/c/foo`)
-4. `exit /b` - Exits the batch script, stopping CMD here
-5. Everything after `CMDBLOCK` is never reached by CMD
+1. `: << 'CMDBLOCK'` - CMD 把 `:` 视为 label（类似 `:label`），并忽略 `<< 'CMDBLOCK'`
+2. `@echo off` - 抑制 command echoing
+3. bash.exe command 运行时带：
+   - `-l`（login shell）以获得包含 Unix utilities 的 proper PATH
+   - `cygpath -u` 把 Windows path 转成 Unix format（`C:\foo` → `/c/foo`）
+4. `exit /b` - 退出 batch script，让 CMD 停在这里
+5. `CMDBLOCK` 之后的内容 CMD 永远不会到达
 
 #### On Unix (bash/sh)
 
-1. `: << 'CMDBLOCK'` - `:` is a no-op, `<< 'CMDBLOCK'` starts a heredoc
-2. Everything until `CMDBLOCK` is consumed by the heredoc (ignored)
+1. `: << 'CMDBLOCK'` - `:` 是 no-op，`<< 'CMDBLOCK'` 开始 heredoc
+2. 直到 `CMDBLOCK` 的所有内容都被 heredoc 消耗（ignored）
 3. `# Unix shell runs from here` - Comment
-4. The script runs directly with the Unix path
+4. Script 用 Unix path 直接运行
 
 ## File Structure
 
@@ -78,41 +78,41 @@ hooks/
 }
 ```
 
-Note: The path must be quoted because `${CLAUDE_PLUGIN_ROOT}` may contain spaces on Windows (e.g., `C:\Program Files\...`).
+Note: Path 必须 quote，因为 `${CLAUDE_PLUGIN_ROOT}` 在 Windows 上可能包含 spaces（例如 `C:\Program Files\...`）。
 
 ## Requirements
 
 ### Windows
-- **Git for Windows** must be installed (provides `bash.exe` and `cygpath`)
-- Default installation path: `C:\Program Files\Git\bin\bash.exe`
-- If Git is installed elsewhere, the wrapper needs modification
+- 必须安装 **Git for Windows**（提供 `bash.exe` 和 `cygpath`）
+- 默认安装路径：`C:\Program Files\Git\bin\bash.exe`
+- 如果 Git 安装在其他位置，需要修改 wrapper
 
 ### Unix (macOS/Linux)
-- Standard bash or sh shell
-- The `.cmd` file must have execute permission (`chmod +x`)
+- 标准 bash 或 sh shell
+- `.cmd` file 必须有 execute permission（`chmod +x`）
 
 ## Writing Cross-Platform Hook Scripts
 
-Your actual hook logic goes in the `.sh` file. To ensure it works on Windows (via Git Bash):
+实际 hook logic 放在 `.sh` file 中。为了确保它在 Windows 上（通过 Git Bash）工作：
 
 ### Do:
-- Use pure bash builtins when possible
-- Use `$(command)` instead of backticks
-- Quote all variable expansions: `"$VAR"`
-- Use `printf` or here-docs for output
+- 尽可能使用 pure bash builtins
+- 使用 `$(command)` 而不是 backticks
+- Quote 所有 variable expansions：`"$VAR"`
+- 使用 `printf` 或 here-docs 输出
 
 ### Avoid:
-- External commands that may not be in PATH (sed, awk, grep)
-- If you must use them, they're available in Git Bash but ensure PATH is set up (use `bash -l`)
+- 可能不在 PATH 中的 external commands（sed、awk、grep）
+- 如果必须使用，它们在 Git Bash 中可用，但要确保 PATH setup 正确（使用 `bash -l`）
 
 ### Example: JSON Escaping Without sed/awk
 
-Instead of:
+不要这样：
 ```bash
 escaped=$(echo "$content" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | awk '{printf "%s\\n", $0}')
 ```
 
-Use pure bash:
+使用 pure bash：
 ```bash
 escape_for_json() {
     local input="$1"
@@ -135,7 +135,7 @@ escape_for_json() {
 
 ## Reusable Wrapper Pattern
 
-For plugins with multiple hooks, you can create a generic wrapper that takes the script name as an argument:
+对于有多个 hooks 的 plugins，可以创建 generic wrapper，把 script name 作为 argument：
 
 ### run-hook.cmd
 ```cmd
@@ -187,19 +187,19 @@ shift
 ## Troubleshooting
 
 ### "bash is not recognized"
-CMD can't find bash. The wrapper uses the full path `C:\Program Files\Git\bin\bash.exe`. If Git is installed elsewhere, update the path.
+CMD 找不到 bash。Wrapper 使用完整路径 `C:\Program Files\Git\bin\bash.exe`。如果 Git 安装在其他位置，更新该 path。
 
 ### "cygpath: command not found" or "dirname: command not found"
-Bash isn't running as a login shell. Ensure `-l` flag is used.
+Bash 没有作为 login shell 运行。确保使用 `-l` flag。
 
 ### Path has weird `\/` in it
-`${CLAUDE_PLUGIN_ROOT}` expanded to a Windows path ending with backslash, then `/hooks/...` was appended. Use `cygpath` to convert the entire path.
+`${CLAUDE_PLUGIN_ROOT}` expanded 成以 backslash 结尾的 Windows path，然后又追加了 `/hooks/...`。使用 `cygpath` 转换整个 path。
 
 ### Script opens in text editor instead of running
-The hooks.json is pointing directly to the `.sh` file. Point to the `.cmd` wrapper instead.
+hooks.json 直接指向 `.sh` file。改为指向 `.cmd` wrapper。
 
 ### Works in terminal but not as hook
-Claude Code may run hooks differently. Test by simulating the hook environment:
+Claude Code 可能以不同方式运行 hooks。通过模拟 hook environment 测试：
 ```powershell
 $env:CLAUDE_PLUGIN_ROOT = "C:\path\to\plugin"
 cmd /c "C:\path\to\plugin\hooks\session-start.cmd"

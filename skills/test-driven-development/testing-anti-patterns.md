@@ -1,16 +1,16 @@
 # Testing Anti-Patterns
 
-**Load this reference when:** writing or changing tests, adding mocks, or tempted to add test-only methods to production code.
+**Load this reference when:** writing or changing tests、adding mocks，或想给 production code 添加 test-only methods 时。
 
-## Overview
+## 概览
 
-Tests must verify real behavior, not mock behavior. Mocks are a means to isolate, not the thing being tested.
+Tests 必须验证 real behavior，而不是 mock behavior。Mocks 是用于 isolate 的手段，不是被测试对象。
 
-**Core principle:** Test what the code does, not what the mocks do.
+**核心原则：** Test what the code does, not what the mocks do。
 
-**Following strict TDD prevents these anti-patterns.**
+**严格遵循 TDD 会防止这些 anti-patterns。**
 
-## The Iron Laws
+## 铁律
 
 ```
 1. NEVER test mock behavior
@@ -29,10 +29,10 @@ test('renders sidebar', () => {
 });
 ```
 
-**Why this is wrong:**
-- You're verifying the mock works, not that the component works
-- Test passes when mock is present, fails when it's not
-- Tells you nothing about real behavior
+**为什么错：**
+- 你验证的是 mock works，不是 component works
+- Mock 存在时 test pass，不存在时 fail
+- 对 real behavior 没有任何说明
 
 **your human partner's correction:** "Are we testing the behavior of a mock?"
 
@@ -76,11 +76,11 @@ class Session {
 afterEach(() => session.destroy());
 ```
 
-**Why this is wrong:**
-- Production class polluted with test-only code
-- Dangerous if accidentally called in production
-- Violates YAGNI and separation of concerns
-- Confuses object lifecycle with entity lifecycle
+**为什么错：**
+- Production class 被 test-only code 污染
+- 如果在 production 中被误调用会很危险
+- 违反 YAGNI 和 separation of concerns
+- 混淆 object lifecycle 和 entity lifecycle
 
 **The fix:**
 ```typescript
@@ -131,10 +131,10 @@ test('detects duplicate server', () => {
 });
 ```
 
-**Why this is wrong:**
-- Mocked method had side effect test depended on (writing config)
-- Over-mocking to "be safe" breaks actual behavior
-- Test passes for wrong reason or fails mysteriously
+**为什么错：**
+- Mocked method 有 test 依赖的 side effect（writing config）
+- 为了“安全”而 over-mocking 会破坏 actual behavior
+- Test 因错误原因 pass，或神秘 fail
 
 **The fix:**
 ```typescript
@@ -188,13 +188,13 @@ const mockResponse = {
 // Later: breaks when code accesses response.metadata.requestId
 ```
 
-**Why this is wrong:**
-- **Partial mocks hide structural assumptions** - You only mocked fields you know about
+**为什么错：**
+- **Partial mocks hide structural assumptions** - 你只 mock 了自己知道的 fields
 - **Downstream code may depend on fields you didn't include** - Silent failures
-- **Tests pass but integration fails** - Mock incomplete, real API complete
-- **False confidence** - Test proves nothing about real behavior
+- **Tests pass but integration fails** - Mock incomplete，real API complete
+- **False confidence** - Test 不能证明 real behavior
 
-**The Iron Rule:** Mock the COMPLETE data structure as it exists in reality, not just fields your immediate test uses.
+**铁律：** Mock COMPLETE data structure as it exists in reality，不要只 mock immediate test 使用的 fields。
 
 **The fix:**
 ```typescript
@@ -234,10 +234,10 @@ BEFORE creating mock responses:
 "Ready for testing"
 ```
 
-**Why this is wrong:**
-- Testing is part of implementation, not optional follow-up
-- TDD would have caught this
-- Can't claim complete without tests
+**为什么错：**
+- Testing 是 implementation 的一部分，不是 optional follow-up
+- TDD 本会抓住这个问题
+- 没有 tests 就不能 claim complete
 
 **The fix:**
 ```
@@ -251,24 +251,24 @@ TDD cycle:
 ## When Mocks Become Too Complex
 
 **Warning signs:**
-- Mock setup longer than test logic
-- Mocking everything to make test pass
-- Mocks missing methods real components have
-- Test breaks when mock changes
+- Mock setup 比 test logic 更长
+- 为了让 test pass 而 mock 一切
+- Mocks 缺少 real components 有的方法
+- Mock 变化时 test break
 
 **your human partner's question:** "Do we need to be using a mock here?"
 
-**Consider:** Integration tests with real components often simpler than complex mocks
+**Consider:** 使用 real components 的 integration tests 通常比 complex mocks 更简单
 
 ## TDD Prevents These Anti-Patterns
 
-**Why TDD helps:**
-1. **Write test first** → Forces you to think about what you're actually testing
-2. **Watch it fail** → Confirms test tests real behavior, not mocks
-3. **Minimal implementation** → No test-only methods creep in
-4. **Real dependencies** → You see what the test actually needs before mocking
+**为什么 TDD 有帮助：**
+1. **Write test first** → 强制你思考自己实际在测试什么
+2. **Watch it fail** → 确认 test 测的是 real behavior，而不是 mocks
+3. **Minimal implementation** → 不会混入 test-only methods
+4. **Real dependencies** → 在 mock 前，你会看到 test 实际需要什么
 
-**If you're testing mock behavior, you violated TDD** - you added mocks without watching test fail against real code first.
+**如果你在测试 mock behavior，你已经违反了 TDD**：你没有先看 test against real code fail，就添加了 mocks。
 
 ## Quick Reference
 
@@ -290,10 +290,10 @@ TDD cycle:
 - Can't explain why mock is needed
 - Mocking "just to be safe"
 
-## The Bottom Line
+## 底线
 
-**Mocks are tools to isolate, not things to test.**
+**Mocks 是用于 isolate 的 tools，不是被测试对象。**
 
-If TDD reveals you're testing mock behavior, you've gone wrong.
+如果 TDD 揭示你在测试 mock behavior，就说明方向错了。
 
-Fix: Test real behavior or question why you're mocking at all.
+Fix: Test real behavior，或质疑为什么要 mock。

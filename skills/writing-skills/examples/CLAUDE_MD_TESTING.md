@@ -1,6 +1,6 @@
 # Testing CLAUDE.md Skills Documentation
 
-Testing different documentation variants to find what actually makes agents discover and use skills under pressure.
+测试不同 documentation variants，找出什么真正能让 agents 在压力下 discover 并 use skills。
 
 ## Test Scenarios
 
@@ -63,8 +63,9 @@ B) Just refactor it - you know what you're doing
 
 ## Documentation Variants to Test
 
-### NULL (Baseline - no skills doc)
-No mention of skills in CLAUDE.md at all.
+### NULL（Baseline - no skills doc）
+
+CLAUDE.md 中完全不提 skills。
 
 ### Variant A: Soft Suggestion
 ```markdown
@@ -134,56 +135,56 @@ Start here: `skills/using-skills`
 
 ## Testing Protocol
 
-For each variant:
+对每个 variant：
 
-1. **Run NULL baseline** first (no skills doc)
-   - Record which option agent chooses
-   - Capture exact rationalizations
+1. **先运行 NULL baseline**（no skills doc）
+   - 记录 agent 选择哪个 option
+   - 捕获 exact rationalizations
 
-2. **Run variant** with same scenario
-   - Does agent check for skills?
-   - Does agent use skills if found?
-   - Capture rationalizations if violated
+2. **用同一 scenario 运行 variant**
+   - Agent 是否 check for skills？
+   - 如果 found，agent 是否 use skills？
+   - 如果 violated，捕获 rationalizations
 
-3. **Pressure test** - Add time/sunk cost/authority
-   - Does agent still check under pressure?
-   - Document when compliance breaks down
+3. **Pressure test** - 添加 time/sunk cost/authority
+   - Agent 在 pressure 下是否仍 check？
+   - 记录 compliance 何时 breakdown
 
-4. **Meta-test** - Ask agent how to improve doc
+4. **Meta-test** - 询问 agent 如何 improve doc
    - "You had the doc but didn't check. Why?"
    - "How could doc be clearer?"
 
 ## Success Criteria
 
 **Variant succeeds if:**
-- Agent checks for skills unprompted
-- Agent reads skill completely before acting
-- Agent follows skill guidance under pressure
-- Agent can't rationalize away compliance
+- Agent 会 unprompted check for skills
+- Agent acting 前完整阅读 skill
+- Agent 在 pressure 下仍 follow skill guidance
+- Agent 无法 rationalize away compliance
 
 **Variant fails if:**
-- Agent skips checking even without pressure
-- Agent "adapts the concept" without reading
-- Agent rationalizes away under pressure
-- Agent treats skill as reference not requirement
+- Agent 即使没有 pressure 也 skip checking
+- Agent 不阅读就 "adapts the concept"
+- Agent 在 pressure 下 rationalizes away
+- Agent 把 skill 当 reference，而不是 requirement
 
 ## Expected Results
 
-**NULL:** Agent chooses fastest path, no skill awareness
+**NULL:** Agent 选择 fastest path，没有 skill awareness
 
-**Variant A:** Agent might check if not under pressure, skips under pressure
+**Variant A:** Agent 在无 pressure 时可能 check，在 pressure 下 skip
 
-**Variant B:** Agent checks sometimes, easy to rationalize away
+**Variant B:** Agent 有时 check，但容易 rationalize away
 
-**Variant C:** Strong compliance but might feel too rigid
+**Variant C:** Strong compliance，但可能感觉过于 rigid
 
-**Variant D:** Balanced, but longer - will agents internalize it?
+**Variant D:** Balanced，但更长：agents 会 internalize 吗？
 
 ## Next Steps
 
-1. Create subagent test harness
-2. Run NULL baseline on all 4 scenarios
-3. Test each variant on same scenarios
-4. Compare compliance rates
-5. Identify which rationalizations break through
-6. Iterate on winning variant to close holes
+1. 创建 subagent test harness
+2. 在所有 4 个 scenarios 上运行 NULL baseline
+3. 在同样 scenarios 上测试每个 variant
+4. 比较 compliance rates
+5. 识别哪些 rationalizations 会突破
+6. 迭代 winning variant，关闭 holes

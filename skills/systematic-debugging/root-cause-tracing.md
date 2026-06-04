@@ -1,12 +1,12 @@
 # Root Cause Tracing
 
-## Overview
+## 概览
 
-Bugs often manifest deep in the call stack (git init in wrong directory, file created in wrong location, database opened with wrong path). Your instinct is to fix where the error appears, but that's treating a symptom.
+Bugs 经常在 call stack 深处表现出来（git init 在错误目录、file 创建在错误位置、database 用错误 path 打开）。你的本能是在 error 出现的位置修复，但那是在治疗 symptom。
 
-**Core principle:** Trace backward through the call chain until you find the original trigger, then fix at the source.
+**核心原则：** 沿 call chain 向后追踪，直到找到 original trigger，然后在 source 修复。
 
-## When to Use
+## 何时使用
 
 ```dot
 digraph when_to_use {
@@ -24,12 +24,12 @@ digraph when_to_use {
 ```
 
 **Use when:**
-- Error happens deep in execution (not at entry point)
-- Stack trace shows long call chain
-- Unclear where invalid data originated
-- Need to find which test/code triggers the problem
+- Error 发生在 execution 深处（不是 entry point）
+- Stack trace 显示长 call chain
+- 不清楚 invalid data 从哪里来
+- 需要找出哪个 test/code 触发问题
 
-## The Tracing Process
+## Tracing Process
 
 ### 1. Observe the Symptom
 ```
@@ -37,7 +37,7 @@ Error: git init failed in ~/project/packages/core
 ```
 
 ### 2. Find Immediate Cause
-**What code directly causes this?**
+**哪段 code 直接导致这个问题？**
 ```typescript
 await execFileAsync('git', ['init'], { cwd: projectDir });
 ```
@@ -51,13 +51,13 @@ WorktreeManager.createSessionWorktree(projectDir, sessionId)
 ```
 
 ### 4. Keep Tracing Up
-**What value was passed?**
-- `projectDir = ''` (empty string!)
-- Empty string as `cwd` resolves to `process.cwd()`
-- That's the source code directory!
+**传入了什么 value？**
+- `projectDir = ''`（empty string!）
+- Empty string 作为 `cwd` 会解析成 `process.cwd()`
+- 那就是 source code directory!
 
 ### 5. Find Original Trigger
-**Where did empty string come from?**
+**Empty string 从哪里来？**
 ```typescript
 const context = setupCoreTest(); // Returns { tempDir: '' }
 Project.create('name', context.tempDir); // Accessed before beforeEach!
@@ -65,7 +65,7 @@ Project.create('name', context.tempDir); // Accessed before beforeEach!
 
 ## Adding Stack Traces
 
-When you can't trace manually, add instrumentation:
+当你无法手动追踪时，添加 instrumentation：
 
 ```typescript
 // Before the problematic operation
@@ -82,7 +82,7 @@ async function gitInit(directory: string) {
 }
 ```
 
-**Critical:** Use `console.error()` in tests (not logger - may not show)
+**Critical:** 在 tests 中使用 `console.error()`（不要用 logger，可能不显示）
 
 **Run and capture:**
 ```bash
@@ -90,36 +90,36 @@ npm test 2>&1 | grep 'DEBUG git init'
 ```
 
 **Analyze stack traces:**
-- Look for test file names
-- Find the line number triggering the call
-- Identify the pattern (same test? same parameter?)
+- 寻找 test file names
+- 找到触发 call 的 line number
+- 识别 pattern（同一个 test？同一个 parameter？）
 
 ## Finding Which Test Causes Pollution
 
-If something appears during tests but you don't know which test:
+如果某个东西在 tests 期间出现，但你不知道是哪个 test：
 
-Use the bisection script `find-polluter.sh` in this directory:
+使用本目录的 bisection script `find-polluter.sh`：
 
 ```bash
 ./find-polluter.sh '.git' 'src/**/*.test.ts'
 ```
 
-Runs tests one-by-one, stops at first polluter. See script for usage.
+它会逐个运行 tests，并在第一个 polluter 处停止。Usage 见 script。
 
 ## Real Example: Empty projectDir
 
-**Symptom:** `.git` created in `packages/core/` (source code)
+**Symptom:** `.git` 创建在 `packages/core/`（source code）
 
 **Trace chain:**
-1. `git init` runs in `process.cwd()` ← empty cwd parameter
-2. WorktreeManager called with empty projectDir
-3. Session.create() passed empty string
-4. Test accessed `context.tempDir` before beforeEach
-5. setupCoreTest() returns `{ tempDir: '' }` initially
+1. `git init` 在 `process.cwd()` 中运行 ← empty cwd parameter
+2. WorktreeManager 被传入 empty projectDir
+3. Session.create() 被传入 empty string
+4. Test 在 beforeEach 前访问了 `context.tempDir`
+5. setupCoreTest() 初始返回 `{ tempDir: '' }`
 
-**Root cause:** Top-level variable initialization accessing empty value
+**Root cause:** Top-level variable initialization 访问了 empty value
 
-**Fix:** Made tempDir a getter that throws if accessed before beforeEach
+**Fix:** 把 tempDir 做成 getter，如果 before beforeEach 访问就 throw
 
 **Also added defense-in-depth:**
 - Layer 1: Project.create() validates directory
@@ -151,19 +151,19 @@ digraph principle {
 }
 ```
 
-**NEVER fix just where the error appears.** Trace back to find the original trigger.
+**永远不要只修 error 出现的位置。** 追溯回去，找到 original trigger。
 
 ## Stack Trace Tips
 
-**In tests:** Use `console.error()` not logger - logger may be suppressed
-**Before operation:** Log before the dangerous operation, not after it fails
-**Include context:** Directory, cwd, environment variables, timestamps
-**Capture stack:** `new Error().stack` shows complete call chain
+**In tests:** 使用 `console.error()`，不要用 logger，因为 logger 可能被 suppress
+**Before operation:** 在危险 operation 前 log，不要在失败后 log
+**Include context:** Directory、cwd、environment variables、timestamps
+**Capture stack:** `new Error().stack` 显示完整 call chain
 
 ## Real-World Impact
 
-From debugging session (2025-10-03):
-- Found root cause through 5-level trace
-- Fixed at source (getter validation)
-- Added 4 layers of defense
-- 1847 tests passed, zero pollution
+来自 debugging session（2025-10-03）：
+- 通过 5-level trace 找到 root cause
+- 在 source 修复（getter validation）
+- 添加 4 层 defense
+- 1847 tests passed，zero pollution

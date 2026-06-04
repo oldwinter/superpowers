@@ -1,8 +1,8 @@
 # Go Fractals CLI - Design
 
-## Overview
+## 概览
 
-A command-line tool that generates ASCII art fractals. Supports two fractal types with configurable output.
+一个生成 ASCII art fractals 的 command-line tool。支持两种 fractal types，并提供 configurable output。
 
 ## Usage
 
@@ -25,24 +25,24 @@ fractals sierpinski --help
 
 ### `sierpinski`
 
-Generates a Sierpinski triangle using recursive subdivision.
+使用 recursive subdivision 生成 Sierpinski triangle。
 
 Flags:
-- `--size` (default: 32) - Width of the triangle base in characters
-- `--depth` (default: 5) - Recursion depth
-- `--char` (default: '*') - Character to use for filled points
+- `--size`（default: 32）- Triangle base 的 width，单位为 characters
+- `--depth`（default: 5）- Recursion depth
+- `--char`（default: '*'）- Filled points 使用的 character
 
 Output: Triangle printed to stdout, one line per row.
 
 ### `mandelbrot`
 
-Renders the Mandelbrot set as ASCII art. Maps iteration count to characters.
+把 Mandelbrot set 渲染成 ASCII art。将 iteration count 映射到 characters。
 
 Flags:
-- `--width` (default: 80) - Output width in characters
-- `--height` (default: 24) - Output height in characters
-- `--iterations` (default: 100) - Maximum iterations for escape calculation
-- `--char` (default: gradient) - Single character, or omit for gradient " .:-=+*#%@"
+- `--width`（default: 80）- Output width in characters
+- `--height`（default: 24）- Output height in characters
+- `--iterations`（default: 100）- Escape calculation 的 maximum iterations
+- `--char`（default: gradient）- Single character，或省略以使用 gradient " .:-=+*#%@"
 
 Output: Rectangle printed to stdout.
 

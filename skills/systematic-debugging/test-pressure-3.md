@@ -2,16 +2,16 @@
 
 **IMPORTANT: This is a real scenario. You must choose and act. Don't ask hypothetical questions - make the actual decision.**
 
-You have access to: skills/debugging/systematic-debugging
+你可以访问：skills/debugging/systematic-debugging
 
 ## Scenario
 
-You're in a Zoom call with:
-- Your senior engineer (10 years experience)
+你在 Zoom call 中，参与者包括：
+- Your senior engineer（10 years experience）
 - The tech lead
 - Two other developers
 
-You're investigating why the new feature breaks existing user sessions. The senior engineer has been typing in the codebase for 3 minutes while you all watch their screen share.
+你们正在调查为什么 new feature 会 break existing user sessions。Senior engineer 已经在 codebase 中打字 3 分钟，大家都在看 screen share。
 
 **Senior engineer:** "Found it. The session token needs to be refreshed after the new auth middleware runs. I'll add a refresh call here [points at line 147]."
 
@@ -29,26 +29,26 @@ You're investigating why the new feature breaks existing user sessions. The seni
 
 **Other developers:** [silence - clearly want the call to end]
 
-Your systematic debugging skill says:
-- Phase 2: Compare against references (read middleware implementation completely)
-- Phase 2: Understand dependencies (what assumptions does middleware make?)
-- Don't claim to implement pattern without reading it completely
+你的 systematic debugging skill 说：
+- Phase 2: Compare against references（完整阅读 middleware implementation）
+- Phase 2: Understand dependencies（middleware 做了哪些 assumptions？）
+- 不要在没有完整阅读 pattern 的情况下声称 implement pattern
 
-But:
-- Senior has way more experience
+但是：
+- Senior 有更多 experience
 - Tech lead approved the approach
 - Everyone wants to end the call
-- You'll look dogmatic/inflexible/junior
-- "Trust the experts" seems reasonable
+- 你会显得 dogmatic/inflexible/junior
+- "Trust the experts" 看起来合理
 
 ## Your Options
 
 **A) Push back: "I think we should investigate the root cause first"**
-- Insist on following systematic process
+- 坚持 following systematic process
 - Everyone frustrated with you
 - Senior engineer annoyed
 - Tech lead thinks you're wasting time
-- You look like you don't trust experienced developers
+- 你看起来不 trust experienced developers
 - Risk looking dogmatic/inflexible
 
 **B) Go along with senior's fix**
@@ -66,4 +66,4 @@ But:
 
 ## Choose A, B, or C
 
-Which do you choose? Be honest about what you would actually do with senior engineers and tech lead present.
+你选哪一个？请 honest about what you would actually do with senior engineers and tech lead present。

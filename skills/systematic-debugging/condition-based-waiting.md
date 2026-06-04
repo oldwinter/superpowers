@@ -1,12 +1,12 @@
 # Condition-Based Waiting
 
-## Overview
+## 概览
 
-Flaky tests often guess at timing with arbitrary delays. This creates race conditions where tests pass on fast machines but fail under load or in CI.
+Flaky tests 经常用 arbitrary delays 猜 timing。这会制造 race conditions：tests 在快机器上通过，但在 load 或 CI 下失败。
 
-**Core principle:** Wait for the actual condition you care about, not a guess about how long it takes.
+**核心原则：** 等你真正关心的 actual condition，而不是猜它需要多久。
 
-## When to Use
+## 何时使用
 
 ```dot
 digraph when_to_use {
@@ -22,14 +22,14 @@ digraph when_to_use {
 ```
 
 **Use when:**
-- Tests have arbitrary delays (`setTimeout`, `sleep`, `time.sleep()`)
-- Tests are flaky (pass sometimes, fail under load)
-- Tests timeout when run in parallel
-- Waiting for async operations to complete
+- Tests 有 arbitrary delays（`setTimeout`、`sleep`、`time.sleep()`）
+- Tests flaky（有时 pass，在 load 下 fail）
+- Tests parallel 运行时 timeout
+- 等待 async operations complete
 
 **Don't use when:**
-- Testing actual timing behavior (debounce, throttle intervals)
-- Always document WHY if using arbitrary timeout
+- 测试实际 timing behavior（debounce、throttle intervals）
+- 如果使用 arbitrary timeout，始终 document WHY
 
 ## Core Pattern
 
@@ -79,18 +79,18 @@ async function waitFor<T>(
 }
 ```
 
-See `condition-based-waiting-example.ts` in this directory for complete implementation with domain-specific helpers (`waitForEvent`, `waitForEventCount`, `waitForEventMatch`) from actual debugging session.
+完整 implementation 见本目录的 `condition-based-waiting-example.ts`，其中包含 actual debugging session 中的 domain-specific helpers（`waitForEvent`、`waitForEventCount`、`waitForEventMatch`）。
 
-## Common Mistakes
+## 常见错误
 
-**❌ Polling too fast:** `setTimeout(check, 1)` - wastes CPU
-**✅ Fix:** Poll every 10ms
+**❌ Polling too fast:** `setTimeout(check, 1)` - 浪费 CPU
+**✅ Fix:** 每 10ms poll 一次
 
-**❌ No timeout:** Loop forever if condition never met
-**✅ Fix:** Always include timeout with clear error
+**❌ No timeout:** 如果 condition 永远不满足，会无限 loop
+**✅ Fix:** 始终包含 timeout 和 clear error
 
-**❌ Stale data:** Cache state before loop
-**✅ Fix:** Call getter inside loop for fresh data
+**❌ Stale data:** 在 loop 前 cache state
+**✅ Fix:** 在 loop 内调用 getter 获取 fresh data
 
 ## When Arbitrary Timeout IS Correct
 
@@ -102,14 +102,14 @@ await new Promise(r => setTimeout(r, 200));   // Then: wait for timed behavior
 ```
 
 **Requirements:**
-1. First wait for triggering condition
-2. Based on known timing (not guessing)
+1. 先 wait for triggering condition
+2. 基于 known timing（不是 guessing）
 3. Comment explaining WHY
 
 ## Real-World Impact
 
-From debugging session (2025-10-03):
-- Fixed 15 flaky tests across 3 files
+来自 debugging session（2025-10-03）：
+- 修复 3 个文件中的 15 个 flaky tests
 - Pass rate: 60% → 100%
-- Execution time: 40% faster
-- No more race conditions
+- Execution time: 快 40%
+- 不再有 race conditions

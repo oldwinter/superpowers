@@ -5,16 +5,16 @@ labels: bug
 ---
 
 <!--
-BEFORE FILING: Search open AND closed issues. The Windows SessionStart
-hook alone has been reported 29 times. If your issue already exists,
-add a comment or reaction to the existing one instead.
+FILING 前：搜索 open AND closed issues。仅 Windows SessionStart
+hook 就已经被报告 29 次。如果你的 issue 已存在，
+请在现有 issue 上 comment 或 reaction。
 -->
 
-- [ ] I searched existing issues and this is not a duplicate
+- [ ] 我已搜索 existing issues，确认这不是 duplicate
 
-## Environment (required)
-<!-- Required. We assume an agent filed this report — tell us which one and
-     where it ran. We weigh reports by what produced them. -->
+## Environment（required）
+<!-- Required。我们假设这是 agent filed report：请告诉我们是哪一个，
+     以及它在哪里运行。我们会按产生 report 的来源衡量它。 -->
 
 | Field | Value |
 |-------|-------|
@@ -25,18 +25,16 @@ add a comment or reaction to the existing one instead.
 | All plugins installed | |
 | OS + shell | |
 
-## Is this a Superpowers issue or a platform issue?
-<!-- Superpowers is a plugin. Some reported "bugs" are actually issues
-     in the underlying platform or model. If you're not sure, try
-     reproducing without Superpowers installed.
+## 这是 Superpowers issue 还是 platform issue？
+<!-- Superpowers 是 plugin。一些被报告的 "bugs" 实际上是 underlying platform
+     或 model 的问题。如果你不确定，请在不安装 Superpowers 的情况下尝试 reproduce。
 
-     If the problem persists without Superpowers, file the issue with
-     your platform instead. -->
+     如果问题在没有 Superpowers 时仍然存在，请向你的 platform 提交 issue。 -->
 
-- [ ] I confirmed this issue does not occur without Superpowers installed
+- [ ] 我确认这个 issue 在未安装 Superpowers 时不会发生
 
 ## What happened?
-<!-- Be specific. "It doesn't work" is not a bug report. -->
+<!-- 请具体。"It doesn't work" 不是 bug report。 -->
 
 ## Steps to reproduce
 1.
@@ -44,12 +42,11 @@ add a comment or reaction to the existing one instead.
 3.
 
 ## Expected behavior
-<!-- What should have happened? -->
+<!-- 本应发生什么？ -->
 
 ## Actual behavior
-<!-- What happened instead? -->
+<!-- 实际发生了什么？ -->
 
 ## Debug log or conversation transcript
-<!-- A debug log or conversation transcript showing the issue is the
-     single most helpful thing you can include. Without one, we're
-     guessing. Screenshots of error output are also useful. -->
+<!-- 展示 issue 的 debug log 或 conversation transcript 是你能提供的
+     最有帮助内容。没有它，我们只能猜。Error output screenshots 也有用。 -->

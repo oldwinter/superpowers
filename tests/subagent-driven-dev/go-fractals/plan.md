@@ -1,22 +1,22 @@
 # Go Fractals CLI - Implementation Plan
 
-Execute this plan using the `superpowers:subagent-driven-development` skill.
+使用 `superpowers:subagent-driven-development` skill 执行这个 plan。
 
 ## Context
 
-Building a CLI tool that generates ASCII fractals. See `design.md` for full specification.
+构建一个生成 ASCII fractals 的 CLI tool。完整 specification 见 `design.md`。
 
 ## Tasks
 
 ### Task 1: Project Setup
 
-Create the Go module and directory structure.
+创建 Go module 和 directory structure。
 
 **Do:**
 - Initialize `go.mod` with module name `github.com/superpowers-test/fractals`
-- Create directory structure: `cmd/fractals/`, `internal/sierpinski/`, `internal/mandelbrot/`, `internal/cli/`
-- Create minimal `cmd/fractals/main.go` that prints "fractals cli"
-- Add `github.com/spf13/cobra` dependency
+- 创建 directory structure：`cmd/fractals/`、`internal/sierpinski/`、`internal/mandelbrot/`、`internal/cli/`
+- 创建 minimal `cmd/fractals/main.go`，打印 "fractals cli"
+- 添加 `github.com/spf13/cobra` dependency
 
 **Verify:**
 - `go build ./cmd/fractals` succeeds
@@ -26,29 +26,29 @@ Create the Go module and directory structure.
 
 ### Task 2: CLI Framework with Help
 
-Set up Cobra root command with help output.
+设置 Cobra root command 和 help output。
 
 **Do:**
-- Create `internal/cli/root.go` with root command
-- Configure help text showing available subcommands
-- Wire root command into `main.go`
+- 创建 `internal/cli/root.go` with root command
+- 配置 help text，显示 available subcommands
+- 把 root command 接入 `main.go`
 
 **Verify:**
 - `./fractals --help` shows usage with "sierpinski" and "mandelbrot" listed as available commands
-- `./fractals` (no args) shows help
+- `./fractals`（no args）shows help
 
 ---
 
 ### Task 3: Sierpinski Algorithm
 
-Implement the Sierpinski triangle generation algorithm.
+实现 Sierpinski triangle generation algorithm。
 
 **Do:**
-- Create `internal/sierpinski/sierpinski.go`
-- Implement `Generate(size, depth int, char rune) []string` that returns lines of the triangle
-- Use recursive midpoint subdivision algorithm
-- Create `internal/sierpinski/sierpinski_test.go` with tests:
-  - Small triangle (size=4, depth=2) matches expected output
+- 创建 `internal/sierpinski/sierpinski.go`
+- 实现 `Generate(size, depth int, char rune) []string`，返回 triangle lines
+- 使用 recursive midpoint subdivision algorithm
+- 创建 `internal/sierpinski/sierpinski_test.go`，包含 tests：
+  - Small triangle（size=4, depth=2）matches expected output
   - Size=1 returns single character
   - Depth=0 returns filled triangle
 
@@ -59,12 +59,12 @@ Implement the Sierpinski triangle generation algorithm.
 
 ### Task 4: Sierpinski CLI Integration
 
-Wire the Sierpinski algorithm to a CLI subcommand.
+把 Sierpinski algorithm 接到 CLI subcommand。
 
 **Do:**
-- Create `internal/cli/sierpinski.go` with `sierpinski` subcommand
-- Add flags: `--size` (default 32), `--depth` (default 5), `--char` (default '*')
-- Call `sierpinski.Generate()` and print result to stdout
+- 创建 `internal/cli/sierpinski.go` with `sierpinski` subcommand
+- 添加 flags：`--size`（default 32）、`--depth`（default 5）、`--char`（default '*'）
+- 调用 `sierpinski.Generate()` 并把 result print 到 stdout
 
 **Verify:**
 - `./fractals sierpinski` outputs a triangle
@@ -75,17 +75,17 @@ Wire the Sierpinski algorithm to a CLI subcommand.
 
 ### Task 5: Mandelbrot Algorithm
 
-Implement the Mandelbrot set ASCII renderer.
+实现 Mandelbrot set ASCII renderer。
 
 **Do:**
-- Create `internal/mandelbrot/mandelbrot.go`
-- Implement `Render(width, height, maxIter int, char string) []string`
-- Map complex plane region (-2.5 to 1.0 real, -1.0 to 1.0 imaginary) to output dimensions
-- Map iteration count to character gradient " .:-=+*#%@" (or single char if provided)
-- Create `internal/mandelbrot/mandelbrot_test.go` with tests:
+- 创建 `internal/mandelbrot/mandelbrot.go`
+- 实现 `Render(width, height, maxIter int, char string) []string`
+- 将 complex plane region（-2.5 to 1.0 real, -1.0 to 1.0 imaginary）映射到 output dimensions
+- 将 iteration count 映射到 character gradient " .:-=+*#%@"（如果提供 single char，则使用它）
+- 创建 `internal/mandelbrot/mandelbrot_test.go`，包含 tests：
   - Output dimensions match requested width/height
-  - Known point inside set (0,0) maps to max-iteration character
-  - Known point outside set (2,0) maps to low-iteration character
+  - Known point inside set（0,0）maps to max-iteration character
+  - Known point outside set（2,0）maps to low-iteration character
 
 **Verify:**
 - `go test ./internal/mandelbrot/...` passes
@@ -94,12 +94,12 @@ Implement the Mandelbrot set ASCII renderer.
 
 ### Task 6: Mandelbrot CLI Integration
 
-Wire the Mandelbrot algorithm to a CLI subcommand.
+把 Mandelbrot algorithm 接到 CLI subcommand。
 
 **Do:**
-- Create `internal/cli/mandelbrot.go` with `mandelbrot` subcommand
-- Add flags: `--width` (default 80), `--height` (default 24), `--iterations` (default 100), `--char` (default "")
-- Call `mandelbrot.Render()` and print result to stdout
+- 创建 `internal/cli/mandelbrot.go` with `mandelbrot` subcommand
+- 添加 flags：`--width`（default 80）、`--height`（default 24）、`--iterations`（default 100）、`--char`（default ""）
+- 调用 `mandelbrot.Render()` 并把 result print 到 stdout
 
 **Verify:**
 - `./fractals mandelbrot` outputs recognizable Mandelbrot set
@@ -110,12 +110,12 @@ Wire the Mandelbrot algorithm to a CLI subcommand.
 
 ### Task 7: Character Set Configuration
 
-Ensure `--char` flag works consistently across both commands.
+确保 `--char` flag 在两个 commands 中表现一致。
 
 **Do:**
-- Verify Sierpinski `--char` flag passes character to algorithm
-- For Mandelbrot, `--char` should use single character instead of gradient
-- Add tests for custom character output
+- 验证 Sierpinski `--char` flag 把 character 传给 algorithm
+- Mandelbrot 中，`--char` 应使用 single character 而不是 gradient
+- 添加 custom character output tests
 
 **Verify:**
 - `./fractals sierpinski --char '#'` uses '#' character
@@ -126,13 +126,13 @@ Ensure `--char` flag works consistently across both commands.
 
 ### Task 8: Input Validation and Error Handling
 
-Add validation for invalid inputs.
+添加 invalid inputs validation。
 
 **Do:**
 - Sierpinski: size must be > 0, depth must be >= 0
 - Mandelbrot: width/height must be > 0, iterations must be > 0
-- Return clear error messages for invalid inputs
-- Add tests for error cases
+- 为 invalid inputs 返回 clear error messages
+- 添加 error cases tests
 
 **Verify:**
 - `./fractals sierpinski --size 0` prints error, exits non-zero
@@ -143,13 +143,13 @@ Add validation for invalid inputs.
 
 ### Task 9: Integration Tests
 
-Add integration tests that invoke the CLI.
+添加调用 CLI 的 integration tests。
 
 **Do:**
-- Create `cmd/fractals/main_test.go` or `test/integration_test.go`
-- Test full CLI invocation for both commands
-- Verify output format and exit codes
-- Test error cases return non-zero exit
+- 创建 `cmd/fractals/main_test.go` 或 `test/integration_test.go`
+- 测试两个 commands 的 full CLI invocation
+- 验证 output format 和 exit codes
+- 测试 error cases return non-zero exit
 
 **Verify:**
 - `go test ./...` passes all tests including integration tests
@@ -158,14 +158,14 @@ Add integration tests that invoke the CLI.
 
 ### Task 10: README
 
-Document usage and examples.
+记录 usage 和 examples。
 
 **Do:**
-- Create `README.md` with:
+- 创建 `README.md`，包含：
   - Project description
   - Installation: `go install ./cmd/fractals`
   - Usage examples for both commands
-  - Example output (small samples)
+  - Example output（small samples）
 
 **Verify:**
 - README accurately describes the tool

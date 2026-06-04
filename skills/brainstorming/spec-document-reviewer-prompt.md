@@ -1,10 +1,10 @@
 # Spec Document Reviewer Prompt Template
 
-Use this template when dispatching a spec document reviewer subagent.
+分派 spec document reviewer subagent 时使用这个 template。
 
-**Purpose:** Verify the spec is complete, consistent, and ready for implementation planning.
+**Purpose:** 验证 spec 是否 complete、consistent，并 ready for implementation planning。
 
-**Dispatch after:** Spec document is written to docs/superpowers/specs/
+**Dispatch after:** Spec document 已写入 docs/superpowers/specs/
 
 ```
 Task tool (general-purpose):
@@ -18,20 +18,20 @@ Task tool (general-purpose):
 
     | Category | What to Look For |
     |----------|------------------|
-    | Completeness | TODOs, placeholders, "TBD", incomplete sections |
-    | Consistency | Internal contradictions, conflicting requirements |
+    | Completeness | TODOs、placeholders、"TBD"、incomplete sections |
+    | Consistency | Internal contradictions、conflicting requirements |
     | Clarity | Requirements ambiguous enough to cause someone to build the wrong thing |
-    | Scope | Focused enough for a single plan — not covering multiple independent subsystems |
-    | YAGNI | Unrequested features, over-engineering |
+    | Scope | 足够聚焦于单个 plan，不覆盖多个 independent subsystems |
+    | YAGNI | Unrequested features、over-engineering |
 
     ## Calibration
 
-    **Only flag issues that would cause real problems during implementation planning.**
-    A missing section, a contradiction, or a requirement so ambiguous it could be
-    interpreted two different ways — those are issues. Minor wording improvements,
-    stylistic preferences, and "sections less detailed than others" are not.
+    **只 flag 会在 implementation planning 中造成真实问题的 issues。**
+    Missing section、contradiction，或某个 requirement 含糊到可被两种方式解读，
+    这些才是 issues。Minor wording improvements、stylistic preferences
+    和 "sections less detailed than others" 都不是。
 
-    Approve unless there are serious gaps that would lead to a flawed plan.
+    除非存在会导致 flawed plan 的 serious gaps，否则 approve。
 
     ## Output Format
 

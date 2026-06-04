@@ -1,41 +1,41 @@
 ---
 name: writing-plans
-description: Use when you have a spec or requirements for a multi-step task, before touching code
+description: 当你已经有 multi-step task 的 spec 或 requirements，并且尚未触碰代码时使用
 ---
 
 # Writing Plans
 
-## Overview
+## 概览
 
-Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
+编写完整 implementation plans，假设执行工程师对我们的 codebase 零上下文，而且品味可疑。把他们需要知道的一切都写清楚：每个 task 要碰哪些文件、代码、测试、可能需要查看的 docs、如何测试。把完整计划拆成 bite-sized tasks。DRY。YAGNI。TDD。频繁 commits。
 
-Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
+假设他们是熟练开发者，但几乎不了解我们的 toolset 或 problem domain。也假设他们不太懂好的 test design。
 
-**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
+**开始时宣布：** "I'm using the writing-plans skill to create the implementation plan."
 
-**Context:** If working in an isolated worktree, it should have been created via the `superpowers:using-git-worktrees` skill at execution time.
+**Context:** 如果工作在 isolated worktree 中，它应该在执行阶段通过 `superpowers:using-git-worktrees` skill 创建。
 
 **Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
-- (User preferences for plan location override this default)
+- （用户对 plan location 的偏好会覆盖这个默认值）
 
 ## Scope Check
 
-If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
+如果 spec 覆盖多个独立 subsystems，它应该已经在 brainstorming 阶段拆成 sub-project specs。如果没有，建议把它拆成独立 plans，每个 subsystem 一份。每份 plan 都应该独立产出可工作、可测试的软件。
 
-## File Structure
+## 文件结构
 
-Before defining tasks, map out which files will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
+定义 tasks 之前，先画清楚哪些文件会被创建或修改，以及每个文件负责什么。这一步会锁定 decomposition decisions。
 
-- Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
-- You reason best about code you can hold in context at once, and your edits are more reliable when files are focused. Prefer smaller, focused files over large ones that do too much.
-- Files that change together should live together. Split by responsibility, not by technical layer.
-- In existing codebases, follow established patterns. If the codebase uses large files, don't unilaterally restructure - but if a file you're modifying has grown unwieldy, including a split in the plan is reasonable.
+- 设计边界清晰、接口明确的 units。每个文件都应该有一个清楚的责任。
+- 你最擅长推理能一次装进 context 的代码；当文件聚焦时，你的 edits 更可靠。优先选择更小、更聚焦的文件，而不是什么都做的大文件。
+- 会一起变化的文件应该放在一起。按责任拆分，不按 technical layer 拆分。
+- 在 existing codebases 中，遵循既有 patterns。如果 codebase 使用大文件，不要单方面重构；但如果你正在修改的文件已经难以管理，把拆分纳入计划是合理的。
 
-This structure informs the task decomposition. Each task should produce self-contained changes that make sense independently.
+这个结构会指导 task decomposition。每个 task 都应该产出独立有意义的 self-contained changes。
 
 ## Bite-Sized Task Granularity
 
-**Each step is one action (2-5 minutes):**
+**每个 step 都是一个行动（2-5 分钟）：**
 - "Write the failing test" - step
 - "Run it to make sure it fails" - step
 - "Implement the minimal code to make the test pass" - step
@@ -44,7 +44,7 @@ This structure informs the task decomposition. Each task should produce self-con
 
 ## Plan Document Header
 
-**Every plan MUST start with this header:**
+**每份 plan 都必须以这个 header 开头：**
 
 ```markdown
 # [Feature Name] Implementation Plan
@@ -103,37 +103,37 @@ git commit -m "feat: add specific feature"
 ```
 ````
 
-## No Placeholders
+## 不要占位符
 
-Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:
-- "TBD", "TODO", "implement later", "fill in details"
+每个 step 都必须包含工程师需要的实际内容。以下都是 **plan failures**，永远不要写：
+- "TBD"、"TODO"、"implement later"、"fill in details"
 - "Add appropriate error handling" / "add validation" / "handle edge cases"
-- "Write tests for the above" (without actual test code)
-- "Similar to Task N" (repeat the code — the engineer may be reading tasks out of order)
-- Steps that describe what to do without showing how (code blocks required for code steps)
-- References to types, functions, or methods not defined in any task
+- "Write tests for the above"（没有实际 test code）
+- "Similar to Task N"（重复代码；工程师可能会乱序阅读 tasks）
+- 只描述做什么却不展示怎么做的 steps（涉及代码的 steps 必须有 code blocks）
+- 引用任何 task 中都没有定义的 types、functions 或 methods
 
-## Remember
-- Exact file paths always
-- Complete code in every step — if a step changes code, show the code
-- Exact commands with expected output
-- DRY, YAGNI, TDD, frequent commits
+## 记住
+- 始终使用 exact file paths
+- 每个 step 都给完整代码：如果 step 修改代码，就展示代码
+- 精确 commands 和 expected output
+- DRY、YAGNI、TDD、frequent commits
 
 ## Self-Review
 
-After writing the complete plan, look at the spec with fresh eyes and check the plan against it. This is a checklist you run yourself — not a subagent dispatch.
+写完整 plan 后，用 fresh eyes 看 spec，并对照检查 plan。这是你自己运行的 checklist，不是 subagent dispatch。
 
-**1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
+**1. Spec coverage:** 浏览 spec 的每个 section/requirement。你能指出哪个 task 实现它吗？列出任何 gaps。
 
-**2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
+**2. Placeholder scan:** 搜索 plan 中的 red flags，也就是上面 "No Placeholders" 部分的任何模式。修复它们。
 
-**3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
+**3. Type consistency:** 后续 tasks 中使用的 types、method signatures 和 property names，是否与前面 tasks 中定义的一致？Task 3 中叫 `clearLayers()`，Task 7 中却叫 `clearFullLayers()`，这就是 bug。
 
-If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
+如果发现问题，直接 inline 修复。不需要重新 review，修完继续。如果发现某个 spec requirement 没有对应 task，就添加 task。
 
 ## Execution Handoff
 
-After saving the plan, offer execution choice:
+保存 plan 后，提供执行选项：
 
 **"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Two execution options:**
 
@@ -144,9 +144,9 @@ After saving the plan, offer execution choice:
 **Which approach?"**
 
 **If Subagent-Driven chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
+- **REQUIRED SUB-SKILL:** 使用 superpowers:subagent-driven-development
 - Fresh subagent per task + two-stage review
 
 **If Inline Execution chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:executing-plans
+- **REQUIRED SUB-SKILL:** 使用 superpowers:executing-plans
 - Batch execution with checkpoints for review

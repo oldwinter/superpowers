@@ -1,22 +1,22 @@
 # Svelte Todo List - Implementation Plan
 
-Execute this plan using the `superpowers:subagent-driven-development` skill.
+使用 `superpowers:subagent-driven-development` skill 执行这个 plan。
 
 ## Context
 
-Building a todo list app with Svelte. See `design.md` for full specification.
+构建一个 Svelte todo list app。完整 specification 见 `design.md`。
 
 ## Tasks
 
 ### Task 1: Project Setup
 
-Create the Svelte project with Vite.
+用 Vite 创建 Svelte project。
 
 **Do:**
 - Run `npm create vite@latest . -- --template svelte-ts`
 - Install dependencies with `npm install`
 - Verify dev server works
-- Clean up default Vite template content from App.svelte
+- 从 App.svelte 清理 default Vite template content
 
 **Verify:**
 - `npm run dev` starts server
@@ -27,30 +27,30 @@ Create the Svelte project with Vite.
 
 ### Task 2: Todo Store
 
-Create the Svelte store for todo state management.
+创建用于 todo state management 的 Svelte store。
 
 **Do:**
-- Create `src/lib/store.ts`
-- Define `Todo` interface with id, text, completed
-- Create writable store with initial empty array
+- 创建 `src/lib/store.ts`
+- 定义 `Todo` interface with id, text, completed
+- 创建 initial empty array 的 writable store
 - Export functions: `addTodo(text)`, `toggleTodo(id)`, `deleteTodo(id)`, `clearCompleted()`
-- Create `src/lib/store.test.ts` with tests for each function
+- 创建 `src/lib/store.test.ts`，为每个 function 添加 tests
 
 **Verify:**
-- Tests pass: `npm run test` (install vitest if needed)
+- Tests pass: `npm run test`（如需要，install vitest）
 
 ---
 
 ### Task 3: localStorage Persistence
 
-Add persistence layer for todos.
+为 todos 添加 persistence layer。
 
 **Do:**
-- Create `src/lib/storage.ts`
-- Implement `loadTodos(): Todo[]` and `saveTodos(todos: Todo[])`
-- Handle JSON parse errors gracefully (return empty array)
-- Integrate with store: load on init, save on change
-- Add tests for load/save/error handling
+- 创建 `src/lib/storage.ts`
+- 实现 `loadTodos(): Todo[]` 和 `saveTodos(todos: Todo[])`
+- Gracefully handle JSON parse errors（return empty array）
+- 与 store 集成：init 时 load，change 时 save
+- 添加 load/save/error handling tests
 
 **Verify:**
 - Tests pass
@@ -60,10 +60,10 @@ Add persistence layer for todos.
 
 ### Task 4: TodoInput Component
 
-Create the input component for adding todos.
+创建添加 todos 的 input component。
 
 **Do:**
-- Create `src/lib/TodoInput.svelte`
+- 创建 `src/lib/TodoInput.svelte`
 - Text input bound to local state
 - Add button calls `addTodo()` and clears input
 - Enter key also submits
@@ -78,14 +78,14 @@ Create the input component for adding todos.
 
 ### Task 5: TodoItem Component
 
-Create the single todo item component.
+创建 single todo item component。
 
 **Do:**
-- Create `src/lib/TodoItem.svelte`
+- 创建 `src/lib/TodoItem.svelte`
 - Props: `todo: Todo`
-- Checkbox toggles completion (calls `toggleTodo`)
+- Checkbox toggles completion（calls `toggleTodo`）
 - Text with strikethrough when completed
-- Delete button (X) calls `deleteTodo`
+- Delete button（X）calls `deleteTodo`
 - Add component tests
 
 **Verify:**
@@ -96,10 +96,10 @@ Create the single todo item component.
 
 ### Task 6: TodoList Component
 
-Create the list container component.
+创建 list container component。
 
 **Do:**
-- Create `src/lib/TodoList.svelte`
+- 创建 `src/lib/TodoList.svelte`
 - Props: `todos: Todo[]`
 - Renders TodoItem for each todo
 - Shows "No todos yet" when empty
@@ -113,15 +113,15 @@ Create the list container component.
 
 ### Task 7: FilterBar Component
 
-Create the filter and status bar component.
+创建 filter and status bar component。
 
 **Do:**
-- Create `src/lib/FilterBar.svelte`
+- 创建 `src/lib/FilterBar.svelte`
 - Props: `todos: Todo[]`, `filter: Filter`, `onFilterChange: (f: Filter) => void`
-- Show count: "X items left" (incomplete count)
+- Show count: "X items left"（incomplete count）
 - Three filter buttons: All, Active, Completed
 - Active filter is visually highlighted
-- "Clear completed" button (hidden when no completed todos)
+- "Clear completed" button（hidden when no completed todos）
 - Add component tests
 
 **Verify:**
@@ -132,11 +132,11 @@ Create the filter and status bar component.
 
 ### Task 8: App Integration
 
-Wire all components together in App.svelte.
+在 App.svelte 中接好所有 components。
 
 **Do:**
 - Import all components and store
-- Add filter state (default: 'all')
+- Add filter state（default: 'all'）
 - Compute filtered todos based on filter state
 - Render: heading, TodoInput, TodoList, FilterBar
 - Pass appropriate props to each component
@@ -151,7 +151,7 @@ Wire all components together in App.svelte.
 
 ### Task 9: Filter Functionality
 
-Ensure filtering works end-to-end.
+确保 filtering end-to-end 工作。
 
 **Do:**
 - Verify filter buttons change displayed todos
@@ -169,14 +169,14 @@ Ensure filtering works end-to-end.
 
 ### Task 10: Styling and Polish
 
-Add CSS styling for usability.
+添加 CSS styling，提升 usability。
 
 **Do:**
-- Style the app to match the design mockup
+- Style app to match design mockup
 - Completed todos have strikethrough and muted color
 - Active filter button is highlighted
 - Input has focus styles
-- Delete button appears on hover (or always on mobile)
+- Delete button appears on hover（or always on mobile）
 - Responsive layout
 
 **Verify:**
@@ -187,18 +187,18 @@ Add CSS styling for usability.
 
 ### Task 11: End-to-End Tests
 
-Add Playwright tests for full user flows.
+添加 full user flows 的 Playwright tests。
 
 **Do:**
 - Install Playwright: `npm init playwright@latest`
-- Create `tests/todo.spec.ts`
+- 创建 `tests/todo.spec.ts`
 - Test flows:
   - Add a todo
   - Complete a todo
   - Delete a todo
   - Filter todos
   - Clear completed
-  - Persistence (add, reload, verify)
+  - Persistence（add, reload, verify）
 
 **Verify:**
 - `npx playwright test` passes
@@ -207,10 +207,10 @@ Add Playwright tests for full user flows.
 
 ### Task 12: README
 
-Document the project.
+记录 project。
 
 **Do:**
-- Create `README.md` with:
+- 创建 `README.md`，包含：
   - Project description
   - Setup: `npm install`
   - Development: `npm run dev`

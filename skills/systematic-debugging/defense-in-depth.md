@@ -1,26 +1,26 @@
 # Defense-in-Depth Validation
 
-## Overview
+## 概览
 
-When you fix a bug caused by invalid data, adding validation at one place feels sufficient. But that single check can be bypassed by different code paths, refactoring, or mocks.
+当你修复由 invalid data 导致的 bug 时，在一个地方添加 validation 会感觉足够。但那个单一 check 可能被不同 code paths、refactoring 或 mocks 绕过。
 
-**Core principle:** Validate at EVERY layer data passes through. Make the bug structurally impossible.
+**核心原则：** 在 data 经过的每一层都 validate。让 bug 在结构上不可能发生。
 
-## Why Multiple Layers
+## 为什么需要多层
 
 Single validation: "We fixed the bug"
 Multiple layers: "We made the bug impossible"
 
-Different layers catch different cases:
-- Entry validation catches most bugs
-- Business logic catches edge cases
-- Environment guards prevent context-specific dangers
-- Debug logging helps when other layers fail
+不同 layers 捕获不同 cases：
+- Entry validation 捕获大多数 bugs
+- Business logic 捕获 edge cases
+- Environment guards 防止 context-specific dangers
+- Debug logging 在其他 layers 失败时提供帮助
 
-## The Four Layers
+## 四层
 
 ### Layer 1: Entry Point Validation
-**Purpose:** Reject obviously invalid input at API boundary
+**Purpose:** 在 API boundary 拒绝明显 invalid input
 
 ```typescript
 function createProject(name: string, workingDirectory: string) {
@@ -38,7 +38,7 @@ function createProject(name: string, workingDirectory: string) {
 ```
 
 ### Layer 2: Business Logic Validation
-**Purpose:** Ensure data makes sense for this operation
+**Purpose:** 确保 data 对当前 operation 来说合理
 
 ```typescript
 function initializeWorkspace(projectDir: string, sessionId: string) {
@@ -50,7 +50,7 @@ function initializeWorkspace(projectDir: string, sessionId: string) {
 ```
 
 ### Layer 3: Environment Guards
-**Purpose:** Prevent dangerous operations in specific contexts
+**Purpose:** 在特定 contexts 中防止 dangerous operations
 
 ```typescript
 async function gitInit(directory: string) {
@@ -70,7 +70,7 @@ async function gitInit(directory: string) {
 ```
 
 ### Layer 4: Debug Instrumentation
-**Purpose:** Capture context for forensics
+**Purpose:** 捕获 context，用于 forensics
 
 ```typescript
 async function gitInit(directory: string) {
@@ -86,22 +86,22 @@ async function gitInit(directory: string) {
 
 ## Applying the Pattern
 
-When you find a bug:
+当你找到 bug：
 
-1. **Trace the data flow** - Where does bad value originate? Where used?
-2. **Map all checkpoints** - List every point data passes through
-3. **Add validation at each layer** - Entry, business, environment, debug
-4. **Test each layer** - Try to bypass layer 1, verify layer 2 catches it
+1. **Trace the data flow** - Bad value 从哪里来？在哪里使用？
+2. **Map all checkpoints** - 列出 data 经过的每个点
+3. **Add validation at each layer** - Entry、business、environment、debug
+4. **Test each layer** - 尝试绕过 layer 1，验证 layer 2 会捕获
 
 ## Example from Session
 
-Bug: Empty `projectDir` caused `git init` in source code
+Bug: Empty `projectDir` 导致 `git init` 在 source code 中运行
 
 **Data flow:**
 1. Test setup → empty string
 2. `Project.create(name, '')`
 3. `WorkspaceManager.createWorkspace('')`
-4. `git init` runs in `process.cwd()`
+4. `git init` 在 `process.cwd()` 中运行
 
 **Four layers added:**
 - Layer 1: `Project.create()` validates not empty/exists/writable
@@ -109,14 +109,14 @@ Bug: Empty `projectDir` caused `git init` in source code
 - Layer 3: `WorktreeManager` refuses git init outside tmpdir in tests
 - Layer 4: Stack trace logging before git init
 
-**Result:** All 1847 tests passed, bug impossible to reproduce
+**Result:** All 1847 tests passed，bug impossible to reproduce
 
 ## Key Insight
 
-All four layers were necessary. During testing, each layer caught bugs the others missed:
-- Different code paths bypassed entry validation
-- Mocks bypassed business logic checks
-- Edge cases on different platforms needed environment guards
-- Debug logging identified structural misuse
+四层都必要。测试期间，每一层都捕获了其他层漏掉的 bugs：
+- 不同 code paths 绕过了 entry validation
+- Mocks 绕过了 business logic checks
+- 不同 platforms 上的 edge cases 需要 environment guards
+- Debug logging 识别了 structural misuse
 
-**Don't stop at one validation point.** Add checks at every layer.
+**不要停在一个 validation point。** 在每一层添加 checks。

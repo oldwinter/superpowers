@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Questions & Help
+  - name: 问题与帮助
     url: https://discord.gg/35wsABTejz
-    about: For usage questions, troubleshooting help, and general discussion, please visit our Discord instead of opening an issue.
+    about: 关于使用问题、troubleshooting help 和一般讨论，请访问我们的 Discord，不要打开 issue。

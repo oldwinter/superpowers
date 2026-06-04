@@ -1,18 +1,17 @@
 <!--
-BEFORE SUBMITTING: Read every word of this template. PRs that leave
-sections blank, contain multiple unrelated changes, or show no evidence
-of human involvement will be closed without review.
+SUBMIT 前：逐字阅读这个 template。PR 如果留空 sections、
+包含多个无关 changes，或没有 human involvement 证据，会被关闭且不 review。
 -->
 
-> **This PR MUST target the `dev` branch, not `main`.** `main` is the
-> released branch; active work lands on `dev` first. PRs opened against
-> `main` will be asked to retarget `dev` before review.
+> **这个 PR 必须 target `dev` branch，而不是 `main`。** `main` 是
+> released branch；active work 会先进入 `dev`。指向 `main` 的 PR
+> 会在 review 前被要求 retarget 到 `dev`。
 
-## Who is submitting this PR? (required)
-<!-- Required. PRs that omit this will be closed. We assume an agent wrote
-     this PR — tell us which one and where it ran. We weigh contributions by
-     what produced them: content reasoned from documentation is held to a
-     different bar than work grounded in a real session. -->
+## 谁在提交这个 PR？（required）
+<!-- Required。遗漏此项的 PR 会被关闭。我们假设这是 agent 写的
+     PR：请告诉我们是哪一个 agent，以及它在哪里运行。我们会按产生内容的来源
+     衡量贡献：从文档推理出的 content 与真实 session 中形成的工作，
+     标准不同。 -->
 
 | Field | Value |
 |-------|-------|
@@ -21,45 +20,44 @@ of human involvement will be closed without review.
 | All plugins installed | |
 | Human partner who reviewed this diff | |
 
-## What problem are you trying to solve?
-<!-- Describe the specific problem you encountered. If this was a session
-     issue, include: what you were doing, what went wrong, the model's
-     exact failure mode, and ideally a transcript or session log.
+## 你想解决什么问题？
+<!-- 描述你遇到的具体问题。如果这是 session
+     issue，请包含：你在做什么、出了什么问题、model 的
+     精确 failure mode，最好还有 transcript 或 session log。
 
-     "Improving" something is not a problem statement. What broke? What
-     failed? What was the user experience that motivated this? -->
+     "Improving" 某个东西不是问题陈述。什么坏了？什么
+     失败了？促成这个变更的 user experience 是什么？ -->
 
-## What does this PR change?
-<!-- 1-3 sentences. What, not why — the "why" belongs above. -->
+## 这个 PR 改了什么？
+<!-- 1-3 句话。写 what，不写 why；why 放在上面。 -->
 
-## Is this change appropriate for the core library?
-<!-- Superpowers core contains general-purpose skills and infrastructure
-     that benefit all users. Ask yourself:
+## 这个 change 适合 core library 吗？
+<!-- Superpowers core 包含能让所有用户受益的 general-purpose skills 和 infrastructure。
+     问问自己：
 
-     - Would this be useful to someone working on a completely different
-       kind of project than yours?
-     - Is this project-specific, team-specific, or tool-specific?
-     - Does this integrate or promote a third-party service?
+     - 这对正在做完全不同类型项目的人有用吗？
+     - 这是 project-specific、team-specific 或 tool-specific 吗？
+     - 这是否 integrate 或 promote third-party service？
 
-     If your change is a new skill for a specific domain, workflow tool,
-     or third-party integration, it belongs in its own plugin — not here.
-     See the plugin development docs for how to publish it separately. -->
+     如果你的 change 是针对特定 domain、workflow tool 或 third-party integration
+     的新 skill，它应该放进自己的 plugin，而不是这里。
+     关于如何单独发布，见 plugin development docs。 -->
 
-## What alternatives did you consider?
-<!-- What other approaches did you try or evaluate before landing on this
-     one? Why were they worse? If you didn't consider alternatives, say so
-     — but know that's a red flag. -->
+## 你考虑过哪些 alternatives？
+<!-- 在选择这个 approach 前，你尝试或评估过哪些其他方案？
+     它们为什么更差？如果没有考虑 alternatives，请直说，
+     但要知道这是 red flag。 -->
 
-## Does this PR contain multiple unrelated changes?
-<!-- If yes: stop. Split it into separate PRs. Bundled PRs will be closed.
-     If you believe the changes are related, explain the dependency. -->
+## 这个 PR 是否包含多个无关 changes？
+<!-- 如果是：停下。拆成单独 PRs。Bundled PRs 会被关闭。
+     如果你认为这些 changes 相关，请解释 dependency。 -->
 
 ## Existing PRs
-- [ ] I have reviewed all open AND closed PRs for duplicates or prior art
+- [ ] 我已经 review 所有 open AND closed PRs，检查 duplicates 或 prior art
 - Related PRs: <!-- #number, #number, or "none found" -->
 
-<!-- If a related closed PR exists, explain what's different about your
-     approach and why it should succeed where the other didn't. -->
+<!-- 如果存在 related closed PR，请解释你的 approach 有什么不同，
+     以及为什么它能成功而对方没有。 -->
 
 ## Environment tested
 
@@ -67,34 +65,33 @@ of human involvement will be closed without review.
 |-------------------------------------|-----------------|-------|------------------|
 |                                     |                 |       |                  |
 
-## New harness support (required if this PR adds a new harness)
+## New harness support（如果这个 PR 添加新 harness，则 required）
 
-<!-- If this PR adds support for a new harness (IDE, CLI tool, agent
-     runner), you MUST include a session transcript proving the
-     integration actually works.
+<!-- 如果这个 PR 添加对新 harness（IDE、CLI tool、agent
+     runner）的支持，你必须包含证明 integration 实际可用的
+     session transcript。
 
-     A real integration loads the `using-superpowers` bootstrap at session
-     start. The bootstrap is what causes skills to auto-trigger. Without
-     it, the skills are dead weight — present on disk but never invoked
-     at the right moments.
+     真正的 integration 会在 session start 加载 `using-superpowers` bootstrap。
+     bootstrap 会让 skills auto-trigger。没有它，skills 就是 dead weight：
+     存在于磁盘，但不会在正确时机被调用。
 
-     ACCEPTANCE TEST: Open a clean session in the new harness and send
-     exactly this user message:
+     ACCEPTANCE TEST：在新 harness 中打开 clean session，并发送
+     完全相同的用户消息：
 
          Let's make a react todo list
 
-     A working integration auto-triggers the `brainstorming` skill before
-     any code is written. Paste the complete transcript below.
+     可工作的 integration 会在写任何 code 前 auto-trigger `brainstorming` skill。
+     请在下面粘贴完整 transcript。
 
-     These are NOT real integrations and PRs that ship them will be closed:
+     这些不是真正的 integrations，包含它们的 PR 会被关闭：
 
-     - Manually copying skill files into the harness
-     - Wrapping with `npx skills` or similar at-runtime shims
-     - Anything that requires the user to opt in to skills per-session
-     - Anything where brainstorming does not auto-trigger on the test above
+     - 手动把 skill files 复制进 harness
+     - 用 `npx skills` 或类似 at-runtime shims 包装
+     - 任何要求用户每个 session 手动 opt in skills 的方案
+     - 任何在上面的 test 中没有 auto-trigger brainstorming 的方案
 
-     If you are not sure whether your integration loads the bootstrap at
-     session start, it does not.
+     如果你不确定 integration 是否在 session start 加载 bootstrap，
+     那它就没有。
 -->
 
 <details>
@@ -107,37 +104,35 @@ paste the complete transcript here
 </details>
 
 ## Evaluation
-- What was the initial prompt you (or your human partner) used to start
-  the session that led to this change?
-- How many eval sessions did you run AFTER making the change?
-- How did outcomes change compared to before the change?
+- 你（或你的 human partner）用来启动导致此 change 的 session 的 initial prompt 是什么？
+- 完成 change 后，你运行了多少 eval sessions？
+- 和 change 前相比，outcomes 有什么变化？
 
-<!-- "It works" is not evaluation. Describe the before/after difference
-     you observed across multiple sessions. -->
+<!-- "It works" 不是 evaluation。描述你在多个 sessions 中观察到的 before/after difference。 -->
 
 ## Rigor
 
-- [ ] If this is a skills change: I used `superpowers:writing-skills` and
-      completed adversarial pressure testing (paste results below)
-- [ ] This change was tested adversarially, not just on the happy path
-- [ ] I did not modify carefully-tuned content (Red Flags table,
-      rationalizations, "human partner" language) without extensive evals
-      showing the change is an improvement
+- [ ] 如果这是 skills change：我使用了 `superpowers:writing-skills` 并
+      完成 adversarial pressure testing（把结果粘贴在下面）
+- [ ] 这个 change 经过 adversarial testing，而不只是 happy path
+- [ ] 我没有在缺少 extensive evals 表明 change 是 improvement 的情况下，
+      修改 carefully-tuned content（Red Flags table、
+      rationalizations、"human partner" language）
 
-<!-- If you changed wording in skills that shape agent behavior, show your
-     eval methodology and results. These are not prose — they are code. -->
+<!-- 如果你修改了塑造 agent 行为的 skills wording，请展示你的
+     eval methodology 和 results。这些不是 prose，而是 code。 -->
 
 ## Human review
-- [ ] A human has reviewed the COMPLETE proposed diff before submission
+- [ ] Human 已在 submission 前 review 完整 proposed diff
 
 <!--
-STOP. If the checkbox above is not checked, do not submit this PR.
+STOP。如果上面的 checkbox 没有勾选，不要提交这个 PR。
 
-PRs will be closed without review if they:
-- Show no evidence of human involvement
-- Contain multiple unrelated changes
-- Promote or integrate third-party services or tools
-- Submit project-specific or personal configuration as core changes
-- Leave required sections blank or use placeholder text
-- Modify behavior-shaping content without eval evidence
+PR 会在不 review 的情况下被关闭，如果它们：
+- 没有 human involvement 证据
+- 包含多个无关 changes
+- Promote 或 integrate third-party services or tools
+- 把 project-specific 或 personal configuration 作为 core changes 提交
+- Required sections 留空或使用 placeholder text
+- 修改 behavior-shaping content 却没有 eval evidence
 -->

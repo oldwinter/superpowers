@@ -5,26 +5,25 @@ labels: platform-support
 ---
 
 <!--
-BEFORE FILING: Search existing issues — your IDE may already be
-requested or discussed.
+FILING 前：搜索 existing issues，你的 IDE 可能已经被请求或讨论过。
 -->
 
-- [ ] I searched existing issues for this IDE/platform
+- [ ] 我已搜索这个 IDE/platform 的 existing issues
 
-## Which IDE or platform?
+## 哪个 IDE 或 platform？
 <!-- Name and link -->
 
-## Does this tool have a plugin or extension system?
-<!-- If yes, link to the docs. If no, explain how third-party
-     integrations typically work with this tool. -->
+## 这个 tool 有 plugin 或 extension system 吗？
+<!-- 如果有，请链接到 docs。如果没有，请说明 third-party
+     integrations 通常如何与这个 tool 配合工作。 -->
 
-## Have you tried manual installation?
-<!-- Many tools work with Superpowers through manual setup even without
-     official support. Did you try? What happened? -->
+## 你尝试过 manual installation 吗？
+<!-- 即使没有 official support，许多 tools 也能通过 manual setup 使用 Superpowers。
+     你试过吗？发生了什么？ -->
 
-## Environment (required)
-<!-- Required. We assume an agent wrote this request — tell us which one and
-     where it ran. -->
+## Environment（required）
+<!-- Required。我们假设这是 agent 写的 request：请告诉我们是哪一个，
+     以及它在哪里运行。 -->
 
 | Field | Value |
 |-------|-------|

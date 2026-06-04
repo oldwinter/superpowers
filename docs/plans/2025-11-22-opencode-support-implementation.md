@@ -1,12 +1,12 @@
 # OpenCode Support Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+> **For agentic workers:** REQUIRED SUB-SKILL: 使用 superpowers:executing-plans 逐 task 实现此 plan。
 
-**Goal:** Add full superpowers support for OpenCode.ai with a native JavaScript plugin that shares core functionality with the existing Codex implementation.
+**Goal:** 通过 native JavaScript plugin 为 OpenCode.ai 添加完整 superpowers support，并与现有 Codex implementation 共享 core functionality。
 
-**Architecture:** Extract common skill discovery/parsing logic into `lib/skills-core.js`, refactor Codex to use it, then build OpenCode plugin using their native plugin API with custom tools and session hooks.
+**Architecture:** 将 common skill discovery/parsing logic extract 到 `lib/skills-core.js`，refactor Codex 以使用它，然后使用 OpenCode native plugin API、custom tools 和 session hooks 构建 OpenCode plugin。
 
-**Tech Stack:** Node.js, JavaScript, OpenCode Plugin API, Git worktrees
+**Tech Stack:** Node.js、JavaScript、OpenCode Plugin API、Git worktrees
 
 ---
 
@@ -16,7 +16,7 @@
 
 **Files:**
 - Create: `lib/skills-core.js`
-- Reference: `.codex/superpowers-codex` (lines 40-74)
+- Reference: `.codex/superpowers-codex`（lines 40-74）
 
 **Step 1: Create lib/skills-core.js with extractFrontmatter function**
 
@@ -98,11 +98,11 @@ git commit -m "feat: create shared skills core module with frontmatter parser"
 
 **Files:**
 - Modify: `lib/skills-core.js`
-- Reference: `.codex/superpowers-codex` (lines 97-136)
+- Reference: `.codex/superpowers-codex`（lines 97-136）
 
 **Step 1: Add findSkillsInDir function to skills-core.js**
 
-Add before `module.exports`:
+添加到 `module.exports` 前：
 
 ```javascript
 /**
@@ -153,7 +153,7 @@ function findSkillsInDir(dir, sourceType, maxDepth = 3) {
 
 **Step 2: Update module.exports**
 
-Replace the exports line with:
+将 exports line 替换为：
 
 ```javascript
 module.exports = {
@@ -165,7 +165,7 @@ module.exports = {
 **Step 3: Verify syntax**
 
 Run: `node -c lib/skills-core.js`
-Expected: No output (success)
+Expected: No output（success）
 
 **Step 4: Commit**
 
@@ -180,11 +180,11 @@ git commit -m "feat: add skill discovery function to core module"
 
 **Files:**
 - Modify: `lib/skills-core.js`
-- Reference: `.codex/superpowers-codex` (lines 212-280)
+- Reference: `.codex/superpowers-codex`（lines 212-280）
 
 **Step 1: Add resolveSkillPath function**
 
-Add before `module.exports`:
+添加到 `module.exports` 前：
 
 ```javascript
 /**
@@ -259,17 +259,17 @@ git commit -m "feat: add skill path resolution with shadowing support"
 
 **Files:**
 - Modify: `lib/skills-core.js`
-- Reference: `.codex/superpowers-codex` (lines 16-38)
+- Reference: `.codex/superpowers-codex`（lines 16-38）
 
 **Step 1: Add checkForUpdates function**
 
-Add at top after requires:
+在 requires 后添加：
 
 ```javascript
 const { execSync } = require('child_process');
 ```
 
-Add before `module.exports`:
+添加到 `module.exports` 前：
 
 ```javascript
 /**
@@ -333,11 +333,11 @@ git commit -m "feat: add git update checking to core module"
 ### Task 5: Update Codex to Import Shared Core
 
 **Files:**
-- Modify: `.codex/superpowers-codex` (add import at top)
+- Modify: `.codex/superpowers-codex`（在顶部添加 import）
 
 **Step 1: Add import statement**
 
-After the existing requires at top of file (around line 6), add:
+在文件顶部 existing requires 后（约 line 6）添加：
 
 ```javascript
 const skillsCore = require('../lib/skills-core');
@@ -360,22 +360,22 @@ git commit -m "refactor: import shared skills core in codex"
 ### Task 6: Replace extractFrontmatter with Core Version
 
 **Files:**
-- Modify: `.codex/superpowers-codex` (lines 40-74)
+- Modify: `.codex/superpowers-codex`（lines 40-74）
 
 **Step 1: Remove local extractFrontmatter function**
 
-Delete lines 40-74 (the entire extractFrontmatter function definition).
+删除 lines 40-74（整个 extractFrontmatter function definition）。
 
 **Step 2: Update all extractFrontmatter calls**
 
-Find and replace all calls from `extractFrontmatter(` to `skillsCore.extractFrontmatter(`
+将所有 `extractFrontmatter(` 调用替换为 `skillsCore.extractFrontmatter(`。
 
 Affected lines approximately: 90, 310
 
 **Step 3: Verify script still works**
 
 Run: `.codex/superpowers-codex find-skills | head -20`
-Expected: Shows list of skills
+Expected: 显示 skills list
 
 **Step 4: Commit**
 
@@ -389,20 +389,20 @@ git commit -m "refactor: use shared extractFrontmatter in codex"
 ### Task 7: Replace findSkillsInDir with Core Version
 
 **Files:**
-- Modify: `.codex/superpowers-codex` (lines 97-136, approximately)
+- Modify: `.codex/superpowers-codex`（约 lines 97-136）
 
 **Step 1: Remove local findSkillsInDir function**
 
-Delete the entire `findSkillsInDir` function definition (approximately lines 97-136).
+删除整个 `findSkillsInDir` function definition（约 lines 97-136）。
 
 **Step 2: Update all findSkillsInDir calls**
 
-Replace calls from `findSkillsInDir(` to `skillsCore.findSkillsInDir(`
+将 `findSkillsInDir(` 调用替换为 `skillsCore.findSkillsInDir(`。
 
 **Step 3: Verify script still works**
 
 Run: `.codex/superpowers-codex find-skills | head -20`
-Expected: Shows list of skills
+Expected: 显示 skills list
 
 **Step 4: Commit**
 
@@ -416,20 +416,20 @@ git commit -m "refactor: use shared findSkillsInDir in codex"
 ### Task 8: Replace checkForUpdates with Core Version
 
 **Files:**
-- Modify: `.codex/superpowers-codex` (lines 16-38, approximately)
+- Modify: `.codex/superpowers-codex`（约 lines 16-38）
 
 **Step 1: Remove local checkForUpdates function**
 
-Delete the entire `checkForUpdates` function definition.
+删除整个 `checkForUpdates` function definition。
 
 **Step 2: Update all checkForUpdates calls**
 
-Replace calls from `checkForUpdates(` to `skillsCore.checkForUpdates(`
+将 `checkForUpdates(` 调用替换为 `skillsCore.checkForUpdates(`。
 
 **Step 3: Verify script still works**
 
 Run: `.codex/superpowers-codex bootstrap | head -50`
-Expected: Shows bootstrap content
+Expected: 显示 bootstrap content
 
 **Step 4: Commit**
 
@@ -503,7 +503,7 @@ git commit -m "feat: create opencode plugin scaffold"
 
 **Step 1: Add use_skill tool implementation**
 
-Replace the plugin return statement with:
+将 plugin return statement 替换为：
 
 ```javascript
 export const SuperpowersPlugin = async ({ project, client, $, directory, worktree }) => {
@@ -593,7 +593,7 @@ git commit -m "feat: implement use_skill tool for opencode"
 
 **Step 1: Add find_skills tool to tools array**
 
-Add after the use_skill tool definition, before closing the tools array:
+添加到 use_skill tool definition 后、tools array closing 前：
 
 ```javascript
       {
@@ -659,7 +659,7 @@ git commit -m "feat: implement find_skills tool for opencode"
 
 **Step 1: Add session.started hook**
 
-After the tools array, add:
+在 tools array 后添加：
 
 ```javascript
     'session.started': async () => {
@@ -903,7 +903,7 @@ git commit -m "docs: add opencode installation guide"
 
 **Step 1: Add OpenCode section**
 
-Find the section about supported platforms (search for "Codex" in the file), and add after it:
+找到 supported platforms 相关 section（在文件中搜索 “Codex”），并在其后添加：
 
 ```markdown
 ### OpenCode
@@ -922,7 +922,7 @@ Superpowers works with [OpenCode.ai](https://opencode.ai) through a native JavaS
 **Step 2: Verify formatting**
 
 Run: `grep -A 10 "### OpenCode" README.md`
-Expected: Shows the section you added
+Expected: 显示添加的 section
 
 **Step 3: Commit**
 
@@ -940,7 +940,7 @@ git commit -m "docs: add opencode support to readme"
 
 **Step 1: Add entry for OpenCode support**
 
-At the top of the file (after the header), add:
+在文件顶部（header 后）添加：
 
 ```markdown
 ## [Unreleased]
@@ -966,7 +966,7 @@ At the top of the file (after the header), add:
 **Step 2: Verify formatting**
 
 Run: `head -30 RELEASE-NOTES.md`
-Expected: Shows your new section
+Expected: 显示 new section
 
 **Step 3: Commit**
 
@@ -987,28 +987,28 @@ git commit -m "docs: add opencode support to release notes"
 **Step 1: Test find-skills command**
 
 Run: `.codex/superpowers-codex find-skills | head -20`
-Expected: Shows list of skills with names and descriptions
+Expected: 显示包含 names 和 descriptions 的 skills list
 
 **Step 2: Test use-skill command**
 
 Run: `.codex/superpowers-codex use-skill superpowers:brainstorming | head -20`
-Expected: Shows brainstorming skill content
+Expected: 显示 brainstorming skill content
 
 **Step 3: Test bootstrap command**
 
 Run: `.codex/superpowers-codex bootstrap | head -30`
-Expected: Shows bootstrap content with instructions
+Expected: 显示带 instructions 的 bootstrap content
 
 **Step 4: If all tests pass, record success**
 
-No commit needed - this is verification only.
+No commit needed：这只是 verification。
 
 ---
 
 ### Task 17: Verify File Structure
 
 **Files:**
-- Check: All new files exist
+- Check: 所有 new files exist
 
 **Step 1: Verify all files created**
 
@@ -1019,11 +1019,11 @@ ls -l .opencode/plugin/superpowers.js
 ls -l .opencode/INSTALL.md
 ```
 
-Expected: All files exist
+Expected: 所有 files exist
 
 **Step 2: Verify directory structure**
 
-Run: `tree -L 2 .opencode/` (or `find .opencode -type f` if tree not available)
+Run: `tree -L 2 .opencode/`（如果 tree 不可用，则 `find .opencode -type f`）
 Expected:
 ```
 .opencode/
@@ -1034,7 +1034,7 @@ Expected:
 
 **Step 3: If structure correct, proceed**
 
-No commit needed - this is verification only.
+No commit needed：这只是 verification。
 
 ---
 
@@ -1046,16 +1046,16 @@ No commit needed - this is verification only.
 **Step 1: Check git status**
 
 Run: `git status`
-Expected: Working tree clean, all changes committed
+Expected: Working tree clean，所有 changes committed
 
 **Step 2: Review commit log**
 
 Run: `git log --oneline -20`
-Expected: Shows all commits from this implementation
+Expected: 显示此 implementation 的所有 commits
 
 **Step 3: Create summary document**
 
-Create a completion summary showing:
+创建 completion summary，包含：
 - Total commits made
 - Files created: `lib/skills-core.js`, `.opencode/plugin/superpowers.js`, `.opencode/INSTALL.md`
 - Files modified: `.codex/superpowers-codex`, `README.md`, `RELEASE-NOTES.md`
@@ -1064,16 +1064,16 @@ Create a completion summary showing:
 
 **Step 4: Report completion**
 
-Present summary to user and offer to:
+向 user 展示 summary，并提供：
 1. Push to remote
 2. Create pull request
-3. Test with real OpenCode installation (requires OpenCode installed)
+3. Test with real OpenCode installation（requires OpenCode installed）
 
 ---
 
-## Testing Guide (Manual - Requires OpenCode)
+## Testing Guide（Manual - Requires OpenCode）
 
-These steps require OpenCode to be installed and are not part of the automated implementation:
+这些 steps 需要已安装 OpenCode，不属于 automated implementation：
 
 1. **Install skills**: Follow `.opencode/INSTALL.md`
 2. **Start OpenCode session**: Verify bootstrap appears
@@ -1087,7 +1087,7 @@ These steps require OpenCode to be installed and are not part of the automated i
 
 - [ ] `lib/skills-core.js` created with all core functions
 - [ ] `.codex/superpowers-codex` refactored to use shared core
-- [ ] Codex commands still work (find-skills, use-skill, bootstrap)
+- [ ] Codex commands still work（find-skills、use-skill、bootstrap）
 - [ ] `.opencode/plugin/superpowers.js` created with tools and hooks
 - [ ] Installation guide created
 - [ ] README and RELEASE-NOTES updated

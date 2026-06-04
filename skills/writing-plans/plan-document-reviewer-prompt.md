@@ -1,10 +1,10 @@
 # Plan Document Reviewer Prompt Template
 
-Use this template when dispatching a plan document reviewer subagent.
+分派 plan document reviewer subagent 时使用这个 template。
 
-**Purpose:** Verify the plan is complete, matches the spec, and has proper task decomposition.
+**Purpose:** 验证 plan 是否 complete、matches the spec，并具备 proper task decomposition。
 
-**Dispatch after:** The complete plan is written.
+**Dispatch after:** 完整 plan 已写完。
 
 ```
 Task tool (general-purpose):
@@ -19,19 +19,19 @@ Task tool (general-purpose):
 
     | Category | What to Look For |
     |----------|------------------|
-    | Completeness | TODOs, placeholders, incomplete tasks, missing steps |
-    | Spec Alignment | Plan covers spec requirements, no major scope creep |
-    | Task Decomposition | Tasks have clear boundaries, steps are actionable |
-    | Buildability | Could an engineer follow this plan without getting stuck? |
+    | Completeness | TODOs、placeholders、incomplete tasks、missing steps |
+    | Spec Alignment | Plan covers spec requirements，没有 major scope creep |
+    | Task Decomposition | Tasks 有 clear boundaries，steps actionable |
+    | Buildability | Engineer 能否按此 plan 执行而不卡住？ |
 
     ## Calibration
 
-    **Only flag issues that would cause real problems during implementation.**
-    An implementer building the wrong thing or getting stuck is an issue.
-    Minor wording, stylistic preferences, and "nice to have" suggestions are not.
+    **只 flag 会在 implementation 中造成真实问题的 issues。**
+    Implementer 构建错误内容或卡住才是 issue。
+    Minor wording、stylistic preferences 和 "nice to have" suggestions 不是。
 
-    Approve unless there are serious gaps — missing requirements from the spec,
-    contradictory steps, placeholder content, or tasks so vague they can't be acted on.
+    除非存在 serious gaps，否则 approve：例如缺失 spec requirements、
+    contradictory steps、placeholder content，或 tasks 含糊到无法执行。
 
     ## Output Format
 

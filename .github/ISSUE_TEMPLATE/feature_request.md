@@ -5,35 +5,33 @@ labels: enhancement
 ---
 
 <!--
-BEFORE FILING: Search open AND closed issues. Many features have been
-requested before — some were implemented differently, some are in
-progress, and some were intentionally declined.
+FILING 前：搜索 open AND closed issues。许多 features 以前被请求过：
+有些以不同方式实现了，有些正在进行，有些被有意拒绝。
 -->
 
-- [ ] I searched existing issues and this has not been proposed before
+- [ ] 我已搜索 existing issues，确认这个需求以前没有被提出过
 
-## What problem does this solve?
-<!-- Describe the problem from your own experience. What were you doing,
-     what went wrong or was missing, and why did it matter?
+## 这解决什么问题？
+<!-- 从你自己的经验描述 problem。你当时在做什么，
+     什么出了问题或缺失，为什么重要？
 
-     "It would be cool if..." is not a problem statement. -->
+     "It would be cool if..." 不是问题陈述。 -->
 
 ## Proposed solution
-<!-- What specifically do you want to happen? Be concrete. -->
+<!-- 你具体希望发生什么？请 concrete。 -->
 
-## What alternatives did you consider?
-<!-- What other approaches could solve the same problem? Why is your
-     proposal better? -->
+## 你考虑过哪些 alternatives？
+<!-- 还有哪些 approach 可以解决同一问题？为什么你的 proposal 更好？ -->
 
-## Is this appropriate for core Superpowers?
-<!-- Would this benefit someone working on a completely different kind
-     of project? If this is specific to your domain, workflow, or a
-     third-party tool, it may belong as its own plugin instead. -->
+## 这适合 core Superpowers 吗？
+<!-- 这是否会让正在做完全不同类型项目的人受益？
+     如果它特定于你的 domain、workflow 或 third-party tool，
+     它可能更适合成为自己的 plugin。 -->
 
-## Environment (required)
-<!-- Required. We assume an agent wrote this request — tell us which one and
-     where it ran. We weigh proposals reasoned from documentation differently
-     than ones grounded in a real session where the problem actually came up. -->
+## Environment（required）
+<!-- Required。我们假设这是 agent 写的 request：请告诉我们是哪一个，
+     以及它在哪里运行。我们会不同对待从 documentation 推理出的 proposals
+     和来自真实 session、实际遇到问题的 proposals。 -->
 
 | Field | Value |
 |-------|-------|
@@ -44,4 +42,4 @@ progress, and some were intentionally declined.
 | All plugins installed | |
 
 ## Context
-<!-- Optional: the workflow where you hit this, links, transcripts. -->
+<!-- Optional：你遇到这个问题的 workflow、links、transcripts。 -->

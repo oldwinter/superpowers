@@ -1,19 +1,19 @@
 ---
 name: subagent-driven-development
-description: Use when executing implementation plans with independent tasks in the current session
+description: 在当前 session 中执行包含 independent tasks 的 implementation plans 时使用
 ---
 
 # Subagent-Driven Development
 
-Execute plan by dispatching fresh subagent per task, with two-stage review after each: spec compliance review first, then code quality review.
+通过为每个 task 分派 fresh subagent 来执行计划，并在每个 task 后进行两阶段 review：先 spec compliance review，再 code quality review。
 
-**Why subagents:** You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.
+**Why subagents:** 你把 tasks 委派给带 isolated context 的 specialized agents。通过精确构造它们的 instructions 和 context，你能确保它们保持专注并完成 task。它们永远不应该继承你的 session context 或 history；你只构造它们真正需要的内容。这也会保留你自己的 context，用于协调工作。
 
-**Core principle:** Fresh subagent per task + two-stage review (spec then quality) = high quality, fast iteration
+**核心原则：** Fresh subagent per task + two-stage review（spec then quality）= high quality, fast iteration
 
-**Continuous execution:** Do not pause to check in with your human partner between tasks. Execute all tasks from the plan without stopping. The only reasons to stop are: BLOCKED status you cannot resolve, ambiguity that genuinely prevents progress, or all tasks complete. "Should I continue?" prompts and progress summaries waste their time — they asked you to execute the plan, so execute it.
+**Continuous execution:** 不要在 tasks 之间暂停向 human partner check in。不中断地执行 plan 中的所有 tasks。停下来的唯一理由是：你无法解决的 BLOCKED status、确实阻止进展的 ambiguity，或所有 tasks 已完成。"Should I continue?" prompts 和 progress summaries 会浪费他们的时间：他们要求你执行计划，所以执行它。
 
-## When to Use
+## 何时使用
 
 ```dot
 digraph when_to_use {
@@ -34,12 +34,12 @@ digraph when_to_use {
 ```
 
 **vs. Executing Plans (parallel session):**
-- Same session (no context switch)
-- Fresh subagent per task (no context pollution)
-- Two-stage review after each task: spec compliance first, then code quality
-- Faster iteration (no human-in-loop between tasks)
+- Same session（没有 context switch）
+- Fresh subagent per task（没有 context pollution）
+- 每个 task 后两阶段 review：先 spec compliance，再 code quality
+- 更快 iteration（tasks 之间不需要 human-in-loop）
 
-## The Process
+## 流程
 
 ```dot
 digraph process {
@@ -88,13 +88,13 @@ digraph process {
 
 ## Model Selection
 
-Use the least powerful model that can handle each role to conserve cost and increase speed.
+使用能处理对应 role 的最低能力模型，以节省成本并提高速度。
 
-**Mechanical implementation tasks** (isolated functions, clear specs, 1-2 files): use a fast, cheap model. Most implementation tasks are mechanical when the plan is well-specified.
+**Mechanical implementation tasks**（isolated functions、clear specs、1-2 files）：使用 fast, cheap model。当 plan 足够明确时，大多数 implementation tasks 都是机械性的。
 
-**Integration and judgment tasks** (multi-file coordination, pattern matching, debugging): use a standard model.
+**Integration and judgment tasks**（multi-file coordination、pattern matching、debugging）：使用 standard model。
 
-**Architecture, design, and review tasks**: use the most capable available model.
+**Architecture, design, and review tasks**：使用可用的最强模型。
 
 **Task complexity signals:**
 - Touches 1-2 files with a complete spec → cheap model
@@ -103,21 +103,21 @@ Use the least powerful model that can handle each role to conserve cost and incr
 
 ## Handling Implementer Status
 
-Implementer subagents report one of four statuses. Handle each appropriately:
+Implementer subagents 会报告四种 status 之一。分别这样处理：
 
-**DONE:** Proceed to spec compliance review.
+**DONE:** 进入 spec compliance review。
 
-**DONE_WITH_CONCERNS:** The implementer completed the work but flagged doubts. Read the concerns before proceeding. If the concerns are about correctness or scope, address them before review. If they're observations (e.g., "this file is getting large"), note them and proceed to review.
+**DONE_WITH_CONCERNS:** Implementer 完成了工作，但标记了疑虑。继续前阅读 concerns。如果 concerns 关于 correctness 或 scope，review 前先处理。如果只是 observations（例如 "this file is getting large"），记录下来并继续 review。
 
-**NEEDS_CONTEXT:** The implementer needs information that wasn't provided. Provide the missing context and re-dispatch.
+**NEEDS_CONTEXT:** Implementer 需要未提供的信息。补充 missing context 并重新 dispatch。
 
-**BLOCKED:** The implementer cannot complete the task. Assess the blocker:
-1. If it's a context problem, provide more context and re-dispatch with the same model
-2. If the task requires more reasoning, re-dispatch with a more capable model
-3. If the task is too large, break it into smaller pieces
-4. If the plan itself is wrong, escalate to the human
+**BLOCKED:** Implementer 无法完成 task。评估 blocker：
+1. 如果是 context problem，提供更多 context，并用同一 model 重新 dispatch
+2. 如果 task 需要更多 reasoning，用更强模型重新 dispatch
+3. 如果 task 太大，拆成更小 pieces
+4. 如果 plan 本身错误，升级给 human
 
-**Never** ignore an escalation or force the same model to retry without changes. If the implementer said it's stuck, something needs to change.
+**Never** ignore an escalation or force the same model to retry without changes. 如果 implementer 说卡住了，就必须改变某些东西。
 
 ## Prompt Templates
 
@@ -204,76 +204,76 @@ Done!
 ## Advantages
 
 **vs. Manual execution:**
-- Subagents follow TDD naturally
-- Fresh context per task (no confusion)
-- Parallel-safe (subagents don't interfere)
-- Subagent can ask questions (before AND during work)
+- Subagents 自然遵循 TDD
+- 每个 task 都是 fresh context（没有 confusion）
+- Parallel-safe（subagents 不互相干扰）
+- Subagent 可以提问（工作前和工作中都可以）
 
 **vs. Executing Plans:**
-- Same session (no handoff)
-- Continuous progress (no waiting)
-- Review checkpoints automatic
+- Same session（没有 handoff）
+- Continuous progress（不用等待）
+- Review checkpoints 自动发生
 
 **Efficiency gains:**
-- No file reading overhead (controller provides full text)
-- Controller curates exactly what context is needed
-- Subagent gets complete information upfront
-- Questions surfaced before work begins (not after)
+- 没有 file reading overhead（controller 提供 full text）
+- Controller 精确筛选所需 context
+- Subagent 一开始就拿到完整信息
+- 问题在工作开始前浮现（不是之后）
 
 **Quality gates:**
-- Self-review catches issues before handoff
-- Two-stage review: spec compliance, then code quality
-- Review loops ensure fixes actually work
-- Spec compliance prevents over/under-building
-- Code quality ensures implementation is well-built
+- Self-review 在 handoff 前抓问题
+- Two-stage review：spec compliance，然后 code quality
+- Review loops 确保 fixes 真的工作
+- Spec compliance 防止 over/under-building
+- Code quality 确保 implementation well-built
 
 **Cost:**
-- More subagent invocations (implementer + 2 reviewers per task)
-- Controller does more prep work (extracting all tasks upfront)
-- Review loops add iterations
-- But catches issues early (cheaper than debugging later)
+- 更多 subagent invocations（implementer + 每个 task 2 个 reviewers）
+- Controller 做更多前置准备（预先提取所有 tasks）
+- Review loops 增加 iterations
+- 但能早抓问题（比之后 debugging 更便宜）
 
 ## Red Flags
 
 **Never:**
-- Start implementation on main/master branch without explicit user consent
-- Skip reviews (spec compliance OR code quality)
-- Proceed with unfixed issues
-- Dispatch multiple implementation subagents in parallel (conflicts)
-- Make subagent read plan file (provide full text instead)
-- Skip scene-setting context (subagent needs to understand where task fits)
-- Ignore subagent questions (answer before letting them proceed)
-- Accept "close enough" on spec compliance (spec reviewer found issues = not done)
-- Skip review loops (reviewer found issues = implementer fixes = review again)
-- Let implementer self-review replace actual review (both are needed)
-- **Start code quality review before spec compliance is ✅** (wrong order)
-- Move to next task while either review has open issues
+- 未经用户明确同意就在 main/master branch 上开始 implementation
+- 跳过 reviews（spec compliance 或 code quality）
+- 带着未修复 issues 继续
+- 并行 dispatch 多个 implementation subagents（会冲突）
+- 让 subagent 读取 plan file（改为提供 full text）
+- 跳过 scene-setting context（subagent 需要理解 task 放在哪里）
+- 忽略 subagent questions（先回答，再让它们继续）
+- 在 spec compliance 上接受 "close enough"（spec reviewer 发现 issues = not done）
+- 跳过 review loops（reviewer 发现 issues = implementer fixes = review again）
+- 用 implementer self-review 替代实际 review（两者都需要）
+- **在 spec compliance ✅ 前开始 code quality review**（顺序错误）
+- 任一 review 仍有 open issues 时移动到下一个 task
 
 **If subagent asks questions:**
-- Answer clearly and completely
-- Provide additional context if needed
-- Don't rush them into implementation
+- 清楚、完整地回答
+- 如有需要，提供 additional context
+- 不要催它们进入 implementation
 
 **If reviewer finds issues:**
-- Implementer (same subagent) fixes them
-- Reviewer reviews again
-- Repeat until approved
-- Don't skip the re-review
+- Implementer（同一个 subagent）修复它们
+- Reviewer 再 review
+- 重复直到 approved
+- 不要跳过 re-review
 
 **If subagent fails task:**
-- Dispatch fix subagent with specific instructions
-- Don't try to fix manually (context pollution)
+- 用具体指令 dispatch fix subagent
+- 不要尝试手动修复（context pollution）
 
 ## Integration
 
 **Required workflow skills:**
-- **superpowers:using-git-worktrees** - Ensures isolated workspace (creates one or verifies existing)
-- **superpowers:writing-plans** - Creates the plan this skill executes
-- **superpowers:requesting-code-review** - Code review template for reviewer subagents
-- **superpowers:finishing-a-development-branch** - Complete development after all tasks
+- **superpowers:using-git-worktrees** - 确保 isolated workspace（创建或验证已有）
+- **superpowers:writing-plans** - 创建本 skill 执行的计划
+- **superpowers:requesting-code-review** - reviewer subagents 使用的 code review template
+- **superpowers:finishing-a-development-branch** - 所有 tasks 完成后收尾开发
 
 **Subagents should use:**
-- **superpowers:test-driven-development** - Subagents follow TDD for each task
+- **superpowers:test-driven-development** - Subagents 对每个 task 遵循 TDD
 
 **Alternative workflow:**
-- **superpowers:executing-plans** - Use for parallel session instead of same-session execution
+- **superpowers:executing-plans** - 用于 parallel session，而不是 same-session execution

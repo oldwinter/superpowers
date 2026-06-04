@@ -1,6 +1,6 @@
 {
   "name": "superpowers",
-  "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
+  "description": "面向 Claude Code 的核心 skills library：TDD、debugging、collaboration patterns 和经过验证的 techniques",
   "version": "5.1.0",
   "author": {
     "name": "Jesse Vincent",

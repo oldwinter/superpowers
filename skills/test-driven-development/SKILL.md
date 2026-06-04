@@ -1,19 +1,19 @@
 ---
 name: test-driven-development
-description: Use when implementing any feature or bugfix, before writing implementation code
+description: 实现任何 feature 或 bugfix 时、写 implementation code 前使用
 ---
 
 # Test-Driven Development (TDD)
 
-## Overview
+## 概览
 
-Write the test first. Watch it fail. Write minimal code to pass.
+先写测试。看它失败。写最少代码让它通过。
 
-**Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing.
+**核心原则：** 如果你没有亲眼看到 test fail，你就不知道它是否测试了正确的东西。
 
-**Violating the letter of the rules is violating the spirit of the rules.**
+**违反规则的字面要求，就是违反规则的精神。**
 
-## When to Use
+## 何时使用
 
 **Always:**
 - New features
@@ -21,28 +21,28 @@ Write the test first. Watch it fail. Write minimal code to pass.
 - Refactoring
 - Behavior changes
 
-**Exceptions (ask your human partner):**
+**Exceptions（询问你的 human partner）：**
 - Throwaway prototypes
 - Generated code
 - Configuration files
 
-Thinking "skip TDD just this once"? Stop. That's rationalization.
+正在想 "skip TDD just this once"？停下。这是在合理化逃避。
 
-## The Iron Law
+## 铁律
 
 ```
 NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
 ```
 
-Write code before the test? Delete it. Start over.
+先写了 code 再写 test？删除它。重新开始。
 
 **No exceptions:**
-- Don't keep it as "reference"
-- Don't "adapt" it while writing tests
-- Don't look at it
+- 不要把它留作 "reference"
+- 不要在写 tests 时 "adapt" 它
+- 不要看它
 - Delete means delete
 
-Implement fresh from tests. Period.
+从 tests 重新实现。句号。
 
 ## Red-Green-Refactor
 
@@ -70,7 +70,7 @@ digraph tdd_cycle {
 
 ### RED - Write Failing Test
 
-Write one minimal test showing what should happen.
+写一个最小 test，展示应该发生什么。
 
 <Good>
 ```typescript
@@ -88,7 +88,7 @@ test('retries failed operations 3 times', async () => {
   expect(attempts).toBe(3);
 });
 ```
-Clear name, tests real behavior, one thing
+名称清楚，测试真实 behavior，只测一件事
 </Good>
 
 <Bad>
@@ -102,34 +102,34 @@ test('retry works', async () => {
   expect(mock).toHaveBeenCalledTimes(3);
 });
 ```
-Vague name, tests mock not code
+名称含糊，测的是 mock 而不是 code
 </Bad>
 
 **Requirements:**
 - One behavior
 - Clear name
-- Real code (no mocks unless unavoidable)
+- Real code（除非无法避免，否则不用 mocks）
 
 ### Verify RED - Watch It Fail
 
-**MANDATORY. Never skip.**
+**MANDATORY。永远不要跳过。**
 
 ```bash
 npm test path/to/test.test.ts
 ```
 
-Confirm:
-- Test fails (not errors)
-- Failure message is expected
-- Fails because feature missing (not typos)
+确认：
+- Test fails（不是 errors）
+- Failure message 是预期的
+- 因 feature missing 失败（不是 typo）
 
-**Test passes?** You're testing existing behavior. Fix test.
+**Test passes?** 你在测试已有 behavior。修 test。
 
-**Test errors?** Fix error, re-run until it fails correctly.
+**Test errors?** 修 error，重新运行，直到它正确失败。
 
 ### GREEN - Minimal Code
 
-Write simplest code to pass the test.
+写最简单的 code，让 test 通过。
 
 <Good>
 ```typescript
@@ -163,129 +163,129 @@ async function retryOperation<T>(
 Over-engineered
 </Bad>
 
-Don't add features, refactor other code, or "improve" beyond the test.
+不要添加 features、refactor 其他代码，或在 test 之外“改进”。
 
 ### Verify GREEN - Watch It Pass
 
-**MANDATORY.**
+**MANDATORY。**
 
 ```bash
 npm test path/to/test.test.ts
 ```
 
-Confirm:
+确认：
 - Test passes
-- Other tests still pass
-- Output pristine (no errors, warnings)
+- 其他 tests 仍然 pass
+- Output pristine（没有 errors、warnings）
 
-**Test fails?** Fix code, not test.
+**Test fails?** 修 code，不要修 test。
 
-**Other tests fail?** Fix now.
+**Other tests fail?** 现在就修。
 
 ### REFACTOR - Clean Up
 
-After green only:
+只有 green 之后才做：
 - Remove duplication
 - Improve names
 - Extract helpers
 
-Keep tests green. Don't add behavior.
+保持 tests green。不要添加 behavior。
 
 ### Repeat
 
-Next failing test for next feature.
+为下一个 feature 写下一个 failing test。
 
 ## Good Tests
 
 | Quality | Good | Bad |
 |---------|------|-----|
-| **Minimal** | One thing. "and" in name? Split it. | `test('validates email and domain and whitespace')` |
-| **Clear** | Name describes behavior | `test('test1')` |
-| **Shows intent** | Demonstrates desired API | Obscures what code should do |
+| **Minimal** | One thing。name 里有 "and"？拆开。 | `test('validates email and domain and whitespace')` |
+| **Clear** | Name 描述 behavior | `test('test1')` |
+| **Shows intent** | 展示期望 API | 掩盖 code 应该做什么 |
 
-## Why Order Matters
+## 为什么顺序重要
 
 **"I'll write tests after to verify it works"**
 
-Tests written after code pass immediately. Passing immediately proves nothing:
-- Might test wrong thing
-- Might test implementation, not behavior
-- Might miss edge cases you forgot
-- You never saw it catch the bug
+Code 之后写的 tests 会立刻通过。立刻通过什么都证明不了：
+- 可能测试了错误的东西
+- 可能测试 implementation，而不是 behavior
+- 可能漏掉你忘记的 edge cases
+- 你从没看到它抓住 bug
 
-Test-first forces you to see the test fail, proving it actually tests something.
+Test-first 强制你看到 test fail，证明它确实测试了某个东西。
 
 **"I already manually tested all the edge cases"**
 
-Manual testing is ad-hoc. You think you tested everything but:
-- No record of what you tested
-- Can't re-run when code changes
-- Easy to forget cases under pressure
+Manual testing 是 ad-hoc。你以为自己测了所有东西，但：
+- 没有你测过什么的记录
+- code 变化后无法重新运行
+- 压力下很容易忘记 cases
 - "It worked when I tried it" ≠ comprehensive
 
-Automated tests are systematic. They run the same way every time.
+Automated tests 是 systematic。每次都以同样方式运行。
 
 **"Deleting X hours of work is wasteful"**
 
-Sunk cost fallacy. The time is already gone. Your choice now:
-- Delete and rewrite with TDD (X more hours, high confidence)
-- Keep it and add tests after (30 min, low confidence, likely bugs)
+Sunk cost fallacy。时间已经花掉了。你现在的选择是：
+- 删除并用 TDD 重写（再花 X 小时，高信心）
+- 保留它并事后补 tests（30 分钟，低信心，很可能有 bugs）
 
-The "waste" is keeping code you can't trust. Working code without real tests is technical debt.
+真正的 "waste" 是保留你无法信任的代码。没有真实 tests 的 working code 是 technical debt。
 
 **"TDD is dogmatic, being pragmatic means adapting"**
 
-TDD IS pragmatic:
-- Finds bugs before commit (faster than debugging after)
-- Prevents regressions (tests catch breaks immediately)
-- Documents behavior (tests show how to use code)
-- Enables refactoring (change freely, tests catch breaks)
+TDD 就是 pragmatic：
+- commit 前发现 bugs（比之后 debugging 更快）
+- 防止 regressions（tests 会立即抓住 breaks）
+- 记录 behavior（tests 展示如何使用 code）
+- 支持 refactoring（自由修改，tests 抓住 breaks）
 
-"Pragmatic" shortcuts = debugging in production = slower.
+"Pragmatic" shortcuts = production 里 debugging = 更慢。
 
 **"Tests after achieve the same goals - it's spirit not ritual"**
 
-No. Tests-after answer "What does this do?" Tests-first answer "What should this do?"
+不。Tests-after 回答 "What does this do?" Tests-first 回答 "What should this do?"
 
-Tests-after are biased by your implementation. You test what you built, not what's required. You verify remembered edge cases, not discovered ones.
+Tests-after 会被你的 implementation 带偏。你测试自己构建了什么，而不是 requirements 是什么。你验证记得的 edge cases，不是发现出来的 edge cases。
 
-Tests-first force edge case discovery before implementing. Tests-after verify you remembered everything (you didn't).
+Tests-first 强制在实现前发现 edge cases。Tests-after 验证你是否记住了一切（你没有）。
 
-30 minutes of tests after ≠ TDD. You get coverage, lose proof tests work.
+事后写 30 分钟 tests ≠ TDD。你得到 coverage，但失去 tests 确实工作的证明。
 
-## Common Rationalizations
+## 常见合理化借口
 
 | Excuse | Reality |
 |--------|---------|
-| "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
-| "I'll test after" | Tests passing immediately prove nothing. |
+| "Too simple to test" | Simple code breaks。Test 只要 30 秒。 |
+| "I'll test after" | Tests passing immediately prove nothing。 |
 | "Tests after achieve same goals" | Tests-after = "what does this do?" Tests-first = "what should this do?" |
-| "Already manually tested" | Ad-hoc ≠ systematic. No record, can't re-run. |
-| "Deleting X hours is wasteful" | Sunk cost fallacy. Keeping unverified code is technical debt. |
-| "Keep as reference, write tests first" | You'll adapt it. That's testing after. Delete means delete. |
-| "Need to explore first" | Fine. Throw away exploration, start with TDD. |
-| "Test hard = design unclear" | Listen to test. Hard to test = hard to use. |
-| "TDD will slow me down" | TDD faster than debugging. Pragmatic = test-first. |
-| "Manual test faster" | Manual doesn't prove edge cases. You'll re-test every change. |
-| "Existing code has no tests" | You're improving it. Add tests for existing code. |
+| "Already manually tested" | Ad-hoc ≠ systematic。没有记录，无法 re-run。 |
+| "Deleting X hours is wasteful" | Sunk cost fallacy。保留未验证代码是 technical debt。 |
+| "Keep as reference, write tests first" | 你会 adapt 它。那就是 testing after。Delete means delete。 |
+| "Need to explore first" | 可以。扔掉 exploration，用 TDD 开始。 |
+| "Test hard = design unclear" | 听 test 的。Hard to test = hard to use。 |
+| "TDD will slow me down" | TDD 比 debugging 更快。Pragmatic = test-first。 |
+| "Manual test faster" | Manual 无法证明 edge cases。每次变化都要重新测。 |
+| "Existing code has no tests" | 你在改进它。为 existing code 添加 tests。 |
 
 ## Red Flags - STOP and Start Over
 
 - Code before test
 - Test after implementation
 - Test passes immediately
-- Can't explain why test failed
+- 无法解释 test 为什么 failed
 - Tests added "later"
 - Rationalizing "just this once"
 - "I already manually tested it"
 - "Tests after achieve the same purpose"
 - "It's about spirit not ritual"
-- "Keep as reference" or "adapt existing code"
+- "Keep as reference" 或 "adapt existing code"
 - "Already spent X hours, deleting is wasteful"
 - "TDD is dogmatic, I'm being pragmatic"
 - "This is different because..."
 
-**All of these mean: Delete code. Start over with TDD.**
+**所有这些都意味着：Delete code。Start over with TDD。**
 
 ## Example: Bug Fix
 
@@ -322,44 +322,44 @@ PASS
 ```
 
 **REFACTOR**
-Extract validation for multiple fields if needed.
+如果需要，提取 multiple fields 的 validation。
 
 ## Verification Checklist
 
-Before marking work complete:
+标记 work complete 前：
 
-- [ ] Every new function/method has a test
-- [ ] Watched each test fail before implementing
-- [ ] Each test failed for expected reason (feature missing, not typo)
-- [ ] Wrote minimal code to pass each test
+- [ ] 每个 new function/method 都有 test
+- [ ] 实现前亲眼看到每个 test fail
+- [ ] 每个 test 都因预期原因 fail（feature missing，不是 typo）
+- [ ] 写了最少代码让每个 test pass
 - [ ] All tests pass
-- [ ] Output pristine (no errors, warnings)
-- [ ] Tests use real code (mocks only if unavoidable)
-- [ ] Edge cases and errors covered
+- [ ] Output pristine（没有 errors、warnings）
+- [ ] Tests 使用 real code（只有无法避免时才用 mocks）
+- [ ] 覆盖 edge cases 和 errors
 
-Can't check all boxes? You skipped TDD. Start over.
+不能勾选所有项？你跳过了 TDD。重新开始。
 
 ## When Stuck
 
 | Problem | Solution |
 |---------|----------|
-| Don't know how to test | Write wished-for API. Write assertion first. Ask your human partner. |
-| Test too complicated | Design too complicated. Simplify interface. |
-| Must mock everything | Code too coupled. Use dependency injection. |
-| Test setup huge | Extract helpers. Still complex? Simplify design. |
+| Don't know how to test | 写 wished-for API。先写 assertion。问你的 human partner。 |
+| Test too complicated | Design too complicated。简化 interface。 |
+| Must mock everything | Code too coupled。使用 dependency injection。 |
+| Test setup huge | Extract helpers。仍然复杂？简化 design。 |
 
 ## Debugging Integration
 
-Bug found? Write failing test reproducing it. Follow TDD cycle. Test proves fix and prevents regression.
+发现 bug？写一个 reproducing 它的 failing test。遵循 TDD cycle。Test 会证明 fix 并防止 regression。
 
-Never fix bugs without a test.
+永远不要在没有 test 的情况下修 bugs。
 
 ## Testing Anti-Patterns
 
-When adding mocks or test utilities, read @testing-anti-patterns.md to avoid common pitfalls:
-- Testing mock behavior instead of real behavior
-- Adding test-only methods to production classes
-- Mocking without understanding dependencies
+添加 mocks 或 test utilities 时，阅读 @testing-anti-patterns.md 以避免常见陷阱：
+- 测试 mock behavior，而不是真实 behavior
+- 给 production classes 添加 test-only methods
+- 不理解 dependencies 就 mock
 
 ## Final Rule
 
@@ -368,4 +368,4 @@ Production code → test exists and failed first
 Otherwise → not TDD
 ```
 
-No exceptions without your human partner's permission.
+没有你的 human partner 许可，不存在 exceptions。

@@ -2,6 +2,12 @@
 
 Superpowers 是一套完整的软件开发方法论，面向你的 coding agents 构建。它基于一组可组合的 skills，以及一小段确保 agent 会使用这些 skills 的初始指令。
 
+## 我们正在招聘
+
+我们正在招聘一位全职同事，协助 Superpowers 社区和代码工作。
+职位介绍见 https://primeradiant.com/jobs/superpowers-community-engineer/
+如果你认识合适的人，欢迎推荐给我们。
+
 ## 快速开始
 
 给你的 agent 装上 Superpowers：[Claude Code](#claude-code)、[Codex CLI](#codex-cli)、[Codex App](#codex-app)、[Factory Droid](#factory-droid)、[Gemini CLI](#gemini-cli)、[OpenCode](#opencode)、[Cursor](#cursor)、[GitHub Copilot CLI](#github-copilot-cli)。

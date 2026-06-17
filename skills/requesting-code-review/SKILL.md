@@ -1,51 +1,51 @@
 ---
 name: requesting-code-review
-description: 完成 tasks、实现 major features，或 merge 前验证工作是否满足 requirements 时使用
+description: 在完成任务、实现主要功能时或在合并之前使用以验证工作是否满足要求
 ---
 
 # Requesting Code Review
 
-分派一个 code reviewer subagent，在问题扩散前抓住它们。Reviewer 会获得精心组织的上下文来做评估，而不是继承你的 session history。这样 reviewer 会专注于 work product，而不是你的思考过程，同时保留你自己的 context 用于继续协调工作。
+派遣代码审阅者子代理以在问题级联之前发现问题。审阅者可以获得精确设计的评估上下文，而不是您的会话历史记录。这可以让审阅者专注于工作产品，而不是您的思维过程，并保留您自己的上下文以供继续工作。
 
-**核心原则：** 早 review，经常 review。
+**核心原则：**早复习、常复习。
 
-## 何时请求 Review
+## When to Request Review
 
 **Mandatory:**
-- subagent-driven development 中每个 task 之后
-- 完成 major feature 之后
-- merge 到 main 之前
+- 子代理驱动开发中的每个任务之后
+- 完成主要功能后
+- 合并到主程序之前
 
-**Optional but valuable:**
-- 卡住时（fresh perspective）
-- refactoring 前（baseline check）
-- 修复 complex bug 后
+**可选但有价值：**
+- 当卡住时（新视角）
+- 重构前（基线检查）
+- 修复复杂的错误后
 
-## 如何请求
+## How to Request
 
-**1. 获取 git SHAs：**
+**1.获取 git SHA：**
 ```bash
 BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. 分派 code reviewer subagent：**
+**2.派遣代码审阅者子代理：**
 
-使用 Task tool，类型设为 `general-purpose`，填写 `code-reviewer.md` 中的 template。
+调度 `general-purpose` 子代理，填写 [code-reviewer.md](code-reviewer.md) 处的模板
 
 **Placeholders:**
-- `{DESCRIPTION}` - 简短概括你构建了什么
+- `{DESCRIPTION}` - 您构建的内容的简要摘要
 - `{PLAN_OR_REQUIREMENTS}` - 它应该做什么
-- `{BASE_SHA}` - 起始 commit
-- `{HEAD_SHA}` - 结束 commit
+- `{BASE_SHA}` - 开始提交
+- `{HEAD_SHA}` - 结束提交
 
-**3. 处理反馈：**
-- 立即修复 Critical issues
-- 继续前修复 Important issues
-- 记录 Minor issues，稍后处理
-- 如果 reviewer 错了，用 reasoning 反驳
+**3.根据反馈采取行动：**
+- 立即修复关键问题
+- 在继续之前修复重要问题
+- 注意稍后的小问题
+- 如果审稿人错了就退回（有推理）
 
-## 示例
+## Example
 
 ```
 [Just completed Task 2: Add verification function]
@@ -72,32 +72,32 @@ You: [Fix progress indicators]
 [Continue to Task 3]
 ```
 
-## 与 Workflows 集成
+## Integration with Workflows
 
 **Subagent-Driven Development:**
-- 每个 task 后 review
-- 在问题叠加前抓住它们
-- 修复后再进入下一个 task
+- 每项任务后回顾
+- 在问题复杂化之前发现问题
+- 在进行下一个任务之前修复
 
 **Executing Plans:**
-- 每个 task 后或自然 checkpoint 处 review
-- 获取反馈、应用反馈、继续
+- 每次任务后或在自然检查点进行回顾
+- 获取反馈、申请、继续
 
 **Ad-Hoc Development:**
-- merge 前 review
-- 卡住时 review
+- 合并前审查
+- 卡住时回顾
 
 ## Red Flags
 
 **Never:**
-- 因为 "it's simple" 就跳过 review
-- 忽略 Critical issues
-- 带着未修复的 Important issues 继续
-- 和有效的技术反馈争辩
+- 跳过评论，因为"很简单"
+- 忽略关键问题
+- 继续处理未解决的重要问题
+- 用有效的技术反馈进行争论
 
-**如果 reviewer 错了：**
-- 用技术 reasoning 反驳
-- 展示能证明它工作的 code/tests
-- 请求 clarification
+**如果审稿人错误：**
+- 用技术推理进行反击
+- Show code/tests that prove it works
+- Request clarification
 
-Template 见：requesting-code-review/code-reviewer.md
+请参阅模板：[code-reviewer.md](code-reviewer.md)

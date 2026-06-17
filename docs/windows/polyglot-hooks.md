@@ -1,61 +1,33 @@
 # Cross-Platform Polyglot Hooks for Claude Code
 
-Claude Code plugins 需要能在 Windows、macOS 和 Linux 上工作的 hooks。本文解释让它可行的 polyglot wrapper technique。
+Claude Code 插件需要适用于 Windows、macOS 和 Linux 的挂钩。本文档描述了 `hooks/run-hook.cmd` 中使用的单一通用调度程序模式。
 
-## 问题
+> **权威来源：** `hooks/run-hook.cmd` 是规范的实现。当本文档和代码不一致时，请相信代码。
 
-Claude Code 通过系统默认 shell 运行 hook commands：
+## The Problem
+
+Claude Code 通过系统默认的 shell 运行钩子命令：
 - **Windows**: CMD.exe
-- **macOS/Linux**: bash or sh
+- **macOS/Linux>**：bash 或 sh
 
-这会带来几个挑战：
+这带来了几个挑战：
 
-1. **Script execution**: Windows CMD 不能直接执行 `.sh` files，它会尝试用 text editor 打开
-2. **Path format**: Windows 使用 backslashes（`C:\path`），Unix 使用 forward slashes（`/path`）
-3. **Environment variables**: `$VAR` syntax 在 CMD 中不工作
-4. **No `bash` in PATH**: 即使安装了 Git Bash，CMD 运行时 `bash` 也不在 PATH 中
+1. **脚本执行**：Windows CMD无法直接执行`.sh`文件
+2. **路径格式**：Windows 使用反斜杠 (`C:\path`)，Unix 使用正斜杠 (`/path`)
+3. **环境变量**：`$VAR` 语法在 CMD 中不起作用
+4. **`.sh` 自动前缀**：Windows 上的 Claude Code 自动在路径中包含 `.sh` 的任何命令前面添加 `bash` — 如果脚本具有扩展名，这会干扰调度程序
 
-## 解决方案：Polyglot `.cmd` Wrapper
+## 解决方案：无扩展脚本 + 单一通用调度程序
 
-Polyglot script 是能同时作为多种语言 valid syntax 的脚本。我们的 wrapper 同时适用于 CMD 和 bash：
+该存储库对所有挂钩使用一个通用的 `run-hook.cmd` 调度程序。挂钩脚本是**无扩展**（`session-start`，而不是`session-start.sh`）。这是故意的：它可以防止 Claude Code 的 Windows 自动检测将 `bash` 添加到调度程序命令中并破坏它。
 
-```cmd
-: << 'CMDBLOCK'
-@echo off
-"C:\Program Files\Git\bin\bash.exe" -l -c "\"$(cygpath -u \"$CLAUDE_PLUGIN_ROOT\")/hooks/session-start.sh\""
-exit /b
-CMDBLOCK
-
-# Unix shell runs from here
-"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"
-```
-
-### How It Works
-
-#### On Windows (CMD.exe)
-
-1. `: << 'CMDBLOCK'` - CMD 把 `:` 视为 label（类似 `:label`），并忽略 `<< 'CMDBLOCK'`
-2. `@echo off` - 抑制 command echoing
-3. bash.exe command 运行时带：
-   - `-l`（login shell）以获得包含 Unix utilities 的 proper PATH
-   - `cygpath -u` 把 Windows path 转成 Unix format（`C:\foo` → `/c/foo`）
-4. `exit /b` - 退出 batch script，让 CMD 停在这里
-5. `CMDBLOCK` 之后的内容 CMD 永远不会到达
-
-#### On Unix (bash/sh)
-
-1. `: << 'CMDBLOCK'` - `:` 是 no-op，`<< 'CMDBLOCK'` 开始 heredoc
-2. 直到 `CMDBLOCK` 的所有内容都被 heredoc 消耗（ignored）
-3. `# Unix shell runs from here` - Comment
-4. Script 用 Unix path 直接运行
-
-## File Structure
+### File Structure
 
 ```
 hooks/
-├── hooks.json           # Points to the .cmd wrapper
-├── session-start.cmd    # Polyglot wrapper (cross-platform entry point)
-└── session-start.sh     # Actual hook logic (bash script)
+├── hooks.json          # Points to run-hook.cmd with extensionless script name
+├── run-hook.cmd        # Cross-platform dispatcher (the polyglot wrapper)
+└── session-start       # Actual hook logic — extensionless bash script
 ```
 
 ### hooks.json
@@ -65,11 +37,12 @@ hooks/
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup|resume|clear|compact",
+        "matcher": "startup|clear|compact",
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.cmd\""
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start",
+            "async": false
           }
         ]
       }
@@ -78,41 +51,63 @@ hooks/
 }
 ```
 
-Note: Path 必须 quote，因为 `${CLAUDE_PLUGIN_ROOT}` 在 Windows 上可能包含 spaces（例如 `C:\Program Files\...`）。
+该路径被引用是因为 `${CLAUDE_PLUGIN_ROOT}` 可能包含空格。
 
-## Requirements
+## `run-hook.cmd` 如何在高水平上工作
 
-### Windows
-- 必须安装 **Git for Windows**（提供 `bash.exe` 和 `cygpath`）
-- 默认安装路径：`C:\Program Files\Git\bin\bash.exe`
-- 如果 Git 安装在其他位置，需要修改 wrapper
+`run-hook.cmd` 是一个多语言脚本：Windows 将第一个块视为批处理
+命令，而 Unix shell 将该块视为无操作定界符并继续
+after it.
 
-### Unix (macOS/Linux)
-- 标准 bash 或 sh shell
-- `.cmd` file 必须有 execute permission（`chmod +x`）
+不要复制本文档的实现。阅读`hooks/run-hook.cmd`
+直接更改调度程序时，然后运行 `tests/hooks/test-session-start.sh`
+afterward.
+
+### 它在 Windows 上的工作原理 (CMD.exe)
+
+1. 批处理部分验证脚本名称并解析挂钩目录
+   从调度员自己的位置。
+2. 它在三个地方尝试 bash：
+   - `C:\Program Files\Git\bin\bash.exe`
+   - `C:\Program Files (x86)\Git\bin\bash.exe`
+   - `PATH` 上的 `bash`（MSYS2、Cygwin 或非默认 Git 安装）
+3. 如果找到 bash，它将从钩子运行命名的无扩展钩子脚本
+   directory.
+4. 如果没有找到 bash，调度程序会默默退出 `0` — 插件
+   继续工作，它只是跳过钩子。
+5. `exit /b` 在 CMD 到达 Unix 部分之前停止它。
+
+### 它如何在 Unix 上工作（bash/sh）
+
+1. `: << 'CMDBLOCK'` 在无操作命令上打开一个定界文档。
+2. 整个 CMD 批处理块被定界符消耗并被忽略。
+3. 在`CMDBLOCK`之后，bash解析脚本目录并`exec`命名
+   直接使用无扩展脚本。
+
+### Key design decisions
+
+|决定|为什么 |
+|----------|-----|
+|无扩展脚本 |防止 Claude Code 的 Windows `.sh`-自动前置干扰调度程序命令 |
+|否 `-l`（登录 shell）|不需要；钩子脚本应该是独立的，不依赖于登录外壳路径设置 |
+|没有 `cygpath` | Bash直接接收Windows路径并正确处理；旧的 `-c "..."` 调用模式需要 `cygpath`，而不是直接 exec |
+| no-bash 静默退出 |避免为没有 Windows 版 Git 的用户破坏插件；钩子上下文注入被优雅地跳过 |
 
 ## Writing Cross-Platform Hook Scripts
 
-实际 hook logic 放在 `.sh` file 中。为了确保它在 Windows 上（通过 Git Bash）工作：
+您的挂钩逻辑位于无扩展脚本文件中。一些便携式模式：
 
-### Do:
-- 尽可能使用 pure bash builtins
-- 使用 `$(command)` 而不是 backticks
-- Quote 所有 variable expansions：`"$VAR"`
-- 使用 `printf` 或 here-docs 输出
+### Do
+- 尽可能使用纯 bash 内置函数
+- 使用 `$(command)` 代替反引号
+- 引用所有变量扩展：`"$VAR"`
 
-### Avoid:
-- 可能不在 PATH 中的 external commands（sed、awk、grep）
-- 如果必须使用，它们在 Git Bash 中可用，但要确保 PATH setup 正确（使用 `bash -l`）
+### Avoid
+- 依赖于 PATH 相关的工具而没有后备（钩子在没有 `-l` 的情况下运行，因此未设置登录 shell PATH）
+- 为脚本提供 `.sh` 扩展名 — 这会触发 Claude Code 的 Windows 自动前置
 
-### Example: JSON Escaping Without sed/awk
+### Example: JSON escaping without external tools
 
-不要这样：
-```bash
-escaped=$(echo "$content" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | awk '{printf "%s\\n", $0}')
-```
-
-使用 pure bash：
 ```bash
 escape_for_json() {
     local input="$1"
@@ -133,80 +128,21 @@ escape_for_json() {
 }
 ```
 
-## Reusable Wrapper Pattern
-
-对于有多个 hooks 的 plugins，可以创建 generic wrapper，把 script name 作为 argument：
-
-### run-hook.cmd
-```cmd
-: << 'CMDBLOCK'
-@echo off
-set "SCRIPT_DIR=%~dp0"
-set "SCRIPT_NAME=%~1"
-"C:\Program Files\Git\bin\bash.exe" -l -c "cd \"$(cygpath -u \"%SCRIPT_DIR%\")\" && \"./%SCRIPT_NAME%\""
-exit /b
-CMDBLOCK
-
-# Unix shell runs from here
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SCRIPT_NAME="$1"
-shift
-"${SCRIPT_DIR}/${SCRIPT_NAME}" "$@"
-```
-
-### hooks.json using the reusable wrapper
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start.sh"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" validate-bash.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
 ## Troubleshooting
 
-### "bash is not recognized"
-CMD 找不到 bash。Wrapper 使用完整路径 `C:\Program Files\Git\bin\bash.exe`。如果 Git 安装在其他位置，更新该 path。
+### "bash 未被识别"
 
-### "cygpath: command not found" or "dirname: command not found"
-Bash 没有作为 login shell 运行。确保使用 `-l` flag。
+CMD 在调度程序尝试的三个位置中的任何一个位置都找不到 bash。调度程序静默退出 (0) 而不是出错，因此会跳过挂钩。在标准路径安装适用于 Windows 的 Git 或确保 `bash` 位于 `PATH` 上。
 
-### Path has weird `\/` in it
-`${CLAUDE_PLUGIN_ROOT}` expanded 成以 backslash 结尾的 Windows path，然后又追加了 `/hooks/...`。使用 `cygpath` 转换整个 path。
+### Hook runs on Unix but does nothing on Windows
 
-### Script opens in text editor instead of running
-hooks.json 直接指向 `.sh` file。改为指向 `.cmd` wrapper。
+检查 `hooks.json` 中的脚本文件名是否**无扩展名**。像 `run-hook.cmd session-start.sh` 这样的命令可以触发 Claude Code 的 `.sh` 自动检测并绕过预期的 CMD 调度程序路径，或者只是尝试运行不存在的 `session-start.sh` 脚本。
 
-### Works in terminal but not as hook
-Claude Code 可能以不同方式运行 hooks。通过模拟 hook environment 测试：
-```powershell
-$env:CLAUDE_PLUGIN_ROOT = "C:\path\to\plugin"
-cmd /c "C:\path\to\plugin\hooks\session-start.cmd"
-```
+### 钩子根本不开火
+
+验证 `hooks.json` 中的 `matcher` 与您的线束发出的事件类型匹配。克劳德代码使用`startup|clear|compact`； Codex 使用`startup|resume|clear`。检查 `hooks-codex.json` 的 Codex 变体。
 
 ## Related Issues
 
-- [anthropics/claude-code#9758](https://github.com/anthropics/claude-code/issues/9758) - .sh scripts open in editor on Windows
-- [anthropics/claude-code#3417](https://github.com/anthropics/claude-code/issues/3417) - Hooks don't work on Windows
-- [anthropics/claude-code#6023](https://github.com/anthropics/claude-code/issues/6023) - CLAUDE_PROJECT_DIR not found
+- [anthropics/claude-code#9758](https://github.com/anthropics/claude-code/issues/9758) — `.sh` 脚本在 Windows 上的编辑器中打开
+- [anthropics/claude-code#3417](https://github.com/anthropics/claude-code/issues/3417) — 挂钩在 Windows 上不起作用

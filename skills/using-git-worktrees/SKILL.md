@@ -1,21 +1,21 @@
 ---
 name: using-git-worktrees
-description: 开始需要与当前 workspace 隔离的 feature work，或执行 implementation plans 前使用 - 通过 native tools 或 git worktree fallback 确保存在 isolated workspace
+description: 在启动需要与当前工作区隔离的功能工作时或在执行实施计划之前使用 - 通过本机工具或 git worktree 后备确保存在隔离的工作区
 ---
 
 # Using Git Worktrees
 
-## 概览
+## Overview
 
-确保工作发生在 isolated workspace 中。优先使用平台原生 worktree tools。只有在没有 native tool 可用时，才 fallback 到手动 git worktrees。
+确保工作在隔离的工作空间中进行。更喜欢您平台的本机工作树工具。仅当没有可用的本机工具时才回退到手动 git 工作树。
 
-**核心原则：** 先检测已有隔离。再使用 native tools。再 fallback 到 git。永远不要和 harness 对抗。
+**核心原则：** 首先检测现有的隔离。然后使用原生工具。然后回到 git。切勿与安全带对抗。
 
-**开始时宣布：** "I'm using the using-git-worktrees skill to set up an isolated workspace."
+**开始时宣布：**"我正在使用 using-git-worktrees 技能来设置一个隔离的工作区。"
 
-## Step 0: 检测已有隔离
+## Step 0: Detect Existing Isolation
 
-**创建任何东西之前，先检查你是否已经在 isolated workspace 中。**
+**在创建任何内容之前，请检查您是否已处于隔离工作区中。**
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
@@ -23,97 +23,85 @@ GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
 BRANCH=$(git branch --show-current)
 ```
 
-**Submodule guard:** 在 git submodules 中，`GIT_DIR != GIT_COMMON` 也为 true。在得出“已经在 worktree 中”的结论前，确认你不是在 submodule 中：
+**子模块保护：** `GIT_DIR != GIT_COMMON` 在 git 子模块中也是如此。在得出"已在工作树中"的结论之前，请验证您不在子模块中：
 
 ```bash
 # If this returns a path, you're in a submodule, not a worktree — treat as normal repo
 git rev-parse --show-superproject-working-tree 2>/dev/null
 ```
 
-**如果 `GIT_DIR != GIT_COMMON`（且不是 submodule）：** 你已经在 linked worktree 中。跳到 Step 3（Project Setup）。不要再创建另一个 worktree。
+**如果`GIT_DIR != GIT_COMMON`（而不是子模块）：**您已经位于链接的工作树中。跳至步骤 2（项目设置）。不要创建另一个工作树。
 
-报告 branch 状态：
-- On a branch: "Already in isolated workspace at `<path>` on branch `<name>`."
-- Detached HEAD: "Already in isolated workspace at `<path>` (detached HEAD, externally managed). Branch creation needed at finish time."
+报告分支状态：
+- 在分支上："已位于分支 `<name>` 上 `<path>` 的隔离工作区中。"
+- 分离的 HEAD："已位于 `<path>` 的隔离工作区中（分离的 HEAD，外部管理）。完成时需要创建分支。"
 
-**如果 `GIT_DIR == GIT_COMMON`（或在 submodule 中）：** 你处于普通 repo checkout。
+**如果`GIT_DIR == GIT_COMMON`（或在子模块中）：**您处于正常的回购结账状态。
 
-用户是否已经在指令中说明 worktree preference？如果没有，在创建 worktree 前请求同意：
+用户是否已在您的说明中表明了他们的工作树偏好？如果没有，请在创建工作树之前征求同意：
 
-> "Would you like me to set up an isolated worktree? It protects your current branch from changes."
+> "您希望我建立一个独立的工作树吗？它可以保护您当前的分支免受更改。"
 
-如果已有明确偏好，直接遵循，不再询问。如果用户拒绝，同步在当前目录工作并跳到 Step 3。
+尊重任何现有的已声明的偏好，无需询问。如果用户拒绝同意，请就地工作并跳至步骤 2。
 
-## Step 1: 创建 Isolated Workspace
+## Step 1: Create Isolated Workspace
 
-**你有两种机制。按顺序尝试。**
+**你有两种机制。按此顺序尝试。**
 
-### 1a. Native Worktree Tools（优先）
+### 1a.本机工作树工具（首选）
 
-用户已经要求 isolated workspace（Step 0 consent）。你是否已经有创建 worktree 的方式？它可能叫 `EnterWorktree`、`WorktreeCreate`、`/worktree` command，或某个 `--worktree` flag。如果有，使用它，然后跳到 Step 3。
+用户已请求隔离工作区（第 0 步同意）。您已经有办法创建工作树了吗？它可能是一个名称类似于 `EnterWorktree`、`WorktreeCreate`、`/worktree` 命令或 `--worktree` 标志的工具。如果这样做，请使用它并跳到步骤 2。
 
-Native tools 会自动处理目录位置、branch 创建和 cleanup。当你拥有 native tool 时使用 `git worktree add`，会创建 harness 看不见、也无法管理的 phantom state。
+本机工具自动处理目录放置、分支创建和清理。当您拥有本机工具时使用 `git worktree add` 会创建您的线束无法看到或管理的幻象状态。
 
-只有在没有 native worktree tool 可用时，才进入 Step 1b。
+仅当您没有可用的本机工作树工具时才继续执行步骤 1b。
 
 ### 1b. Git Worktree Fallback
 
-**只有 Step 1a 不适用时才使用**：你没有 native worktree tool。用 git 手动创建 worktree。
+**仅当步骤 1a 不适用时才使用此** - 您没有可用的本机工作树工具。使用 git 手动创建工作树。
 
 #### Directory Selection
 
-按以下优先级。用户明确偏好永远优先于观察到的 filesystem state。
+请遵循此优先顺序。显式的用户首选项总是优于观察到的文件系统状态。
 
-1. **检查你的 instructions 中是否声明 worktree directory preference。** 如果用户已经指定，直接使用，不再询问。
+1. **检查您的说明以了解声明的工作树目录首选项。**如果用户已经指定了一个，则无需询问即可使用它。
 
-2. **检查是否存在 project-local worktree directory：**
+2. **检查现有的项目本地工作树目录：**
    ```bash
    ls -d .worktrees 2>/dev/null     # Preferred (hidden)
    ls -d worktrees 2>/dev/null      # Alternative
    ```
-   如果找到就使用。如果两者都存在，`.worktrees` 优先。
+   如果找到，请使用它。如果两者都存在，则 `.worktrees` 获胜。
 
-3. **检查是否存在 global directory：**
-   ```bash
-   project=$(basename "$(git rev-parse --show-toplevel)")
-   ls -d ~/.config/superpowers/worktrees/$project 2>/dev/null
-   ```
-   如果找到就使用它（backward compatibility with legacy global path）。
+3. **如果没有其他可用的指导**，默认为项目根目录下的 `.worktrees/`。
 
-4. **如果没有其他可用指导**，默认使用 project root 下的 `.worktrees/`。
+#### 安全验证（仅限项目本地目录）
 
-#### Safety Verification（仅 project-local directories）
-
-**创建 worktree 前必须验证目录已被 ignored：**
+**在创建工作树之前必须验证目录是否被忽略：**
 
 ```bash
 git check-ignore -q .worktrees 2>/dev/null || git check-ignore -q worktrees 2>/dev/null
 ```
 
-**如果没有 ignored：** 添加到 .gitignore，commit 该变更，然后继续。
+**如果不忽略：** 添加到 .gitignore，提交更改，然后继续。
 
-**为什么关键：** 防止意外把 worktree contents commit 到 repository。
-
-Global directories（`~/.config/superpowers/worktrees/`）不需要验证。
+**为什么重要：** 防止意外地将工作树内容提交到存储库。
 
 #### Create the Worktree
 
 ```bash
-project=$(basename "$(git rev-parse --show-toplevel)")
-
 # Determine path based on chosen location
-# For project-local: path="$LOCATION/$BRANCH_NAME"
-# For global: path="~/.config/superpowers/worktrees/$project/$BRANCH_NAME"
+path="$LOCATION/$BRANCH_NAME"
 
 git worktree add "$path" -b "$BRANCH_NAME"
 cd "$path"
 ```
 
-**Sandbox fallback:** 如果 `git worktree add` 因 permission error（sandbox denial）失败，告诉用户 sandbox 阻止了 worktree 创建，你将在当前目录工作。然后在原地运行 setup 和 baseline tests。
+**沙箱后备：** 如果 `git worktree add` 因权限错误（沙箱拒绝）而失败，请告诉用户沙箱阻止了工作树创建，并且您正在当前目录中工作。然后就地运行设置和基线测试。
 
-## Step 3: Project Setup
+## Step 2: Project Setup
 
-自动检测并运行适当 setup：
+自动检测并运行适当的设置：
 
 ```bash
 # Node.js
@@ -130,18 +118,18 @@ if [ -f pyproject.toml ]; then poetry install; fi
 if [ -f go.mod ]; then go mod download; fi
 ```
 
-## Step 4: 验证 Clean Baseline
+## Step 3: Verify Clean Baseline
 
-运行 tests，确保 workspace 起点干净：
+运行测试以确保工作区开始干净：
 
 ```bash
 # Use project-appropriate command
 npm test / cargo test / pytest / go test ./...
 ```
 
-**如果 tests fail：** 报告 failures，询问是继续还是调查。
+**如果测试失败：** 报告失败，询问是否继续或调查。
 
-**如果 tests pass：** 报告 ready。
+**如果测试通过：** 报告准备就绪。
 
 ### Report
 
@@ -153,63 +141,62 @@ Ready to implement <feature-name>
 
 ## Quick Reference
 
-| Situation | Action |
+|情况|行动|
 |-----------|--------|
-| Already in linked worktree | 跳过创建（Step 0） |
-| In a submodule | 当作 normal repo 处理（Step 0 guard） |
-| Native worktree tool available | 使用它（Step 1a） |
-| No native tool | Git worktree fallback（Step 1b） |
-| `.worktrees/` exists | 使用它（verify ignored） |
-| `worktrees/` exists | 使用它（verify ignored） |
-| Both exist | 使用 `.worktrees/` |
-| Neither exists | 检查 instruction file，然后默认 `.worktrees/` |
-| Global path exists | 使用它（backward compat） |
-| Directory not ignored | 添加到 .gitignore + commit |
-| Permission error on create | Sandbox fallback，在原地工作 |
-| Tests fail during baseline | 报告 failures + 询问 |
-| No package.json/Cargo.toml | 跳过 dependency install |
+|已经在链接的工作树中 |跳过创建（步骤 0）|
+|在子模块中 |视为正常回购（步骤 0 防护）|
+|本机工作树工具可用 |使用它（步骤 1a）|
+|没有原生工具 | Git 工作树后备（步骤 1b） |
+| `.worktrees/` 存在 |使用它（验证忽略）|
+| `worktrees/` 存在 |使用它（验证忽略） |
+|两者都存在|使用 `.worktrees/` |
+|两者都不存在 |查看指令文件，默认`.worktrees/` |
+|目录不被忽略 |添加到 .gitignore + 提交 |
+|创建时权限错误 |沙箱后备，就地工作 |
+|测试在基线期间失败 |报告失败+询问|
+|没有 package.json/Cargo.toml |跳过依赖安装 |
 
-## 常见错误
+## Common Mistakes
 
 ### Fighting the harness
 
-- **Problem:** 平台已经提供隔离时仍使用 `git worktree add`
-- **Fix:** Step 0 检测已有隔离。Step 1a 让 native tools 接管。
+- **问题：** 当平台已经提供隔离时使用 `git worktree add`
+- **修复：** 步骤 0 检测现有隔离。步骤 1a 遵循本机工具。
 
 ### Skipping detection
 
-- **Problem:** 在已有 worktree 内创建 nested worktree
-- **Fix:** 创建任何东西前始终运行 Step 0
+- **问题：** 在现有工作树中创建嵌套工作树
+- **修复：** 在创建任何内容之前始终运行步骤 0
 
 ### Skipping ignore verification
 
-- **Problem:** Worktree contents 被 tracked，污染 git status
-- **Fix:** 创建 project-local worktree 前始终使用 `git check-ignore`
+- **问题：** 工作树内容被跟踪，污染 git 状态
+- **修复：** 在创建项目本地工作树之前始终使用 `git check-ignore`
 
 ### Assuming directory location
 
-- **Problem:** 造成不一致，违反项目约定
-- **Fix:** 遵循优先级：existing > global legacy > instruction file > default
+- **问题：** 造成不一致，违反项目约定
+- **修复：**遵循优先级：明确说明>现有项目本地目录>默认
 
 ### Proceeding with failing tests
 
-- **Problem:** 无法区分新 bug 和既有问题
-- **Fix:** 报告 failures，取得明确许可后再继续
+- **问题：** 无法区分新错误和先前存在的问题
+- **修复：** 报告失败，获得明确的许可才能继续
 
 ## Red Flags
 
 **Never:**
-- Step 0 检测到已有隔离时仍创建 worktree
-- 拥有 native worktree tool（例如 `EnterWorktree`）时使用 `git worktree add`。这是头号错误：如果有，就用它。
-- 跳过 Step 1a，直接进入 Step 1b 的 git commands
-- 创建 worktree 而不验证它被 ignored（project-local）
-- 跳过 baseline test verification
-- 未询问就带着 failing tests 继续
+- 当步骤 0 检测到现有隔离时创建工作树
+- 当您有本机工作树工具（例如 `EnterWorktree`）时，请使用 `git worktree add`。这是第一个错误——如果你有它，就使用它。
+- 直接跳到步骤 1b 的 git 命令来跳过步骤 1a
+- 创建工作树而不验证它是否被忽略（项目本地）
+- 跳过基线测试验证
+- 不询问就继续失败的测试
 
 **Always:**
-- 先运行 Step 0 detection
-- 优先使用 native tools，而不是 git fallback
-- 遵循目录优先级：existing > global legacy > instruction file > default
-- 对 project-local 验证目录被 ignored
-- 自动检测并运行 project setup
-- 验证 clean test baseline
+- 首先运行Step 0检测
+- 更喜欢原生工具而不是 git 回退
+- 遵循目录优先级：明确指示 > 现有项目本地目录 > 默认
+- 验证项目本地的目录被忽略
+- 自动检测并运行项目设置
+- 验证干净的测试基线

@@ -1,70 +1,70 @@
 ---
 name: executing-plans
-description: 当你有一份书面 implementation plan，并要在单独 session 中带 review checkpoints 执行时使用
+description: 当您有书面实施计划并在带有审查检查点的单独会话中执行时使用
 ---
 
 # Executing Plans
 
-## 概览
+## Overview
 
-加载计划，严格 review，执行所有 tasks，完成后报告。
+加载计划，严格审查，执行所有任务，完成后报告。
 
-**开始时宣布：** "I'm using the executing-plans skill to implement this plan."
+**开始时宣布：**"我正在使用执行计划技能来实施这个计划。"
 
-**注意：** 告诉你的 human partner，Superpowers 在能访问 subagents 时效果会好得多。如果运行在支持 subagent 的平台（例如 Claude Code 或 Codex），工作质量会显著更高。如果 subagents 可用，请使用 superpowers:subagent-driven-development，而不是这个 skill。
+**注意：** 告诉你的人类伙伴，通过访问子代理，超级大国的效果会更好。如果在支持子代理的平台上运行，其工作质量将显着提高（Claude Code、Codex CLI、Codex App、Copilot CLI 和 Gemini CLI 均符合条件；请参阅 `../using-superpowers/references/` 中的每个平台工具参考）。如果子代理可用，请使用 superpowers:subagent-driven-development 而不是此技能。
 
-## 流程
+## The Process
 
-### Step 1: 加载并 Review 计划
-1. 读取 plan file
-2. 严格 review：识别你对计划的任何问题或担忧
-3. 如果有担忧：开始前先向你的 human partner 提出
-4. 如果没有担忧：创建 TodoWrite 并继续
+### Step 1: Load and Review Plan
+1. 读取计划文件
+2. 批判性地审查 - 找出有关计划的任何问题或疑虑
+3. 如果有疑虑：在开始之前与您的人类伴侣提出这些问题
+4. 如果没有问题：为计划项目创建待办事项并继续
 
-### Step 2: 执行 Tasks
+### Step 2: Execute Tasks
 
-对每个 task：
-1. 标记为 in_progress
-2. 严格遵循每个 step（plan 已拆成 bite-sized steps）
-3. 按指定方式运行 verifications
-4. 标记为 completed
+对于每个任务：
+1. 标记为进行中
+2. 严格遵循每个步骤（计划有小步骤）
+3. 按规定运行验证
+4. 标记为已完成
 
-### Step 3: 完成开发
+### Step 3: Complete Development
 
-所有 tasks 完成并验证后：
-- 宣布："I'm using the finishing-a-development-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** 使用 superpowers:finishing-a-development-branch
-- 遵循该 skill 验证测试、展示选项并执行选择
+所有任务完成并验证后：
+- 宣布："我正在使用完成开发分支技能来完成这项工作。"
+- **所需的子技能：** 使用超能力：完成开发分支
+- 遵循该技能来验证测试、呈现选项、执行选择
 
-## 何时停下来求助
+## When to Stop and Ask for Help
 
-**遇到以下情况，立即 STOP 执行：**
-- 遇到 blocker（缺少 dependency、test 失败、instruction 不清楚）
-- 计划有 critical gaps，导致无法开始
-- 你不理解某条 instruction
-- Verification 反复失败
+**在以下情况下立即停止执行：**
+- 遇到阻碍（缺少依赖项、测试失败、指令不清楚）
+- 计划存在重大缺陷，无法启动
+- 你不明白指令
+- 验证多次失败
 
-**要求澄清，而不是猜。**
+**要求澄清而不是猜测。**
 
-## 何时回到前面步骤
+## When to Revisit Earlier Steps
 
-**在以下情况回到 Review（Step 1）：**
-- Partner 根据你的反馈更新了计划
-- 基本方案需要重新思考
+**在以下情况下返回审核（步骤 1）：**
+- 合作伙伴根据您的反馈更新计划
+- 基本方法需要重新思考
 
-**不要硬闯 blockers**：停下来询问。
+**不要强行通过阻碍** - 停下来询问。
 
-## 记住
-- 先严格 review 计划
-- 严格遵循计划 steps
-- 不要跳过 verifications
-- 当计划要求时引用 skills
-- blocked 时停下，不要猜
-- 没有用户明确同意，永远不要在 main/master branch 上开始 implementation
+## Remember
+- 首先严格审查计划
+- 严格遵循计划步骤
+- 不要跳过验证
+- 计划中提到的参考技能
+- 堵住就停下来，别乱猜
+- Never start implementation on main/master branch without explicit user consent
 
 ## Integration
 
-**Required workflow skills:**
-- **superpowers:using-git-worktrees** - 确保存在 isolated workspace（创建或验证已有）
-- **superpowers:writing-plans** - 创建本 skill 执行的计划
-- **superpowers:finishing-a-development-branch** - 所有 tasks 完成后收尾开发
+**所需的工作流程技能：**
+- **superpowers:using-git-worktrees** - 确保隔离的工作区（创建一个或验证现有的）
+- **superpowers:writing-plans** - 创建该技能执行的计划
+- **超级大国：完成开发分支** - 在完成所有任务后完成开发

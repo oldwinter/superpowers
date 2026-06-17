@@ -2,11 +2,11 @@
 
 ## Prerequisites
 
-- 已安装 [OpenCode.ai](https://opencode.ai)
+- [OpenCode.ai](https://opencode.ai) installed
 
 ## Installation
 
-把 superpowers 添加到你的 `opencode.json`（global 或 project-level）的 `plugin` array：
+将超级能力添加到 `opencode.json` 中的 `plugin` 数组（全局或项目级别）：
 
 ```json
 {
@@ -14,15 +14,17 @@
 }
 ```
 
-重启 OpenCode。Plugin 会通过 OpenCode 的 plugin manager 安装，并注册所有 skills。
+重新启动 OpenCode。该插件通过 OpenCode 的插件管理器安装，
+注册所有技能。
 
-通过提问验证："Tell me about your superpowers"
+通过询问来验证："告诉我你的超能力"
 
-OpenCode 使用自己的 plugin install。即使你也使用 Claude Code、Codex 或其他 harness，也需要为每个 harness 单独安装 Superpowers。
+OpenCode 使用自己的插件安装。如果您还使用 Claude Code、Codex 或
+另一种安全带，为每个安全带单独安装 Superpowers。
 
-## 从旧的 symlink-based install 迁移
+## Migrating from the old symlink-based install
 
-如果你之前用 `git clone` 和 symlinks 安装过 superpowers，请移除旧 setup：
+如果您之前使用 `git clone` 和符号链接安装了超级能力，请删除旧的设置：
 
 ```bash
 # Remove old symlinks
@@ -35,22 +37,25 @@ rm -rf ~/.config/opencode/superpowers
 # Remove skills.paths from opencode.json if you added one for superpowers
 ```
 
-然后按上面的 installation steps 操作。
+然后按照上面的安装步骤进行操作。
 
 ## Usage
 
-使用 OpenCode 原生 `skill` tool：
+使用 OpenCode 的原生 `skill` 工具：
 
 ```
 use skill tool to list skills
-use skill tool to load superpowers/brainstorming
+use skill tool to load brainstorming
 ```
 
 ## Updating
 
-OpenCode 通过 git-backed package spec 安装 Superpowers。一些 OpenCode 和 Bun 版本会在 lockfile 或 cache 中 pin 已解析的 git dependency，所以重启可能无法拿到最新 Superpowers commit。如果 updates 没出现，请清理 OpenCode package cache 或重新安装 plugin。
+OpenCode 通过 git 支持的包规范安装 Superpowers。一些开放代码
+和 Bun 版本 pin 解决了锁定文件或缓存中的 git 依赖关系，因此
+重新启动可能无法获取最新的 Superpowers 提交。如果没有出现更新，
+清除 OpenCode 的包缓存或重新安装插件。
 
-要 pin 到特定版本：
+要固定特定版本：
 
 ```json
 {
@@ -62,19 +67,23 @@ OpenCode 通过 git-backed package spec 安装 Superpowers。一些 OpenCode 和
 
 ### Plugin not loading
 
-1. 检查 logs：`opencode run --print-logs "hello" 2>&1 | grep -i superpowers`
-2. 验证 `opencode.json` 中的 plugin line
-3. 确保你运行的是较新的 OpenCode 版本
+1. 检查日志：`opencode run --print-logs "hello" 2>&1 | grep -i superpowers`
+2. 验证您的 `opencode.json` 中的插件行
+3. 确保您运行的是最新版本的 OpenCode
 
 ### Windows install issues
 
-一些 Windows OpenCode builds 在 git-backed plugin specs 上有 upstream installer issues，包括 `git+https` URLs 的 cache paths，以及 Bun 在普通 terminal 能找到 `git.exe` 时仍找不到它。如果 OpenCode 无法安装 plugin，尝试用 system npm 安装，并让 OpenCode 指向 local package：
+某些 Windows OpenCode 版本存在 git 支持的上游安装程序问题
+插件规范，包括 `git+https` URL 的缓存路径和 Bun 未找到
+`git.exe` 即使它在普通终端中工作。如果 OpenCode 无法安装
+插件，尝试使用系统 npm 安装并将 OpenCode 指向本地
+package:
 
 ```powershell
 npm install superpowers@git+https://github.com/obra/superpowers.git --prefix "$HOME\.config\opencode"
 ```
 
-然后在 `opencode.json` 中使用 installed package path：
+然后使用`opencode.json`中安装的包路径：
 
 ```json
 {
@@ -84,16 +93,21 @@ npm install superpowers@git+https://github.com/obra/superpowers.git --prefix "$H
 
 ### Skills not found
 
-1. 使用 `skill` tool 列出 discovered 内容
-2. 检查 plugin 是否正在 loading（见上方）
+1. 使用 `skill` 工具列出发现的内容
+2. 检查插件是否正在加载（见上文）
 
 ### Tool mapping
 
-当 skills 引用 Claude Code tools 时：
-- `TodoWrite` → `todowrite`
-- `Task` with subagents → `@mention` syntax
-- `Skill` tool → OpenCode 原生 `skill` tool
-- File operations → 你的 native tools
+技能用行动说话（"创建待办事项"、"派遣子代理"、"读取文件"）。在 OpenCode 上，这些解析为：
+
+- "创建待办事项"/"在待办事项列表中标记完成"→ `todowrite`
+- `Subagent (general-purpose):` 模板 → `task` 工具和 `subagent_type: "general"` （或 `"explore"` 用于代码库探索）
+- "调用技能" → OpenCode 原生的`skill`工具
+- "读取文件"→`read`
+- "创建文件"/"编辑文件"/"删除文件"→ `apply_patch`
+- "运行 shell 命令"→ `bash`
+- "搜索文件内容"/"按名称查找文件"→ `grep`, `glob`
+- "获取 URL"→ `webfetch`
 
 ## Getting Help
 

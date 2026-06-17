@@ -7,7 +7,7 @@
 **Dispatch after:** Spec document 已写入 docs/superpowers/specs/
 
 ```
-Task tool (general-purpose):
+Subagent (general-purpose):
   description: "Review spec document"
   prompt: |
     You are a spec document reviewer. Verify this spec is complete and ready for planning.

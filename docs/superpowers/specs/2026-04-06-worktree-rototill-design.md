@@ -3,56 +3,56 @@
 **Date:** 2026-04-06
 **Status:** Draft
 **Ticket:** PRI-974
-**Subsumes:** PRI-823（Codex App compatibility）
+**包含：** PRI-823（Codex 应用程序兼容性）
 
 ## Problem
 
-Superpowers 对 worktree management 有强 opinion：特定 paths（`.worktrees/<branch>`）、特定 commands（`git worktree add`）、特定 cleanup（`git worktree remove`）。与此同时，Claude Code、Codex App、Gemini CLI 和 Cursor 都提供自己的 native worktree support，拥有各自的 paths、lifecycle management 和 cleanup。
+Superpowers 对工作树管理有自己的看法——特定路径 (`.worktrees/<branch>`)、特定命令 (`git worktree add`)、特定清理 (`git worktree remove`)。同时，Claude Code、Codex App、Gemini CLI 和 Cursor 都提供本机工作树支持以及自己的路径、生命周期管理和清理。
 
-这造成三种 failure modes：
+这会产生三种故障模式：
 
-1. **Duplication**：在 Claude Code 上，skill 做了 `EnterWorktree`/`ExitWorktree` 已经做的事
-2. **Conflict**：在 Codex App 上，skill 会尝试在 already-managed worktree 里创建 worktrees
-3. **Phantom state**：skill-created worktrees 位于 `.worktrees/`，harness 看不见；harness-created worktrees 位于 `.claude/worktrees/`，skill 看不见
+1. **重复** — 在 Claude Code 上，该技能执行 `EnterWorktree`/`ExitWorktree` 已经执行的操作
+2. **冲突** - 在 Codex App 上，该技能尝试在已管理的工作树内创建工作树
+3. **幻象状态** — 在 `.worktrees/` 处创建的技能工作树对于线束来说是不可见的；在 `.claude/worktrees/` 处由线束创建的工作树对于技能来说是不可见的
 
-对于没有 native support 的 harnesses（Codex CLI、OpenCode、Copilot standalone），superpowers 填补了真实 gap。该 skill 不应该消失；它应在 native support 存在时让路。
+对于没有本机支持（Codex CLI、OpenCode、Copilot 独立）的线束，超级功能填补了真正的空白。这项技能不应该消失——当存在本机支持时它应该消失。
 
 ## Goals
 
-1. 当 native harness worktree systems 存在时 defer 给它们
-2. 继续为缺少 worktree support 的 harnesses 提供支持
-3. 修复 `finishing-a-development-branch` 中三个已知 bugs（#940、#999、#238）
-4. 让 worktree creation 从 mandatory 改为 opt-in（#991）
-5. 用 platform-neutral language 替换 hardcoded `CLAUDE.md` references（#1049）
+1. 遵循本机线束工作树系统（如果存在）
+2. 继续为缺乏工作树的线束提供工作树支持
+3. 修复 Finishing-a-development-branch 中的三个已知错误（#940、#999、#238）
+4. 使工作树创建成为选择加入而不是强制性的（#991）
+5. 用平台中立语言替换硬编码的 `CLAUDE.md` 引用 (#1049)
 
 ## Non-Goals
 
-- Per-worktree environment conventions（`.worktree-env.sh`、port offsetting）：Phase 4
-- PreToolUse hooks for path enforcement：Phase 4
-- Multi-repo worktree documentation：Phase 4
-- Brainstorming checklist changes for worktrees：Phase 4
-- `.superpowers-session.json` metadata tracking（PR #997 的有趣想法，但 v1 不需要）
-- Hooks symlinking into worktrees（PR #965 idea，单独 concern）
+- 每个工作树环境约定（`.worktree-env.sh`，端口偏移）— 第 4 阶段
+- PreToolUse 挂钩进行路径实施 — 第 4 阶段
+- 多存储库工作树文档 - 第 4 阶段
+- 工作树集思广益清单变更 — 第 4 阶段
+- `.superpowers-session.json` 元数据跟踪（有趣的 PR #997 想法，v1 不需要）
+- 将符号链接挂钩到工作树中（PR #965 想法，单独关注）
 
 ## Design Principles
 
-### Detect state, not platform
+### 检测状态，而不是平台
 
-使用 `GIT_DIR != GIT_COMMON` 判断 “我是否已经在 worktree 中？”，而不是 sniff environment variables 来识别 harness。这是稳定的 git primitive（自 git 2.5，2015 起），可普遍适用于所有 harnesses，并且随着新 harnesses 出现无需维护。
+使用 `GIT_DIR != GIT_COMMON` 确定"我已经在工作树中了吗？"而不是通过嗅探环境变量来识别线束。这是一个稳定的 git 原语（自 2015 年 git 2.5 起），在所有线束中通用，并且在新线束出现时需要零维护。
 
-### Declarative intent, prescriptive fallback
+### 声明性意图，规定性后备
 
-Skill 描述目标（“ensure work happens in an isolated workspace”），并在可用时 defer 给 native tools。只有在缺少 native worktree support 的 harnesses 上，才 prescribe 具体 git commands 作为 fallback。Step 1a 放在前面，并明确命名 native tools（`EnterWorktree`、`WorktreeCreate`、`/worktree`、`--worktree`）；Step 1b 放在后面，提供 git fallback。原 spec 让 Step 1a 保持抽象（“you know your own toolkit”），但 TDD 证明当 Step 1a 太含糊时，agents 会锚定 Step 1b 的 concrete commands。必须显式命名 tools，并建立 consent-authorization bridge，才能可靠表达偏好。
+该技能描述了目标（"确保工作在隔离的工作空间中进行"）并遵循可用的本机工具。它规定特定的 git 命令仅作为没有本机工作树支持的工具的后备。步骤 1a 首先出现并明确命名本机工具（`EnterWorktree`、`WorktreeCreate`、`/worktree`、`--worktree`）；第二步是 git 后备步骤 1b。最初的规范保留了步骤 1a 的抽象性（"你知道你自己的工具包"），但 TDD 证明，当步骤 1a 过于模糊时，代理会锚定在步骤 1b 的具体命令上。为了使偏好可靠，需要显式的工具命名和同意授权桥。
 
 ### Provenance-based ownership
 
-谁创建 worktree，谁拥有它的 cleanup。如果 harness 创建它，superpowers 不碰它。如果 superpowers 创建它（via git fallback），superpowers 清理它。Heuristic：如果 worktree 位于 `.worktrees/` 或 `~/.config/superpowers/worktrees/` 下，superpowers owns it。其他路径（`.claude/worktrees/`、`~/.codex/worktrees/`、`.gemini/worktrees/`）属于 harness。
+创建工作树的人就拥有其清理工作。如果安全带创造了它，那么超能力就不会碰它。如果超级大国创建了它（通过 git 回退），超级大国会清理它。启发式：如果工作树位于 `.worktrees/` 或 `worktrees/` 下，则超级权限拥有它。任何其他内容（`.claude/worktrees/`、`~/.codex/worktrees/`、`.gemini/worktrees/` 或旧的用户全局超级能力路径）都属于线束或用户，无需处理。
 
 ## Design
 
-### 1. `using-git-worktrees` SKILL.md Rewrite
+### 1. `using-git-worktrees` SKILL.md 重写
 
-该 skill 在 creation 前新增三个 steps，并简化 creation flow。
+该技能在创建前增加了三个新步骤，并简化了创建流程。
 
 #### Step 0: Detect Existing Isolation
 
@@ -62,68 +62,67 @@ GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
 BRANCH=$(git branch --show-current)
 ```
 
-三种 outcomes：
+Three outcomes:
 
-| Condition | Meaning | Action |
+|状况 |意义|行动|
 |-----------|---------|--------|
-| `GIT_DIR == GIT_COMMON` | Normal repo checkout | Proceed to Step 0.5 |
-| `GIT_DIR != GIT_COMMON`, named branch | Already in a linked worktree | Skip to Step 3（project setup）。Report: "Already in isolated workspace at `<path>` on branch `<name>`." |
-| `GIT_DIR != GIT_COMMON`, detached HEAD | Externally managed worktree（例如 Codex App sandbox） | Skip to Step 3。Report: "Already in isolated workspace at `<path>` (detached HEAD, externally managed)." |
+| `GIT_DIR == GIT_COMMON` |正常回购结帐 |继续步骤 0.5 |
+| `GIT_DIR != GIT_COMMON`，命名分支 |已经在链接的工作树中 |跳至步骤 3（项目设置）。报告："已位于分支 `<name>` 的 `<path>` 的隔离工作区中。" |
+| `GIT_DIR != GIT_COMMON`，分离头 |外部管理的工作树（例如 Codex App 沙箱）|跳至步骤 3。报告："已位于 `<path>` 的隔离工作区中（分离的 HEAD，外部管理）。" |
 
-Step 0 不关心谁创建了 worktree，也不关心正在运行哪个 harness。无论 origin 如何，worktree 就是 worktree。
+步骤 0 不关心谁创建了工作树或哪个线束正在运行。工作树就是工作树，无论其来源如何。
 
-**Submodule guard:** `GIT_DIR != GIT_COMMON` 在 git submodules 中也为 true。在得出 “already in a worktree” 结论前，检查我们不是位于 submodule 中：
+**子模块保护：** `GIT_DIR != GIT_COMMON` 在 git 子模块中也是如此。在得出"已在工作树中"的结论之前，请检查我们是否不在子模块中：
 
 ```bash
 # If this returns a path, we're in a submodule, not a worktree
 git rev-parse --show-superproject-working-tree 2>/dev/null
 ```
 
-如果位于 submodule，将其视作 `GIT_DIR == GIT_COMMON`（继续 Step 0.5）。
+如果在子模块中，则视为 `GIT_DIR == GIT_COMMON`（继续步骤 0.5）。
 
 #### Step 0.5: Consent
 
-当 Step 0 未发现 existing isolation（`GIT_DIR == GIT_COMMON`）时，创建前询问：
+当步骤 0 发现不存在现有隔离 (`GIT_DIR == GIT_COMMON`) 时，在创建之前询问：
 
-> "Would you like me to set up an isolated worktree? This protects your current branch from changes. (y/n)"
+> "您希望我建立一个独立的工作树吗？这可以保护您当前的分支免受更改。(y/n)"
 
-如果 yes，继续 Step 1。如果 no，就 in place 工作：跳到 Step 3，不创建 worktree。
+如果是，则继续执行步骤 1。如果否，则就地工作 — 跳至步骤 3，无需工作树。
 
-当 Step 0 检测到 existing isolation 时，完全跳过此步骤（没必要询问已经存在的东西）。
+当步骤 0 检测到现有隔离时，将完全跳过此步骤（无需询问已存在的隔离）。
 
-#### Step 1a: Native Tools (preferred)
+#### 步骤 1a：本机工具（首选）
 
-> The user has asked for an isolated workspace (Step 0 consent). Check your available tools — do you have `EnterWorktree`, `WorktreeCreate`, a `/worktree` command, or a `--worktree` flag? If YES: the user's consent to create a worktree is your authorization to use it. Use it now and skip to Step 3.
+> 用户已请求隔离工作区（第 0 步同意）。检查您可用的工具 - 您是否有 `EnterWorktree`、`WorktreeCreate`、`/worktree` 命令或 `--worktree` 标志？如果是：用户同意创建工作树即表示您授权您使用它。现在使用它并跳到步骤 3。
 
-使用 native tool 后，跳到 Step 3（project setup）。
+使用本机工具后，跳至步骤 3（项目设置）。
 
-**Design note — TDD revision:** 原 spec 使用刻意简短、抽象的 Step 1a（“You know your own toolkit — the skill does not need to name specific tools”）。TDD validation 否定了它：agents 锚定 Step 1b 的 concrete git commands，并忽略抽象 guidance（2/6 pass rate）。三个变化修复了问题（GREEN 和 PRESSURE tests 中 50/50 pass rate）：
+**设计说明 - TDD 修订版：** 原始规范故意使用了简短、抽象的步骤 1a（"您知道自己的工具包 - 该技能不需要命名特定的工具"）。 TDD 验证反驳了这一点：代理锚定在步骤 1b 的具体 git 命令上，而忽略了抽象指导（2/6 通过率）。三个更改修复了该问题（绿色和压力测试的通过率为 50/50）：
 
-1. **Explicit tool naming**：列出 `EnterWorktree`、`WorktreeCreate`、`/worktree`、`--worktree` 名称，把 decision 从解释（“do I have a native tool?”）变成事实查找（“is `EnterWorktree` in my tool list?”）。没有这些 tools 的 platforms 上，agents 会检查、找不到并 fall through 到 Step 1b。未观察到 false positives。
-2. **Consent bridge**：“the user's consent to create a worktree is your authorization to use it” 直接回应 `EnterWorktree` 的 tool-level guardrail（“ONLY when user explicitly asks”）。Tool descriptions override skill instructions（Claude Code #29950），因此 skill 必须把 user consent frame 成该 tool 所需的 authorization。
-3. **Red Flag entry**：在 Red Flags section 明确命名具体 anti-pattern（“Use `git worktree add` when you have a native worktree tool — this is the #1 mistake”）。
+1. **显式工具命名** - 按名称列出 `EnterWorktree`、`WorktreeCreate`、`/worktree`、`--worktree` 将决策从解释（"我有本机工具吗？"）转换为事实查找（"`EnterWorktree` 在我的工具列表中吗？"）。没有这些工具的平台上的代理只需进行检查，什么也找不到，然后进入步骤 1b。没有观察到误报。
+2. **同意桥** - "用户同意创建工作树就是您授权使用它"直接解决`EnterWorktree`的工具级护栏（"仅当用户明确要求时"）。工具描述优先于技能说明（Claude Code #29950），因此技能必须将用户同意作为工具所需的授权。
+3. **危险信号条目** — 在危险信号部分中命名特定的反模式（"当您有本机工作树工具时使用 `git worktree add` — 这是第一个错误"）。
 
-File splitting（把 Step 1b 放到单独 skill）已测试并证明不需要。Anchoring problem 由 Step 1a text 的质量解决，而不是由 git commands 的物理分离解决。带完整 240-line skill（所有 git commands 可见）的 control tests 20/20 通过。
+文件分割（单独技能中的步骤 1b）经过测试并证明是不必要的。锚定问题是通过步骤 1a 的文本质量来解决的，而不是通过 git 命令的物理分离来解决。具有完整 240 行技能的控制测试（所有 git 命令可见）通过了 20/20.
 
 #### Step 1b: Git Worktree Fallback
 
-没有 native tool 时，手动创建 worktree。
+当没有可用的本机工具时，请手动创建工作树。
 
-**Directory selection**（priority order）：
-1. 检查现有 `.worktrees/` 或 `worktrees/` directory：若存在则使用。若二者都存在，`.worktrees/` 优先。
-2. 检查现有 `~/.config/superpowers/worktrees/<project>/` directory：若存在则使用（保持 legacy global path 的 backward compatibility）。
-3. 检查项目的 agent instruction file（CLAUDE.md、GEMINI.md、AGENTS.md、.cursorrules 或 equivalent），查看 worktree directory preference。
-4. 默认使用 `.worktrees/`。
+**目录选择**（优先顺序）：
+1. 检查项目的代理指令文件（CLAUDE.md、GEMINI.md、AGENTS.md、.cursorrules 或等效文件）以获取工作树目录首选项。
+2. 检查现有的 `.worktrees/` 或 `worktrees/` 目录 - 如果找到，则使用它。如果两者都存在，则 `.worktrees/` 获胜。
+3. 默认为`.worktrees/`。
 
-不再使用 interactive directory selection prompt。global path（`~/.config/superpowers/worktrees/`）不再作为选项提供给 new users，但会检测并使用该位置已有 worktrees，以保持 backward compatibility。
+没有交互式目录选择提示。未检测或提供旧的用户全局 Superpowers 工作树路径；新的手动工作树是项目本地的，除非用户明确指定另一个位置。
 
-**Safety verification**（仅 project-local directories）：
+**安全验证**（仅限项目本地目录）：
 
 ```bash
 git check-ignore -q .worktrees 2>/dev/null
 ```
 
-如果没有 ignored，在继续前添加到 `.gitignore` 并 commit。
+如果不忽略，请添加到 `.gitignore` 并在继续之前提交。
 
 **Create:**
 
@@ -132,7 +131,7 @@ git worktree add "$path" -b "$BRANCH_NAME"
 cd "$path"
 ```
 
-**Hooks awareness:** Git worktrees 不继承 parent repo 的 hooks directory。通过 1b 创建 worktree 后，如果 main repo 中存在 hooks directory，则 symlink 它：
+**Hooks 意识：** Git 工作树不会继承父存储库的 hooks 目录。通过 1b 创建工作树后，从主存储库中符号链接 hooks 目录（如果存在）：
 
 ```bash
 if [ -d "$MAIN_ROOT/.git/hooks" ]; then
@@ -140,64 +139,64 @@ if [ -d "$MAIN_ROOT/.git/hooks" ]; then
 fi
 ```
 
-这能防止 pre-commit checks、linters 和其他 hooks 在工作移到 worktree 后 silent stop。（Idea from PR #965。）
+这可以防止预提交检查、linter 和其他钩子在工作移动到工作树时默默停止。 （来自 PR #965 的想法。）
 
-**Sandbox fallback:** 如果 `git worktree add` 因 permission error 失败，将其视作 restricted environment。跳过 creation，在 current directory 工作，并继续 Step 3。
+**沙盒后备：** 如果 `git worktree add` 因权限错误而失败，则视为受限环境。跳过创建，在当前目录中工作，继续步骤 3。
 
-**Step numbering note:** 当前 skill 使用 Steps 1-4 的 flat list。此 redesign 使用 0、0.5、1a、1b、3、4。没有 Step 2，因为它是旧的 monolithic “Create Isolated Workspace”，现在拆成 1a/1b 结构。Implementation 应 cleanly renumber（例如 0 → “Step 0: Detect”，0.5 → Step 0 flow 内，1a/1b → “Step 1”，3 → “Step 2”，4 → “Step 3”），或保留当前 numbering 并加 note。由 implementer 决定。
+**步骤编号说明：** 当前技能将步骤 1-4 作为简单列表。此重新设计使用 0, 0.5, 1a, 1b, 3, 4。没有第 2 步 - 它是旧的整体"创建独立工作空间"，现在被拆分为 1a/1b 结构。实现应该干净地重新编号（例如，0→"步骤0：检测"，0.5→在步骤0的流程中，1a/1b→"步骤1"，3→"步骤2"，4→"步骤3"）或保留当前编号并附上注释。实施者的选择。
 
-#### Steps 3-4: Project Setup and Baseline Tests（unchanged）
+#### 步骤 3-4：项目设置和基线测试（不变）
 
-无论 workspace 由哪条 path 创建（Step 0 detected existing、Step 1a native tool、Step 1b git fallback，或根本没有 worktree），execution 都 converge：
+无论使用哪条路径创建工作区（步骤 0 检测到现有工作区、步骤 1a 本机工具、步骤 1b git 回退或根本没有工作树），执行都会收敛：
 
-- **Step 3:** Auto-detect 并运行 project setup（`npm install`、`cargo build`、`pip install`、`go mod download` 等）
-- **Step 4:** 运行 test suite。如果 tests fail，报告 failures 并询问是否继续。
+- **第 3 步：** 自动检测并运行项目设置（`npm install`、`cargo build`、`pip install`、`go mod download` 等）
+- **第 4 步：** 运行测试套件。如果测试失败，报告失败并询问是否继续。
 
-### 2. `finishing-a-development-branch` SKILL.md Rewrite
+### 2. `finishing-a-development-branch` SKILL.md 重写
 
-finishing skill 增加 environment detection，并修复三个 bugs。
+终结技能获得环境检测并修复了三个错误。
 
-#### Step 1: Verify Tests（unchanged）
+#### 第 1 步：验证测试（不变）
 
-运行项目 test suite。如果 tests fail，停止。不要提供 completion options。
+运行项目的测试套件。如果测试失败，请停止。不提供完成选项。
 
-#### Step 1.5: Detect Environment（new）
+#### 步骤1.5：检测环境（新）
 
-重新运行 creation 中 Step 0 的相同 detection：
+重新运行与创建中步骤 0 相同的检测：
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
 GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
 ```
 
-三条 paths：
+Three paths:
 
-| State | Menu | Cleanup |
+|状态|菜单|清理 |
 |-------|------|---------|
-| `GIT_DIR == GIT_COMMON`（normal repo） | Standard 4 options | No worktree to clean up |
-| `GIT_DIR != GIT_COMMON`, named branch | Standard 4 options | Provenance-based（见 Step 5） |
-| `GIT_DIR != GIT_COMMON`, detached HEAD | Reduced menu：push as new branch + PR、keep as-is、discard | No merge options（can't merge from detached HEAD） |
+| `GIT_DIR == GIT_COMMON`（普通仓库）|标准 4 选项 |没有需要清理的工作树 |
+| `GIT_DIR != GIT_COMMON`，命名分支 |标准 4 选项 |基于出处（参见步骤 5）|
+| `GIT_DIR != GIT_COMMON`，分离头 |简化菜单：作为新分支推送 + PR，保持原样，丢弃 |没有合并选项（无法从分离的 HEAD 合并）|
 
-#### Step 2: Determine Base Branch（unchanged）
+#### 步骤2：确定基础分支（不变）
 
 #### Step 3: Present Options
 
-**Normal repo and named-branch worktree:**
+**普通仓库和命名分支工作树：**
 
-1. Merge back to `<base-branch>` locally
-2. Push and create a Pull Request
-3. Keep the branch as-is（I'll handle it later）
-4. Discard this work
+1. 合并回本地`<base-branch>`
+2. 推送并创建拉取请求
+3. 保持分支不变（我稍后会处理）
+4. 放弃这个工作
 
 **Detached HEAD:**
 
-1. Push as new branch and create a Pull Request
-2. Keep as-is（I'll handle it later）
-3. Discard this work
+1. 作为新分支推送并创建拉取请求
+2. 保持原样（稍后我会处理）
+3. 放弃这个工作
 
 #### Step 4: Execute Choice
 
-**Option 1（Merge locally）:**
+**选项 1（本地合并）：**
 
 ```bash
 # Get main repo root for CWD safety (Bug #238 fix)
@@ -215,24 +214,24 @@ git worktree remove "$WORKTREE_PATH"  # only if superpowers owns it
 git branch -d <feature-branch>
 ```
 
-顺序至关重要：merge → verify → remove worktree → delete branch。旧 skill 在 remove worktree 前删除 branch（会失败，因为 worktree 仍引用该 branch）。天真的修复是先 remove worktree，这也不对：如果 merge 随后失败，working directory 已消失，changes 会丢失。
+顺序很关键：合并→验证→删除工作树→删除分支。旧技能在删除工作树之前删除了分支（这会失败，因为工作树仍然引用分支）。首先删除工作树的天真修复也是错误的——如果合并失败，工作目录就会消失，更改也会丢失。
 
-**Option 2（Create PR）:**
+**选项 2（创建 PR）：**
 
-Push branch，create PR。不要 clean up worktree：用户需要它做 PR iteration。（Bug #940 fix：移除矛盾的 “Then: Cleanup worktree” prose。）
+推送分支，创建 PR。不要清理工作树——用户需要它来进行 PR 迭代。 （错误#940修复：删除矛盾的"然后：清理工作树"散文。）
 
-**Option 3（Keep as-is）:** No action。
+**选项 3（保持原样）：** 不执行任何操作。
 
-**Option 4（Discard）:** 要求 typed “discard” confirmation。然后 remove worktree（如果 superpowers owns it），force-delete branch。
+**选项 4（丢弃）：** 需要键入"丢弃"确认。然后删除工作树（如果超级大国拥有它），强制删除分支。
 
-#### Step 5: Cleanup（updated）
+#### 第 5 步：清理（已更新）
 
 ```
 if GIT_DIR == GIT_COMMON:
     # Normal repo, no worktree to clean up
     done
 
-if worktree path is under .worktrees/ or ~/.config/superpowers/worktrees/:
+if worktree path is under .worktrees/ or worktrees/:
     # Superpowers created it — we own cleanup
     cd to main repo root       # Bug #238 fix
     git worktree remove <path>
@@ -243,100 +242,100 @@ else:
     # Otherwise, leave the worktree in place
 ```
 
-Cleanup 只为 Options 1 和 4 运行。Options 2 和 3 始终保留 worktree。（Bug #940 fix。）
+清理仅针对选项 1 和 4 运行。选项 2 和 3 始终保留工作树。 （错误#940 修复。）
 
-**Stale worktree pruning:** 每次 `git worktree remove` 后，运行 `git worktree prune` 作为 self-healing step。Worktree directories 可能 out-of-band 被删除（例如 harness cleanup、manual `rm` 或 `.claude/` cleanup），留下 stale registrations 并造成 confusing errors。一行命令即可防止 silent rot。（Idea from PR #1072。）
+**陈旧工作树修剪：** 在任何 `git worktree remove` 之后，运行 `git worktree prune` 作为自我修复步骤。工作树目录可能会被带外删除（例如，通过线束清理、手动`rm`或`.claude/`清理），留下陈旧的注册，从而导致混乱的错误。一根线，防止无声腐烂。 （来自 PR #1072 的想法。）
 
 ### 3. Integration Updates
 
-#### `subagent-driven-development` and `executing-plans`
+#### `subagent-driven-development` 和 `executing-plans`
 
-二者目前在 integration sections 中把 `using-git-worktrees` 列为 REQUIRED。改为：
+目前，两者都在其集成部分中将 `using-git-worktrees` 列为必需。更改为：
 
-> `using-git-worktrees` — Ensures isolated workspace (creates one or verifies existing)
+> `using-git-worktrees` — 确保隔离工作区（创建一个或验证现有工作区）
 
-skill 自身现在处理 consent（Step 0.5）和 detection（Step 0），所以 calling skills 不需要 gate 或 prompt。
+该技能本身现在可以处理同意（步骤 0.5）和检测（步骤 0），因此调用技能不需要门控或提示。
 
 #### `writing-plans`
 
-移除过期说法 “should be run in a dedicated worktree (created by brainstorming skill)”。Brainstorming 是 design skill，不创建 worktrees。worktree prompt 在 execution time 通过 `using-git-worktrees` 发生。
+删除陈旧的主张"应该在专用工作树中运行（通过头脑风暴技能创建）"。头脑风暴是一种设计技能，不会创建工作树。工作树提示在执行时通过 `using-git-worktrees` 发生。
 
 ### 4. Platform-Neutral Instruction File References
 
-所有 worktree-related skills 中 hardcoded `CLAUDE.md` instances 都替换为：
+工作树相关技能中所有硬编码的 `CLAUDE.md` 实例均替换为：
 
-> "your project's agent instruction file (CLAUDE.md, GEMINI.md, AGENTS.md, .cursorrules, or equivalent)"
+> "您项目的代理指令文件（CLAUDE.md、GEMINI.md、AGENTS.md、.cursorrules 或同等文件）"
 
-这适用于 Step 1b 中的 directory preference checks。
+这适用于步骤 1b 中的目录首选项检查。
 
-## Bug Fixes（bundled）
+## 错误修复（捆绑）
 
-| Bug | Problem | Fix | Location |
+|错误 |问题 |修复|地点 |
 |-----|---------|-----|----------|
-| #940 | Option 2 prose says "Then: Cleanup worktree (Step 5)" but quick reference says keep it. Step 5 says "For Options 1, 2, 4" but Common Mistakes says "Options 1 and 4 only." | Remove cleanup from Option 2. Step 5 applies to Options 1 and 4 only. | finishing SKILL.md |
-| #999 | Option 1 deletes branch before removing worktree. `git branch -d` can fail because worktree still references the branch. | Reorder to: merge → verify tests → remove worktree → delete branch. Merge must succeed before anything is removed. | finishing SKILL.md |
-| #238 | `git worktree remove` fails silently if CWD is inside the worktree being removed. | Add CWD guard: `cd` to main repo root before `git worktree remove`. | finishing SKILL.md |
+|第940章选项 2 的散文说"然后：清理工作树（步骤 5）"，但快速参考说保留它。第 5 步显示"对于选项 1、2、4"，但常见错误显示"仅限选项 1 和 4"。 |从选项 2 中删除清理。步骤 5 仅适用于选项 1 和 4。 |正在整理SKILL.md |
+|第999章选项 1 在删除工作树之前删除分支。 `git branch -d` 可能会失败，因为工作树仍然引用分支。 |重新排序为：合并→验证测试→删除工作树→删除分支。在删除任何内容之前，合并必须成功。 |正在整理SKILL.md |
+|第238章如果 CWD 位于要删除的工作树内，则 `git worktree remove` 会静默失败。 |将 CWD 防护：`cd` 添加到主存储库根目录 `git worktree remove` 之前。 |正在整理SKILL.md |
 
 ## Issues Resolved
 
-| Issue | Resolution |
+|问题 |分辨率|
 |-------|-----------|
-| #940 | Direct fix（Bug #940） |
-| #991 | Opt-in consent in Step 0.5 |
-| #918 | Step 0 detection + Step 1.5 finishing detection |
-| #1009 | Resolved by Step 1a：agents use native tools（例如 `EnterWorktree`），这些 tools 会在 harness-native paths 创建。依赖 Step 1a 有效；见 Risks。 |
-| #999 | Direct fix（Bug #999） |
-| #238 | Direct fix（Bug #238） |
-| #1049 | Platform-neutral instruction file references |
-| #279 | Solved by detect-and-defer：native paths 得到尊重，因为我们不 override 它们 |
-| #574 | **Deferred.** 本 spec 不触及 bug 所在的 brainstorming skill。完整修复（向 brainstorming checklist 添加 worktree step）属于 Phase 4。 |
+|第940章直接修复（错误#940）|
+|第991章在步骤 0.5 中选择同意 |
+|第918章步骤0检测+步骤1.5完成检测|
+|第1009章通过步骤 1a 解决 - 代理使用在harness-native 路径上创建的本机工具（例如，`EnterWorktree`）。取决于步骤 1a 的工作情况；请参阅风险。 |
+|第999章直接修复（错误#999）|
+|第238章直接修复（错误#238）|
+|第1049章平台中立指令文件参考 |
+|第279章通过检测和延迟解决 - 尊重本机路径，因为我们不覆盖它们 |
+|第574章**推迟。** 本规范中没有任何内容涉及 bug 所在的头脑风暴技能。全面修复（将工作树步骤添加到头脑风暴的清单中）是第 4 阶段。
 
 ## Risks
 
-### Step 1a is the load-bearing assumption — RESOLVED
+### 步骤 1a 是承载假设 — 已解决
 
-Step 1a，也就是 agents 优先使用 native worktree tools 而不是 git fallback，是整个 design 的基础。如果 agents 忽略 Step 1a，并在有 native support 的 harnesses 上 fall through 到 Step 1b，detect-and-defer 就完全失败。
+步骤 1a——代理更喜欢本地工作树工具而不是 git 后备——是整个设计的基础。如果代理忽略步骤 1a 并在具有本机支持的线束上执行步骤 1b，则检测和延迟将完全失败。
 
-**Status:** implementation 期间该风险确实出现。原先抽象的 Step 1a（“You know your own toolkit”）在 Claude Code 上 2/6 失败。TDD gate 按预期工作：它在任何 skill files 被修改前捕获 failure，防止发布 broken release。三轮 REFACTOR iterations 找到 root causes（agent anchoring on concrete commands、tool-description guardrail overriding skill instructions），并产生了在 GREEN 和 PRESSURE tests 中 50/50 验证通过的修复。细节见上方 Step 1a design note。
+**状态：** 此风险在实施过程中出现。最初的摘要步骤 1a（"你知道你自己的工具包"）在 Claude Code 上的 2/6 处失败。 TDD 门按设计工作——它在修改任何技能文件之前捕获故障，从而防止发布失败。三次 REFACTOR 迭代确定了根本原因（代理锚定具体命令、工具描述护栏覆盖技能指令），并生成了在 GREEN 和 PRESSURE 测试中以 50/50 进行验证的修复程序。有关详细信息，请参阅上面的步骤 1a 设计说明。
 
 **Cross-platform validation:**
 
-截至 2026-04-06，Claude Code 是唯一拥有 agent-callable mid-session worktree tool（`EnterWorktree`）的 harness。其他 harnesses 要么在 agent 启动前创建 worktrees（Codex App、Gemini CLI、Cursor），要么没有 native worktree support（Codex CLI、OpenCode）。Step 1a 是 forward-compatible 的：当其他 harnesses 增加 agent-callable worktree tools 时，agents 会将其与 named examples 匹配，并无需修改 skill 即可使用。
+截至 2026 年 4 月 6 日，Claude Code 是唯一具有代理可调用的会话中工作树工具 (`EnterWorktree`) 的工具。所有其他人要么在代理启动之前创建工作树（Codex App、Gemini CLI、Cursor），要么没有本机工作树支持（Codex CLI、OpenCode）。步骤 1a 是向前兼容的：当其他工具添加代理可调用的工作树工具时，代理会将它们与命名示例进行匹配，并在无需更改技能的情况下使用它们。
 
-| Harness | Current worktree model | Skill mechanism | Tested |
+|线束|当前工作树模型 |技能机制|已测试 |
 |---------|----------------------|-----------------|--------|
-| Claude Code | Agent-callable `EnterWorktree` | Step 1a | 50/50（GREEN + PRESSURE） |
-| Codex CLI | No native tool（shell only） | Step 1b git fallback | 6/6（`codex exec`） |
-| Gemini CLI | Launch-time `--worktree` flag, no agent tool | Step 0 if launched with flag, Step 1b if not | Step 0: 1/1, Step 1b: 1/1（`gemini -p`） |
-| Cursor Agent | User-facing `/worktree`, no agent tool | Step 0 if user activated, Step 1b if not | Step 0: 1/1, Step 1b: 1/1（`cursor-agent -p`） |
-| Codex App | Platform-managed, detached HEAD, no agent tool | Step 0 detects existing | 1/1 simulated |
-| OpenCode | Detection only（`ctx.worktree`）, no agent tool | Step 1b git fallback | Untested（no CLI access） |
+|克劳德·代码 |代理可调用 `EnterWorktree` |步骤 1a | 50/50（绿色+压力）|
+|法典 CLI |没有本机工具（仅限 shell） |步骤 1b git 后备 | 6/6 (`codex exec`) |
+|双子座 CLI |启动时 `--worktree` 标志，无代理工具 |如果使用标志启动则执行步骤 0，否则执行步骤 1b |步骤 0：1/1，步骤 1b：1/1 (`gemini -p`) |
+|光标代理|面向用户`/worktree`，无代理工具|如果用户激活则执行步骤 0，如果未激活则执行步骤 1b |步骤 0：1/1，步骤 1b：1/1 (`cursor-agent -p`) |
+|法典应用程序 |平台管理、独立HEAD、无代理工具|步骤 0 检测现有 | 1/1 模拟 |
+|开放代码 |仅检测（`ctx.worktree`），无代理工具 |步骤 1b git 后备 |未经测试（无 CLI 访问）|
 
 **Residual risks:**
-1. 如果 Anthropic 将 `EnterWorktree` 的 tool description 改得更 restrictive（例如 “Do not use based on skill instructions”），consent bridge 会失效。值得 filing an issue，请求 tool description 适配 skill-driven invocation。
-2. 当其他 harnesses 增加 agent-callable worktree tools 时，它们可能使用 Step 1a list 中没有的名称。新 tools 出现时应更新该 list。generic phrasing（“a worktree or workspace-isolation tool”）提供了一定 forward coverage。
+1. 如果 Anthropic 将 `EnterWorktree` 的工具描述更改为更具限制性（例如，"请勿根据技能说明使用"），则同意桥会中断。值得提出一个问题，要求工具描述适应技能驱动的调用。
+2. 当其他工具添加代理可调用工作树工具时，它们可能会使用步骤 1a 列表中没有的名称。该列表应随着新工具的出现而更新。通用措辞（"工作树或工作区隔离工具"）提供了一些前瞻性的覆盖。
 
 ### Provenance heuristic
 
-`.worktrees/` 或 `~/.config/superpowers/worktrees/` = ours，anything else = hands off 的 heuristic 适用于所有当前 harness。如果未来某个 harness 采用 `.worktrees/` 作为 convention，会出现 false positive（superpowers 尝试清理 harness-owned worktree）。同样，如果用户手动运行 `git worktree add .worktrees/experiment` 而不通过 superpowers，我们也会错误认领 ownership。二者风险都低：所有 harness 都使用 branded paths，且 manual `.worktrees/` creation 不太常见；但值得记录。
+`.worktrees/` 或 `worktrees/` = 我们的，其他任何东西 = 放手 ` heuristic works for every current harness. If a future harness adopts one of those project-local directories as its convention, we'd have a false positive (superpowers tries to clean up a harness-owned worktree). Similarly, if a user manually runs `git worktree add .worktrees/experiment` without superpowers, we'd incorrectly claim ownership. Both are low risk — every harness uses branded paths, and manual `.worktrees/` 创建不太可能 - 但值得注意。
 
 ### Detached HEAD finishing
 
-detached HEAD worktrees 的 reduced menu（无 merge option）符合 Codex App sandbox model。如果用户出于其他原因位于 detached HEAD，reduced menu 仍然合理：不先创建 branch，确实无法从 detached HEAD merge。
+分离 HEAD 工作树的简化菜单（无合并选项）对于 Codex App 的沙箱模型是正确的。如果用户由于其他原因处于分离的 HEAD 中，则简化的菜单仍然有意义 - 如果不先创建分支，您确实无法从分离的 HEAD 进行合并。
 
 ## Implementation Notes
 
-两个 skill files 都包含 core steps 之外的 sections，implementation 期间也需要更新：
+这两个技能文件都包含在实施过程中需要更新的核心步骤之外的部分：
 
-- **Frontmatter**（`name`、`description`）：更新以反映 detect-and-defer behavior
-- **Quick Reference tables**：重写以匹配新 step structure 和 bug fixes
-- **Common Mistakes sections**：更新或移除引用旧 behavior 的 items（例如 “Skip CLAUDE.md check” 现在是错的）
-- **Red Flags sections**：更新以反映新 priorities（例如 “Never create a worktree when Step 0 detects existing isolation”）
-- **Integration sections**：更新 skills 之间的 cross-references
+- **Frontmatter** (`name`, `description`)：更新以反映检测和延迟行为
+- **快速参考表**：重写以匹配新的步骤结构和错误修复
+- **常见错误部分**：更新或删除引用旧行为的项目（例如，"跳过 CLAUDE.md 检查"现在是错误的）
+- **危险信号部分**：更新以反映新的优先级（例如，"当步骤 0 检测到现有隔离时切勿创建工作树"）
+- **集成部分**：更新技能之间的交叉引用
 
-spec 描述 *what changes*；implementation plan 会指定这些 secondary sections 的 exact edits。
+规范描述了*发生了什么变化*；实施计划将具体说明对这些次要部分的具体编辑。
 
-## Future Work（not in this spec）
+## 未来的工作（不在本规范中）
 
-- **Phase 3 remainder:** `$TMPDIR` directory option (#666)、setup docs for caching and env inheritance (#299)
-- **Phase 4:** PreToolUse hooks for path enforcement (#1040)、per-worktree env conventions (#597)、brainstorming checklist worktree step (#574)、multi-repo documentation (#710)
+- **第 3 阶段剩余部分：** `$TMPDIR` 目录选项 (#666)，用于缓存和环境继承的设置文档 (#299)
+- **阶段 4：** PreToolUse 挂钩用于路径强制 (#1040)、每个工作树环境约定 (#597)、集思广益清单工作树步骤 (#574)、多存储库文档 (#710)

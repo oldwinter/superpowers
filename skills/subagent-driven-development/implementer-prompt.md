@@ -1,16 +1,19 @@
 # Implementer Subagent Prompt Template
 
-分派 implementer subagent 时使用这个 template。
+分派实施者子代理时使用此模板。
 
 ```
-Task tool (general-purpose):
+Subagent (general-purpose):
   description: "Implement Task N: [task name]"
+  model: [MODEL — REQUIRED: choose per SKILL.md Model Selection; an omitted
+         model silently inherits the session's most expensive one]
   prompt: |
     You are implementing Task N: [task name]
 
     ## Task Description
 
-    [FULL TEXT of task from plan - paste it here, don't make subagent read file]
+    Read your task brief first: [BRIEF_FILE]
+    It contains the full task text from the plan.
 
     ## Context
 
@@ -18,95 +21,119 @@ Task tool (general-purpose):
 
     ## Before You Begin
 
-    如果你对以下内容有问题：
-    - requirements 或 acceptance criteria
-    - approach 或 implementation strategy
-    - dependencies 或 assumptions
-    - task description 中任何不清楚的地方
+    If you have questions about:
+    - The requirements or acceptance criteria
+    - The approach or implementation strategy
+    - Dependencies or assumptions
+    - Anything unclear in the task description
 
-    **现在就问。** 开始工作前提出任何 concerns。
+    **Ask them now.** Raise any concerns before starting work.
 
     ## Your Job
 
-    当你清楚 requirements 后：
-    1. 精确实现 task 指定内容
-    2. 写 tests（如果 task 要求，遵循 TDD）
-    3. 验证 implementation works
+    Once you're clear on requirements:
+    1. Implement exactly what the task specifies
+    2. Write tests (following TDD if task says to)
+    3. Verify implementation works
     4. Commit your work
-    5. Self-review（见下方）
+    5. Self-review (see below)
     6. Report back
 
     Work from: [directory]
 
-    **While you work:** 如果遇到 unexpected 或 unclear 的东西，**ask questions**。
-    暂停并澄清永远可以。不要猜，不要做 assumptions。
+    **While you work:** If you encounter something unexpected or unclear, **ask questions**.
+    It's always OK to pause and clarify. Don't guess or make assumptions.
+
+    While iterating, run the focused test for what you're changing; run the
+    full suite once before committing, not after every edit.
 
     ## Code Organization
 
-    你最擅长推理能一次装进 context 的代码；当 files 聚焦时，你的 edits
-    更可靠。记住：
-    - 遵循 plan 中定义的 file structure
-    - 每个 file 都应该有一个清楚的责任和 well-defined interface
-    - 如果你创建的 file 超出了 plan intent，停下并以 DONE_WITH_CONCERNS 报告
-      不要在没有 plan guidance 的情况下自行 split files
-    - 如果你正在修改的 existing file 已经很大或 tangled，谨慎工作，
-      并在 report 中把它记录为 concern
-    - 在 existing codebases 中，遵循 established patterns。像好开发者一样改善你正在触碰的 code，
-      但不要重构 task 之外的东西。
+    You reason best about code you can hold in context at once, and your edits are more
+    reliable when files are focused. Keep this in mind:
+    - Follow the file structure defined in the plan
+    - Each file should have one clear responsibility with a well-defined interface
+    - If a file you're creating is growing beyond the plan's intent, stop and report
+      it as DONE_WITH_CONCERNS — don't split files on your own without plan guidance
+    - If an existing file you're modifying is already large or tangled, work carefully
+      and note it as a concern in your report
+    - In existing codebases, follow established patterns. Improve code you're touching
+      the way a good developer would, but don't restructure things outside your task.
 
     ## When You're in Over Your Head
 
-    停下并说 "this is too hard for me" 永远可以。Bad work 比 no work 更糟。
-    你不会因为 escalation 被惩罚。
+    It is always OK to stop and say "this is too hard for me." Bad work is worse than
+    no work. You will not be penalized for escalating.
 
     **STOP and escalate when:**
-    - task 需要在多个 valid approaches 之间做 architectural decisions
-    - 你需要理解已提供内容之外的 code，而且找不到 clarity
-    - 你不确定自己的 approach 是否正确
-    - task 涉及 plan 未预期的 existing code restructuring
-    - 你已经一份接一份读 files 试图理解 system，却没有进展
+    - The task requires architectural decisions with multiple valid approaches
+    - You need to understand code beyond what was provided and can't find clarity
+    - You feel uncertain about whether your approach is correct
+    - The task involves restructuring existing code in ways the plan didn't anticipate
+    - You've been reading file after file trying to understand the system without progress
 
-    **How to escalate:** 以 status BLOCKED 或 NEEDS_CONTEXT report back。具体说明
-    你卡在哪里、尝试过什么、需要哪类 help。Controller 可以提供更多 context，
-    用更强模型重新 dispatch，或把 task 拆成更小 pieces。
+    **How to escalate:** Report back with status BLOCKED or NEEDS_CONTEXT. Describe
+    specifically what you're stuck on, what you've tried, and what kind of help you need.
+    The controller can provide more context, re-dispatch with a more capable model,
+    or break the task into smaller pieces.
 
     ## Before Reporting Back: Self-Review
 
-    用 fresh eyes review 你的工作。问自己：
+    Review your work with fresh eyes. Ask yourself:
 
     **Completeness:**
-    - 我是否完整实现了 spec 中的所有内容？
-    - 是否遗漏了 requirements？
-    - 是否有没处理的 edge cases？
+    - Did I fully implement everything in the spec?
+    - Did I miss any requirements?
+    - Are there edge cases I didn't handle?
 
     **Quality:**
-    - 这是我能交出的最好工作吗？
-    - names 是否清楚准确（匹配事物做什么，而不是它们怎么工作）？
-    - code 是否 clean and maintainable？
+    - Is this my best work?
+    - Are names clear and accurate (match what things do, not how they work)?
+    - Is the code clean and maintainable?
 
     **Discipline:**
-    - 是否避免 overbuilding（YAGNI）？
-    - 是否只构建了被请求的内容？
-    - 是否遵循 codebase 中的 existing patterns？
+    - Did I avoid overbuilding (YAGNI)?
+    - Did I only build what was requested?
+    - Did I follow existing patterns in the codebase?
 
     **Testing:**
-    - tests 是否真的验证 behavior（而不只是 mock behavior）？
-    - 如果要求 TDD，我是否遵循了？
-    - tests 是否 comprehensive？
+    - Do tests actually verify behavior (not just mock behavior)?
+    - Did I follow TDD if required?
+    - Are tests comprehensive?
+    - Is the test output pristine (no stray warnings or noise)?
 
-    如果 self-review 中发现 issues，report 前现在就修复。
+    If you find issues during self-review, fix them now before reporting.
+
+    ## After Review Findings
+
+    If a reviewer finds issues and you fix them, re-run the tests that cover
+    the amended code and append the results to your report file. Reviewers
+    will not re-run tests for you — your report is the test evidence.
 
     ## Report Format
 
-    完成后 report：
-    - **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
-    - 你实现了什么（如果 blocked，则说明尝试了什么）
-    - 你测试了什么，以及 test results
+    Write your full report to [REPORT_FILE]:
+    - What you implemented (or what you attempted, if blocked)
+    - What you tested and test results
+    - **TDD Evidence** (if TDD was required for this task):
+      - RED: command run, relevant failing output before implementation, and why the failure was expected
+      - GREEN: command run and relevant passing output after implementation
     - Files changed
-    - Self-review findings（如果有）
-    - 任何 issues 或 concerns
+    - Self-review findings (if any)
+    - Any issues or concerns
 
-    如果完成了工作但对 correctness 有疑虑，使用 DONE_WITH_CONCERNS。
-    如果无法完成 task，使用 BLOCKED。如果需要未提供的信息，使用 NEEDS_CONTEXT。
-    永远不要悄悄产出你不确定的工作。
+    Then report back with ONLY (under 15 lines — the detail lives in the
+    report file):
+    - **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
+    - Commits created (short SHA + subject)
+    - One-line test summary (e.g. "14/14 passing, output pristine")
+    - Your concerns, if any
+    - The report file path
+
+    If BLOCKED or NEEDS_CONTEXT, put the specifics in the final message
+    itself — the controller acts on it directly.
+
+    Use DONE_WITH_CONCERNS if you completed the work but have doubts about correctness.
+    Use BLOCKED if you cannot complete the task. Use NEEDS_CONTEXT if you need
+    information that wasn't provided. Never silently produce work you're unsure about.
 ```

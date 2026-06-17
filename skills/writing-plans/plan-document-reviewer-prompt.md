@@ -7,7 +7,7 @@
 **Dispatch after:** 完整 plan 已写完。
 
 ```
-Task tool (general-purpose):
+Subagent (general-purpose):
   description: "Review plan document"
   prompt: |
     You are a plan document reviewer. Verify this plan is complete and ready for implementation.

@@ -250,16 +250,12 @@ diff 的大小、复杂性和风险。小型机械差速器不需要
 序列——观察到的最昂贵的单一故障。跟踪进展
 账本文件，不仅仅是待办事项中的。
 
-- 在技能开始时，检查分类帐：
-  `cat "$(git rev-parse --git-path sdd)/progress.md"`。那里列出的任务
-  已完成 — 不要重新发送；继续执行第一个任务
-  未标记为完成。
-- 当一项任务的审查结果干净时，将一行添加到分类帐中
-  与您的其他簿记相同的消息：
+- 在技能开始时，检查 ledger：
+  `cat "$(git rev-parse --show-toplevel)/.superpowers/sdd/progress.md"`。那里列为 complete 的任务就是 DONE，不要重新 dispatch；从第一个未标记 complete 的任务继续。
+- 当某个任务的审查结果干净时，在与其他 bookkeeping 相同的消息中向 ledger 追加一行：
   `Task N: complete (commits <base7>..<head7>, review clean)`。
-- 账本是你的恢复图：它命名的提交甚至存在于 git 中
-  当你的上下文不再记得创建它们时。压实后，
-  相信账本和`git log`而不是你自己的记忆。
+- Ledger 是你的恢复地图：即使上下文不再记得创建过哪些提交，它命名的 commits 仍存在于 git 中。压缩后，相信 ledger 和 `git log`，不要相信自己的记忆。
+- `git clean -fdx` 会销毁 ledger（它是 git-ignored scratch）；如果发生这种情况，请从 `git log` 恢复。
 
 ## Prompt Templates
 

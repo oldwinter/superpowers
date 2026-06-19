@@ -1,5 +1,11 @@
 # Superpowers Release Notes
 
+## v6.0.3 (2026-06-18)
+
+### Subagent-Driven Development
+
+- **SDD scratch files 已移出 `.git/`。** Claude Code 会把 `.git/` 视为 protected path，并拒绝 agent 写入；因此 implementer subagent 把报告写到 `.git/sdd/` 时会在运行中途被阻塞。Task briefs、implementer reports、review diffs 和 progress ledger 现在位于 working tree 中自我 ignore 的 `.superpowers/sdd/` 目录，既不会出现在 `git status`，也不会进入 commits，并由共享的 `sdd-workspace` helper 按 worktree 解析。有一个 caveat：因为这个 workspace 是 git-ignored working-tree scratch，`git clean -fdx` 会删除 progress ledger；如果发生这种情况，请从 `git log` 恢复。（#1780）
+
 ## v6.0.2 (2026-06-16)
 
 ### Install Fixes

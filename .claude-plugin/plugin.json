@@ -1,7 +1,7 @@
 {
   "name": "superpowers",
   "description": "面向 Claude Code 的核心 skills library：TDD、debugging、collaboration patterns 和经过验证的 techniques",
-  "version": "6.0.2",
+  "version": "6.0.3",
   "author": {
     "name": "Jesse Vincent",
     "email": "jesse@fsck.com"

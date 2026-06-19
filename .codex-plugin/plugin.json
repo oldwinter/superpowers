@@ -1,6 +1,6 @@
 {
   "name": "superpowers",
-  "version": "6.0.2",
+  "version": "6.0.3",
   "description": "一套真正可用的 agentic skills framework 和软件开发方法论：planning、TDD、debugging 与 collaboration workflows。",
   "author": {
     "name": "Jesse Vincent",

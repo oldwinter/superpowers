@@ -101,7 +101,7 @@ Superpowers 核心包含通用技能，可以使所有用户受益，无论他�
 
 ## Eval harness
 
-技能行为评估位于 [superpowers-evals](https://github.com/prime-radiant-inc/superpowers-evals/) 中，克隆到 `evals/` 中 — 请参阅 `evals/README.md` 进行设置。 Drill（工具）驱动 Claude Code / Codex / Gemini CLI 的真实 tmux 会话，并通过 LLM 验证器判断技能合规性。插件基础设施测试仍然在`tests/`进行。
+技能行为评估位于 [superpowers-evals](https://github.com/prime-radiant-inc/superpowers-evals/) 中，克隆到 `evals/` 中；设置请参阅 `evals/README.md`。该 harness 会驱动 Claude Code / Codex 的真实 tmux 会话，并通过 LLM verifier 判断技能合规性。插件基础设施测试仍然位于 `tests/`。
 
 ## 贡献前先理解项目
 

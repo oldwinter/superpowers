@@ -140,7 +140,7 @@ CMD 在调度程序尝试的三个位置中的任何一个位置都找不到 bas
 
 ### 钩子根本不开火
 
-验证 `hooks.json` 中的 `matcher` 与您的线束发出的事件类型匹配。克劳德代码使用`startup|clear|compact`； Codex 使用`startup|resume|clear`。检查 `hooks-codex.json` 的 Codex 变体。
+验证 `hooks.json` 中的 `matcher` 是否与你的 harness 发出的事件类型匹配。Claude Code 使用 `startup|clear|compact`；Cursor 使用 `sessionStart`。Cursor 变体见 `hooks-cursor.json`。
 
 ## Related Issues
 

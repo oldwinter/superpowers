@@ -9,7 +9,7 @@ description: 在创建新技能、编辑现有技能或在部署之前验证技�
 
 **写作技巧是将测试驱动开发应用于流程文档。**
 
-**个人技能位于运行时的技能目录中** — 请参阅 [claude-code-tools.md](../using-superpowers/references/claude-code-tools.md)、[codex-tools.md](../using-superpowers/references/codex-tools.md)、[copilot-tools.md](../using-superpowers/references/copilot-tools.md) 或 [gemini-tools.md](../using-superpowers/references/gemini-tools.md) 了解运行时的路径。 Codex、Copilot CLI 和 Gemini CLI 也都将 `~/.agents/skills/` 识别为跨运行时别名。
+**个人 skills 位于你的 runtime skills 目录中**
 
 您编写测试用例（子代理的压力场景），观察它们失败（基线行为），编写技能（文档），观察测试通过（代理遵守），然后重构（关闭漏洞）。
 

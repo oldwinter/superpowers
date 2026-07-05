@@ -1,5 +1,34 @@
 # Superpowers Release Notes
 
+## v6.1.1 (2026-07-02)
+
+### Codex
+
+- **Codex 不再重新注册 Claude SessionStart hook。** v6.1.0 删除了 Codex hook config 和 manifest 中的 `hooks` 指针，意图是阻止 Codex 安装 SessionStart hook；但如果没有 `hooks` 字段，Codex 会回退到自动发现 `hooks/hooks.json`，也就是 marketplace 从仓库根目录发布的 Claude Code SessionStart hook，并连同安装时 trust prompt 一起重新注册。Codex manifest 现在显式声明空 hooks object（`hooks: {}`），Codex 会把它理解为“无 hooks”，而不是进入自动发现 fallback。缺失字段、`[]` 和空 inline list 都会折叠回 fallback，所以值必须精确为 `{}`。
+- **移除孤立的 Codex session-start dead code。** 删除 Codex hook config 后，`hooks/session-start-codex` 已没有调用者，因此它和冗余测试一并移除。`docs/porting-to-a-new-harness.md` 中的 shell-hook 示例从 Codex（现在使用原生 skill discovery，没有 session-start hook）迁移到 Cursor 这个仍在使用 shell hook 的 harness，并修正 `docs/windows/polyglot-hooks.md` 中陈旧的 `hooks-codex.json` 指针。Codex plugin category 也修正为 “Developer Tools”。
+
+### Packaging
+
+- **新增 `package-codex-plugin.sh` 用于构建 Codex portal package。** 维护者脚本会生成确定性的 Codex “portal” archive，默认 `.zip`，按需 `tar.gz`；它会规范化 entry timestamps、保留 executable modes、验证每个 packaged skill 都带 OpenAI metadata、包含 app 与 composer icons，并拒绝在 dirty worktree 上运行。打包后的 manifest 保留源 `hooks: {}` object，使 portal 安装的 plugin 避免同样的 SessionStart 自动发现；脚本还可以从保存的 metadata source 重建 byte-identical archive。已有新测试套件覆盖。
+
+## v6.1.0 (2026-06-30)
+
+### Lower Per-Session Token Cost
+
+`using-superpowers` bootstrap 会注入每个 session，因此它的体积会被持续支付 token 成本。本版本在不删除行为塑形内容的前提下，精简了它以及它指向的 per-harness references。
+
+- **压缩 `using-superpowers` bootstrap。** 用文字替代 graphviz skill-flow diagram，把独立的 Instruction-Priority 章节合入 User Instructions，删除 per-platform “How to Access Skills” walkthrough，并把 Platform Adaptation 指针收窄到仍然发布 reference file 的 harness。完整的 Red Flags rationalization table 和用户指令优先级规则保持不变。
+- **修剪 per-harness tool-mapping references。** 冗长的 action-to-tool tables 重复了现代 agents 已经会遵循的 guidance。每个 reference file 都被压缩到仍有价值的 harness-specific notes，例如 subagent dispatch、task tracking、instructions-file paths；没有剩余 harness-specific 内容的 `claude-code-tools.md` 和 `copilot-tools.md` 已删除。
+
+### Codex
+
+- **Codex 可以从 marketplace 安装。** Codex marketplace sources 预期 marketplace root 下有 `.agents/plugins/marketplace.json`；仓库之前只发布 Claude marketplace 文件，因此 Codex 能命名 marketplace，却找不到可安装 plugin entries。现在仓库内的 Codex marketplace manifest 指向同一仓库根目录，因此 plugin 可以从 Codex 安装。
+- **Codex 不再发布 SessionStart hook。** Codex 已能可靠地自行触发 skills，bootstrap hook 反而让 UX 更差。Codex hook config（`hooks-codex.json`）及其 manifest registration 已删除。
+
+### Harness Support
+
+- **移除 Gemini CLI 支持。** Google 已在 2026-06-18 EOL Gemini CLI；该 extension 已无法安装或更新。Gemini 已从安装文档、支持 subagent 的平台列表和 eval-harness 描述中移除，并删除其 tool-mapping reference。
+
 ## v6.0.3 (2026-06-18)
 
 ### Subagent-Driven Development

@@ -11,7 +11,7 @@ description: 当您有书面实施计划并在带有审查检查点的单独会�
 
 **开始时宣布：**"我正在使用执行计划技能来实施这个计划。"
 
-**注意：** 告诉你的人类伙伴，通过访问子代理，超级大国的效果会更好。如果在支持子代理的平台上运行，其工作质量将显着提高（Claude Code、Codex CLI、Codex App、Copilot CLI 和 Gemini CLI 均符合条件；请参阅 `../using-superpowers/references/` 中的每个平台工具参考）。如果子代理可用，请使用 superpowers:subagent-driven-development 而不是此技能。
+**注意：** 告诉你的人类伙伴，Superpowers 在能访问 subagents 时效果会好得多。如果运行平台支持 subagent，工作质量会显著提高（Claude Code、Codex CLI、Codex App 和 Copilot CLI 都符合条件；见 `../using-superpowers/references/` 中的各平台工具参考）。如果 subagents 可用，请使用 superpowers:subagent-driven-development，而不是此技能。
 
 ## The Process
 

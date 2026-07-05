@@ -1,6 +1,6 @@
 {
   "name": "superpowers",
-  "version": "6.0.3",
+  "version": "6.1.1",
   "description": "一套真正可用的 agentic skills framework 和软件开发方法论：planning、TDD、debugging 与 collaboration workflows。",
   "author": {
     "name": "Jesse Vincent",
@@ -21,13 +21,13 @@
     "workflow"
   ],
   "skills": "./skills/",
-  "hooks": "./hooks/hooks-codex.json",
+  "hooks": {},
   "interface": {
     "displayName": "Superpowers",
     "shortDescription": "面向 coding agents 的 planning、TDD、debugging 和 delivery workflows",
     "longDescription": "使用 Superpowers 引导 agent 工作流，覆盖 brainstorming、implementation planning、test-driven development、systematic debugging、parallel execution、code review 和 finish-the-branch workflows。",
     "developerName": "Jesse Vincent",
-    "category": "Coding",
+    "category": "Developer Tools",
     "capabilities": [
       "Interactive",
       "Read",

@@ -6,9 +6,12 @@ Claude Code 插件需要适用于 Windows、macOS 和 Linux 的挂钩。本文�
 
 ## The Problem
 
-Claude Code 通过系统默认的 shell 运行钩子命令：
-- **Windows**: CMD.exe
-- **macOS/Linux>**：bash 或 sh
+Claude Code 通过 shell 运行 hook 命令：
+- **macOS/Linux**：bash 或 sh
+- **已安装 Git Bash 的 Windows**：Git Bash
+- **未安装 Git Bash 的 Windows**：PowerShell（较旧版本使用 CMD.exe）
+
+两种 Windows fallback shell 都无法解析我们的命令字符串：PowerShell 会把开头带引号的路径当成字符串表达式，并在下一个裸词处报错；CMD.exe 的 `/c` 引号规则则会在路径包含 `(` 等元字符时剥掉外层引号。因此 hooks 显式声明 `"shell": "bash"`（Claude Code 2.1.81 起支持，旧版本会忽略该 key），强制走 Git Bash；未安装 Git Bash 时，会显示可操作的“安装 Git for Windows”错误，而不是 shell parser failure。
 
 这带来了几个挑战：
 
@@ -42,6 +45,7 @@ hooks/
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start",
+            "shell": "bash",
             "async": false
           }
         ]

@@ -11,15 +11,16 @@ description: 当您有书面实施计划并在带有审查检查点的单独会�
 
 **开始时宣布：**"我正在使用执行计划技能来实施这个计划。"
 
-**注意：** 告诉你的人类伙伴，Superpowers 在能访问 subagents 时效果会好得多。如果运行平台支持 subagent，工作质量会显著提高（Claude Code、Codex CLI、Codex App 和 Copilot CLI 都符合条件；见 `../using-superpowers/references/` 中的各平台工具参考）。如果 subagents 可用，请使用 superpowers:subagent-driven-development，而不是此技能。
+**注意：** 告诉你的人类伙伴，Superpowers 在能访问 subagents 时效果会好得多（Claude Code、Codex CLI、Codex App、Copilot CLI 和 Gemini CLI 都符合条件；见 `../using-superpowers/references/` 中的各平台工具参考）。如果 subagents 可用，请使用 superpowers:subagent-driven-development，而不是此技能。
 
 ## The Process
 
 ### Step 1: Load and Review Plan
-1. 读取计划文件
-2. 批判性地审查 - 找出有关计划的任何问题或疑虑
-3. 如果有疑虑：在开始之前与您的人类伴侣提出这些问题
-4. 如果没有问题：为计划项目创建待办事项并继续
+1. 确保工作区隔离：使用 superpowers:using-git-worktrees 创建工作区，或验证现有工作区
+2. 读取计划文件
+3. 批判性地审查 - 找出有关计划的任何问题或疑虑
+4. 如果有疑虑：在开始之前与您的人类伴侣提出这些问题
+5. 如果没有问题：为计划项目创建待办事项并继续
 
 ### Step 2: Execute Tasks
 
@@ -61,10 +62,3 @@ description: 当您有书面实施计划并在带有审查检查点的单独会�
 - 计划中提到的参考技能
 - 堵住就停下来，别乱猜
 - Never start implementation on main/master branch without explicit user consent
-
-## Integration
-
-**所需的工作流程技能：**
-- **superpowers:using-git-worktrees** - 确保隔离的工作区（创建一个或验证现有的）
-- **superpowers:writing-plans** - 创建该技能执行的计划
-- **超级大国：完成开发分支** - 在完成所有任务后完成开发

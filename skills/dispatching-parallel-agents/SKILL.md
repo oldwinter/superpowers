@@ -158,15 +158,6 @@ Agent 3 → Fix tool-approval-race-conditions.test.ts
 
 **Integration:** 所有 fixes 独立，无 conflicts，full suite green
 
-**Time saved:** 3 个问题并行解决，而不是顺序处理
-
-## Key Benefits
-
-1. **Parallelization** - 多个 investigations 同时发生
-2. **Focus** - 每个 agent scope 窄，需要追踪的 context 更少
-3. **Independence** - Agents 不会互相干扰
-4. **Speed** - 用解决 1 个问题的时间解决 3 个
-
 ## Verification
 
 Agents 返回后：
@@ -174,12 +165,3 @@ Agents 返回后：
 2. **Check for conflicts** - Agents 是否编辑了同一段 code？
 3. **Run full suite** - 验证所有 fixes 一起工作
 4. **Spot check** - Agents 可能犯系统性错误
-
-## Real-World Impact
-
-来自 debugging session（2025-10-03）：
-- 3 个文件中 6 个 failures
-- 并行分派 3 个 agents
-- 所有 investigations 并发完成
-- 所有 fixes 成功整合
-- Agent changes 之间 zero conflicts

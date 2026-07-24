@@ -7,8 +7,6 @@ description: 在提出修复建议之前遇到任何错误、测试失败或意�
 
 ## Overview
 
-随机修复会浪费时间并产生新的错误。快速补丁掩盖了根本问题。
-
 **核心原则：** 在尝试修复之前始终找到根本原因。症状修复失败。
 
 **违反此过程的字面意思就是违反调试精神。**
@@ -188,6 +186,7 @@ NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
    - 现在测试通过了吗？
    - 其他测试没有被破坏吗？
    - 问题真的解决了吗？
+   - 在声明成功前使用 `superpowers:verification-before-completion` skill
 
 4. **如果修复不起作用**
    - STOP
@@ -282,15 +281,3 @@ NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
 - **`root-cause-tracing.md`** - 通过调用堆栈向后跟踪错误以找到原始触发器
 - **`defense-in-depth.md`>** - 在找到根本原因后添加多层验证
 - **`condition-based-waiting.md`>** - 用条件轮询替换任意超时
-
-**Related skills:**
-- **superpowers:test-driven-development** - 用于创建失败的测试用例（第 4 阶段，步骤 1）
-- **超级能力：完成前验证** - 在声明成功之前验证修复是否有效
-
-## Real-World Impact
-
-从调试会话：
-- 系统方法：15-30 分钟修复
-- 随机修复方法：2-3小时的颠簸
-- 首次修复率：95% vs 40%
-- 引入新错误：接近零与常见

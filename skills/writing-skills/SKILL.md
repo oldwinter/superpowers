@@ -9,7 +9,7 @@ description: 在创建新技能、编辑现有技能或在部署之前验证技�
 
 **写作技巧是将测试驱动开发应用于流程文档。**
 
-**个人 skills 位于你的 runtime skills 目录中**
+**个人 skills 位于你的 runtime skills 目录中**（Claude Code 使用 `~/.claude/skills/`）；Codex 或 Gemini 的路径见 [codex-tools.md](../using-superpowers/references/codex-tools.md) 和 [gemini-tools.md](../using-superpowers/references/gemini-tools.md)。Codex、Copilot CLI 和 Gemini CLI 也都识别跨 runtime alias `~/.agents/skills/`。
 
 您编写测试用例（子代理的压力场景），观察它们失败（基线行为），编写技能（文档），观察测试通过（代理遵守），然后重构（关闭漏洞）。
 
@@ -677,13 +677,3 @@ step2 [label="read file"];
 6. **加载示例**（仅在实现时）
 
 **针对此流程进行优化** - 尽早且经常放置可搜索术语。
-
-## The Bottom Line
-
-**创建技能是流程文档的 TDD。**
-
-同样的铁律：没有经过考验就没有技能。
-相同的循环：红色（基线）→绿色（编写技巧）→REFACTOR（关闭漏洞）。
-相同的好处：更好的质量、更少的惊喜、万无一失的结果。
-
-如果您在代码方面遵循 TDD，那么在技能方面也遵循 TDD。这与应用于文档的规则相同。

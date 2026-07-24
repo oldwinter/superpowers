@@ -7,7 +7,7 @@
 multi_agent = true
 ```
 
-这会为 `dispatching-parallel-agents` 和 `subagent-driven-development` 等 skills 启用 `spawn_agent`、`wait_agent` 和 `close_agent`。使用 subagent-driven-development 时，implementer 和 reviewer subagents 完成全部工作后，应始终关闭它们。
+这会为 `dispatching-parallel-agents` 和 `subagent-driven-development` 等 skills 启用 `spawn_agent`、`wait_agent` 和 `close_agent`。使用 subagent-driven-development 时，reviewer 返回结果后即可关闭；implementer 要保持开启，直到该任务 review 通过，因为 fix loop 会继续恢复同一个 implementer，然后再关闭。如果 harness 无法继续向已生成的 agent 发消息，每轮 fix 都派一个新的 implementer，并携带 brief path、report file 和 findings。
 
 ## Environment Detection
 

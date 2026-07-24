@@ -203,11 +203,3 @@ You understand 1,2,3,6. Unclear on 4,5.
 ## GitHub Thread Replies
 
 在 GitHub 上回复内嵌评论时，请在评论线程 (`gh api repos/{owner}/{repo}/pulls/{pr}/comments/{id}/replies`) 中回复，而不是作为顶级 PR 评论。
-
-## The Bottom Line
-
-**外部反馈=评估建议，而不是遵循的命令。**
-
-验证。问题。然后实施。
-
-没有执行协议。技术始终严谨。

@@ -7,8 +7,6 @@ description: 即将宣称工作 complete、fixed 或 passing，或 commit/create
 
 ## 概览
 
-没有验证就宣称工作完成，是不诚实，不是高效。
-
 **核心原则：** Evidence before claims，永远如此。
 
 **违反这条规则的字面要求，就是违反这条规则的精神。**
@@ -105,15 +103,6 @@ Skip any step = lying, not verifying
 ❌ Trust agent report
 ```
 
-## 为什么这很重要
-
-来自 24 条 failure memories：
-- your human partner 说过 "I don't believe you" - trust broken
-- Undefined functions shipped - 会 crash
-- Missing requirements shipped - 功能不完整
-- Time wasted on false completion → redirect → rework
-- 违反："Honesty is a core value. If you lie, you'll be replaced."
-
 ## 何时应用
 
 **ALWAYS before:**
@@ -129,11 +118,3 @@ Skip any step = lying, not verifying
 - 改写和同义表达
 - 成功的暗示
 - 任何传达 completion/correctness 的 communication
-
-## 底线
-
-**验证没有捷径。**
-
-运行命令。阅读输出。然后再 claim 结果。
-
-这没有商量余地。

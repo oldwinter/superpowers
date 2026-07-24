@@ -73,7 +73,7 @@ git rev-parse --show-superproject-working-tree 2>/dev/null
    ```
    如果找到，请使用它。如果两者都存在，则 `.worktrees` 获胜。
 
-3. **如果没有其他可用的指导**，默认为项目根目录下的 `.worktrees/`。
+3. **如果没有其他可用的指导**，默认为项目根目录下的 `.worktrees/`（default to `.worktrees/` at the project root）。
 
 #### 安全验证（仅限项目本地目录）
 
@@ -156,47 +156,12 @@ Ready to implement <feature-name>
 |测试在基线期间失败 |报告失败+询问|
 |没有 package.json/Cargo.toml |跳过依赖安装 |
 
-## Common Mistakes
+## 常见合理化借口
 
-### Fighting the harness
-
-- **问题：** 当平台已经提供隔离时使用 `git worktree add`
-- **修复：** 步骤 0 检测现有隔离。步骤 1a 遵循本机工具。
-
-### Skipping detection
-
-- **问题：** 在现有工作树中创建嵌套工作树
-- **修复：** 在创建任何内容之前始终运行步骤 0
-
-### Skipping ignore verification
-
-- **问题：** 工作树内容被跟踪，污染 git 状态
-- **修复：** 在创建项目本地工作树之前始终使用 `git check-ignore`
-
-### Assuming directory location
-
-- **问题：** 造成不一致，违反项目约定
-- **修复：**遵循优先级：明确说明>现有项目本地目录>默认
-
-### Proceeding with failing tests
-
-- **问题：** 无法区分新错误和先前存在的问题
-- **修复：** 报告失败，获得明确的许可才能继续
-
-## Red Flags
-
-**Never:**
-- 当步骤 0 检测到现有隔离时创建工作树
-- 当您有本机工作树工具（例如 `EnterWorktree`）时，请使用 `git worktree add`。这是第一个错误——如果你有它，就使用它。
-- 直接跳到步骤 1b 的 git 命令来跳过步骤 1a
-- 创建工作树而不验证它是否被忽略（项目本地）
-- 跳过基线测试验证
-- 不询问就继续失败的测试
-
-**Always:**
-- 首先运行Step 0检测
-- 更喜欢原生工具而不是 git 回退
-- 遵循目录优先级：明确指示 > 现有项目本地目录 > 默认
-- 验证项目本地的目录被忽略
-- 自动检测并运行项目设置
-- 验证干净的测试基线
+| 借口 | 事实 |
+|------|------|
+| “我显然不在 worktree 中，不必检查” | 运行 Step 0。Harness 创建的隔离环境和 submodule 都可能误导肉眼判断；检测命令会给出确定答案。 |
+| “直接用 `git worktree add` 比找原生工具快” | 原生工具（例如 `EnterWorktree`）负责位置、分支和清理。绕过它是最常见的错误，会产生 harness 看不到、也无法管理的残留状态。 |
+| “worktree 目录肯定已经被忽略” | 运行 `git check-ignore`。未被忽略的 worktree 目录会把整棵工作树提交进仓库。 |
+| “目录名随便用都行” | 显式指令优先，其次是已有的项目本地目录，最后才是默认 `.worktrees/`。 |
+| “工作区是新的，基线测试可以以后再跑” | 脏基线会让后续每个 failure 都无法归因。现在运行测试；是否带着 failure 继续，必须由你的人类伙伴决定。 |

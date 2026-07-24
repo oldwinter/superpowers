@@ -135,12 +135,6 @@ git commit -m "feat: add specific feature"
 - 只描述做什么却不展示怎么做的 steps（涉及代码的 steps 必须有 code blocks）
 - 引用任何 task 中都没有定义的 types、functions 或 methods
 
-## 记住
-- 始终使用 exact file paths
-- 每个 step 都给完整代码：如果 step 修改代码，就展示代码
-- 精确 commands 和 expected output
-- DRY、YAGNI、TDD、frequent commits
-
 ## Self-Review
 
 写完整 plan 后，用 fresh eyes 看 spec，并对照检查 plan。这是你自己运行的 checklist，不是 subagent dispatch。

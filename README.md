@@ -11,7 +11,7 @@ Superpowers 是一种适用于编码代理的完整软件开发方法，建立�
 
 ## 快速开始
 
-赋予你的 agent Superpowers：[Claude Code](#claude-code)、[Antigravity](#antigravity)、[Codex App](#codex-app)、[Codex CLI](#codex-cli)、[Cursor](#cursor)、[Factory Droid](#factory-droid)、[GitHub Copilot CLI](#github-copilot-cli)、[Kimi Code](#kimi-code)、[OpenCode](#opencode)、[Pi](#pi)。
+赋予你的 agent Superpowers：[Claude Code](#claude-code)、[Antigravity](#antigravity)、[Codex App](#codex-app)、[Codex CLI](#codex-cli)、[Cursor](#cursor)、[Factory Droid](#factory-droid)、[Gemini CLI](#gemini-cli)、[GitHub Copilot CLI](#github-copilot-cli)、[Kimi Code](#kimi-code)、[OpenCode](#opencode)、[Pi](#pi)。
 
 ## 工作方式
 
@@ -120,6 +120,20 @@ Superpowers可通过[official Codex plugin marketplace](https://github.com/opena
 
   ```bash
   droid plugin install superpowers@superpowers
+  ```
+
+### Gemini CLI
+
+- 安装 extension：
+
+  ```bash
+  gemini extensions install https://github.com/oldwinter/superpowers
+  ```
+
+- 后续更新：
+
+  ```bash
+  gemini extensions update superpowers
   ```
 
 ### GitHub Copilot CLI

@@ -2,6 +2,17 @@
 
 Superpowers 是一种适用于编码代理的完整软件开发方法，建立在一组可组合技能和一些确保您的代理使用它们的初始指令之上。
 
+> [!IMPORTANT]
+> **安装中文版（社区维护 fork）**
+>
+> 本仓库是 `obra/superpowers` 的中文 fork，不是上游官方发行，当前同步到上游 `44c9b2d`。通过 Codex plugin marketplace 安装本 fork 后，runtime 会直接读取已中文化的 `skills/**/SKILL.md` 和 hooks：
+>
+> ```bash
+> codex plugin marketplace add oldwinter/superpowers
+> codex plugin add superpowers@superpowers
+> ```
+>
+> 下方标为官方 marketplace 或指向 `obra/superpowers` 的入口属于上游发行，不代表安装的是本中文版。
 
 ## 快速开始
 

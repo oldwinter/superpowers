@@ -3,12 +3,6 @@
 Superpowers 是一种适用于编码代理的完整软件开发方法，建立在一组可组合技能和一些确保您的代理使用它们的初始指令之上。
 
 
-## 我们正在招聘！
-
-我们正在招聘某人全职帮助 Superpowers 社区和代码工作。
-职位介绍见 https://primeradiant.com/jobs/superpowers-community-engineer/
-如果这听起来像是您认识的人，请务必将他们发送给我们。
-
 ## 快速开始
 
 赋予你的 agent Superpowers：[Claude Code](#claude-code)、[Antigravity](#antigravity)、[Codex App](#codex-app)、[Codex CLI](#codex-cli)、[Cursor](#cursor)、[Factory Droid](#factory-droid)、[Gemini CLI](#gemini-cli)、[GitHub Copilot CLI](#github-copilot-cli)、[Kimi Code](#kimi-code)、[OpenCode](#opencode)、[Pi](#pi)。

@@ -83,10 +83,11 @@ scripts/start-server.sh --project-dir /path/to/project --open --foreground
 
 **Copilot CLI:**
 ```bash
-# Use --foreground and start the server via the bash tool with mode: "async"
-# so the process survives across turns. Capture the returned shellId for
-# read_bash / stop_bash if you need to interact with it later.
-scripts/start-server.sh --project-dir /path/to/project --open --foreground
+# Start it with Copilot CLI's non-blocking/background shell mechanism so the
+# server survives across turns. Keep --foreground so the harness, not the
+# script, owns backgrounding. The launcher is a .sh, so invoke it via bash
+# (on Windows, call Git Bash's bash.exe from the PowerShell tool).
+bash scripts/start-server.sh --project-dir /path/to/project --open --foreground
 ```
 
 **其他环境：** 服务器必须在对话轮次期间保持在后台运行。如果您的环境获取分离的进程，请使用 `--foreground` 并使用您平台的后台执行机制启动该命令。

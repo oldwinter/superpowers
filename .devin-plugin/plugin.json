@@ -1,8 +1,7 @@
 {
   "name": "superpowers",
-  "displayName": "Superpowers",
-  "description": "核心 skills library：TDD、debugging、collaboration patterns 和经过验证的 techniques",
   "version": "6.3.0",
+  "description": "An agentic skills framework & software development methodology that works: planning, TDD, debugging, and collaboration workflows.",
   "author": {
     "name": "Jesse Vincent",
     "email": "jesse@fsck.com"
@@ -11,13 +10,13 @@
   "repository": "https://github.com/obra/superpowers",
   "license": "MIT",
   "keywords": [
+    "brainstorming",
+    "subagent-driven-development",
     "skills",
+    "planning",
     "tdd",
     "debugging",
-    "collaboration",
-    "best-practices",
-    "workflows"
-  ],
-  "skills": "./skills/",
-  "hooks": "./hooks/hooks-cursor.json"
+    "code-review",
+    "workflow"
+  ]
 }

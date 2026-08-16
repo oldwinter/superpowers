@@ -56,6 +56,7 @@ description: 开始任何对话时使用 - 确立如何查找和使用 skills，
 - Codex: `references/codex-tools.md`
 - Pi: `references/pi-tools.md`
 - Antigravity: `references/antigravity-tools.md`
+- Hermes Agent: `references/hermes-tools.md`
 
 ## User Instructions
 

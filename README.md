@@ -5,7 +5,7 @@ Superpowers 是一种适用于编码代理的完整软件开发方法，建立�
 > [!IMPORTANT]
 > **安装中文版（社区维护 fork）**
 >
-> 本仓库是 `obra/superpowers` 的中文 fork，不是上游官方发行，当前同步到上游 `44c9b2d`。通过 Codex plugin marketplace 安装本 fork 后，runtime 会直接读取已中文化的 `skills/**/SKILL.md` 和 hooks：
+> 本仓库是 `obra/superpowers` 的中文 fork，不是上游官方发行，当前同步到上游 `b36e082`。通过 Codex plugin marketplace 安装本 fork 后，runtime 会直接读取已中文化的 `skills/**/SKILL.md` 和 hooks：
 >
 > ```bash
 > codex plugin marketplace add oldwinter/superpowers
@@ -16,7 +16,7 @@ Superpowers 是一种适用于编码代理的完整软件开发方法，建立�
 
 ## 快速开始
 
-赋予你的 agent Superpowers：[Claude Code](#claude-code)、[Antigravity](#antigravity)、[Codex App](#codex-app)、[Codex CLI](#codex-cli)、[Cursor](#cursor)、[Factory Droid](#factory-droid)、[Gemini CLI](#gemini-cli)、[GitHub Copilot CLI](#github-copilot-cli)、[Kimi Code](#kimi-code)、[OpenCode](#opencode)、[Pi](#pi)。
+赋予你的 agent Superpowers：[Claude Code](#claude-code)、[Antigravity](#antigravity)、[Codex App](#codex-app)、[Codex CLI](#codex-cli)、[Cursor](#cursor)、[Devin CLI](#devin-cli)、[Factory Droid](#factory-droid)、[Gemini CLI](#gemini-cli)、[GitHub Copilot CLI](#github-copilot-cli)、[Grok Build CLI](#grok-build-cli)、[Kimi Code](#kimi-code)、[OpenCode](#opencode)、[Pi](#pi)、[Hermes Agent](#hermes-agent)。
 
 ## 工作方式
 
@@ -113,6 +113,20 @@ Superpowers可通过[official Codex plugin marketplace](https://github.com/opena
 
 - 或者在插件市场中搜索"superpower"。
 
+### Devin CLI
+
+- Install the plugin from this repository:
+
+  ```bash
+  devin plugins install obra/superpowers
+  ```
+
+- Update to the latest version with:
+
+  ```bash
+  devin plugins update superpowers
+  ```
+
 ### Factory Droid
 
 - 注册市场：
@@ -153,6 +167,22 @@ Superpowers可通过[official Codex plugin marketplace](https://github.com/opena
 
   ```bash
   copilot plugin install superpowers@superpowers-marketplace
+  ```
+
+### Grok Build CLI
+
+Superpowers is available via the [official Grok plugin marketplace](https://github.com/xai-org/plugin-marketplace).
+
+- Install the plugin from xAI's official marketplace:
+
+  ```bash
+  grok plugin install superpowers@xai-official --trust
+  ```
+
+- Or open the marketplace in the TUI, search for Superpowers, and install it:
+
+  ```text
+  /marketplace
   ```
 
 ### Kimi Code
@@ -203,6 +233,16 @@ pi -e /path/to/superpowers
 ```
 
 Pi 包加载 Superpowers 技能和一个小扩展，该扩展在会话启动时注入 `using-superpowers` 引导程序，并在压缩后再次注入。 Pi 具有原生技能，因此不需要兼容性 `Skill` 工具。子代理和任务列表工具仍然是可选的 Pi 配套软件包。
+
+### Hermes Agent
+
+从此仓库将 Superpowers 安装为 Hermes plugin：
+
+```bash
+hermes plugins install obra/superpowers --enable
+```
+
+安装后重启已有 Hermes session。Hermes 没有 post-compaction hook；如果很长的 session 在第一轮之后 compact 丢失 bootstrap，skill 不再触发时请启动新 session。
 
 ## 基本工作流
 

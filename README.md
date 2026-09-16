@@ -246,19 +246,19 @@ hermes plugins install obra/superpowers --enable
 
 ## 基本工作流
 
-1. **头脑风暴** - 在编写代码之前激活。通过问题提炼粗略的想法，探索替代方案，分段展示设计以供验证。保存设计文档。
+1. **[`brainstorming`](skills/brainstorming/SKILL.md)**（头脑风暴） - 在编写代码之前激活。通过问题提炼粗略的想法，探索替代方案，分段展示设计以供验证。保存设计文档。
 
-2. **using-git-worktrees** - 设计批准后激活。在新分支上创建独立的工作区，运行项目设置，验证干净的测试基线。
+2. **[`using-git-worktrees`](skills/using-git-worktrees/SKILL.md)** - 设计批准后激活。在新分支上创建独立的工作区，运行项目设置，验证干净的测试基线。
 
-3. **写作计划** - 使用批准的设计激活。将工作分解为小任务（每个任务 2-5 分钟）。每个任务都有准确的文件路径、完整的代码、验证步骤。
+3. **[`writing-plans`](skills/writing-plans/SKILL.md)**（写作计划） - 使用批准的设计激活。将工作分解为小任务（每个任务 2-5 分钟）。每个任务都有准确的文件路径、完整的代码、验证步骤。
 
-4. **子代理驱动开发**或**执行计划** - 按计划激活。通过两阶段审查（规范合规性，然后是代码质量）为每个任务分派新的子代理，或通过人工检查点批量执行。
+4. **[`subagent-driven-development`](skills/subagent-driven-development/SKILL.md)**（子代理驱动开发）或 **[`executing-plans`](skills/executing-plans/SKILL.md)**（执行计划） - 按计划激活。通过两阶段审查（规范合规性，然后是代码质量）为每个任务分派新的子代理，或通过人工检查点批量执行。
 
-5. **测试驱动开发** - 在实施期间激活。强制执行红绿重构：编写失败的测试，观察它失败，编写最少的代码，观察它通过，提交。删除测试之前编写的代码。
+5. **[`test-driven-development`](skills/test-driven-development/SKILL.md)**（测试驱动开发） - 在实施期间激活。强制执行红绿重构：编写失败的测试，观察它失败，编写最少的代码，观察它通过，提交。删除测试之前编写的代码。
 
-6. **请求代码审查** - 在任务之间激活。根据计划进行审查，按严重程度报告问题。关键问题阻碍进展。
+6. **[`requesting-code-review`](skills/requesting-code-review/SKILL.md)**（请求代码审查） - 在任务之间激活。根据计划进行审查，按严重程度报告问题。关键问题阻碍进展。
 
-7. **完成开发分支** - 任务完成时激活。验证测试，显示选项（合并/PR/keep/discard），清理工作树。
+7. **[`finishing-a-development-branch`](skills/finishing-a-development-branch/SKILL.md)**（完成开发分支） - 任务完成时激活。验证测试，显示选项（合并/PR/keep/discard），清理工作树。
 
 **代理在执行任何任务之前都会检查相关技能。** 强制性工作流程，而不是建议。
 
@@ -266,27 +266,31 @@ hermes plugins install obra/superpowers --enable
 
 ### Skills Library
 
-**Testing**
-- **测试驱动开发** - 红-绿-重构周期（包括测试反模式参考）
+Skill 身份是目录名（slug）。译名只是说明，不是路径。点 slug 进入对应 `SKILL.md`。
 
-**Debugging**
-- **系统调试** - 4 阶段根本原因流程（包括根本原因追踪、深度防御、基于条件的等待技术）
-- **完成前验证** - 确保它确实已修复
+| 分组 | 译名 | slug | 路径 |
+| --- | --- | --- | --- |
+| Testing | 测试驱动开发 | [`test-driven-development`](skills/test-driven-development/SKILL.md) | `skills/test-driven-development/` |
+| Debugging | 系统调试 | [`systematic-debugging`](skills/systematic-debugging/SKILL.md) | `skills/systematic-debugging/` |
+| Debugging | 完成前验证 | [`verification-before-completion`](skills/verification-before-completion/SKILL.md) | `skills/verification-before-completion/` |
+| Collaboration | 头脑风暴 | [`brainstorming`](skills/brainstorming/SKILL.md) | `skills/brainstorming/` |
+| Collaboration | 写作计划 | [`writing-plans`](skills/writing-plans/SKILL.md) | `skills/writing-plans/` |
+| Collaboration | 执行计划 | [`executing-plans`](skills/executing-plans/SKILL.md) | `skills/executing-plans/` |
+| Collaboration | 派遣并行代理 | [`dispatching-parallel-agents`](skills/dispatching-parallel-agents/SKILL.md) | `skills/dispatching-parallel-agents/` |
+| Collaboration | 请求代码审查 | [`requesting-code-review`](skills/requesting-code-review/SKILL.md) | `skills/requesting-code-review/` |
+| Collaboration | 接收代码审查 | [`receiving-code-review`](skills/receiving-code-review/SKILL.md) | `skills/receiving-code-review/` |
+| Collaboration | 使用 git worktrees | [`using-git-worktrees`](skills/using-git-worktrees/SKILL.md) | `skills/using-git-worktrees/` |
+| Collaboration | 完成开发分支 | [`finishing-a-development-branch`](skills/finishing-a-development-branch/SKILL.md) | `skills/finishing-a-development-branch/` |
+| Collaboration | 子代理驱动开发 | [`subagent-driven-development`](skills/subagent-driven-development/SKILL.md) | `skills/subagent-driven-development/` |
+| Meta | 写作技能 | [`writing-skills`](skills/writing-skills/SKILL.md) | `skills/writing-skills/` |
+| Meta | 使用 Superpowers | [`using-superpowers`](skills/using-superpowers/SKILL.md) | `skills/using-superpowers/` |
 
-**Collaboration**
-- **头脑风暴** - 苏格拉底式设计细化
-- **写作计划** - 详细的实施计划
-- **执行计划** - 带检查点的批量执行
-- **dispatching-parallel-agents** - 并发子代理工作流程
-- **请求代码审查** - 预审查清单
-- **接收代码审查** - 回复反馈
-- **using-git-worktrees** - 并行开发分支
-- **完成开发分支** - 合并/PR决策工作流程
-- **子代理驱动开发** - 通过两阶段审查进行快速迭代（规范合规性，然后是代码质量）
+### 文档地图
 
-**Meta**
-- **写作技能** - 按照最佳实践创建新技能（包括测试方法）
-- **using-superpowers** - 技能系统介绍
+`docs/superpowers/` 不是子项目。下面两套 `plans/` 都是历史设计稿，不是当前行为真源：
+
+- [`docs/plans/`](docs/plans/) — 2025 年起的设计稿
+- [`docs/superpowers/plans/`](docs/superpowers/plans/) — 2026 年设计稿；对应规格在 [`docs/superpowers/specs/`](docs/superpowers/specs/)
 
 ## Philosophy
 

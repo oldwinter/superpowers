@@ -5,6 +5,7 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
 tests=(
+  "node tests/ci/test-fast-workflow.mjs"
   "bash tests/readme/test-skill-map.sh"
   "bash tests/hooks/test-session-start.sh"
   "bash tests/codex/test-marketplace-manifest.sh"

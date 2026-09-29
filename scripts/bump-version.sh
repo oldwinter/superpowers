@@ -64,6 +64,16 @@ validate_config() {
   fi
 }
 
+require_arg_count() {
+  local expected="$1"
+  shift
+
+  if [[ "$#" -ne "$expected" ]]; then
+    echo "error: expected exactly $expected argument(s), got $#" >&2
+    return 1
+  fi
+}
+
 read_yaml_field() {
   local file="$1" field="$2"
   require_tool yq || return 1
@@ -281,14 +291,25 @@ cmd_bump() {
 
 case "${1:-}" in
   --check)
+    require_arg_count 1 "$@"
     validate_config
     cmd_check
     ;;
   --audit)
+    require_arg_count 1 "$@"
     validate_config
     cmd_audit
     ;;
-  --help|-h|"")
+  --help|-h)
+    require_arg_count 1 "$@"
+    echo "Usage: bump-version.sh <new-version> | --check | --audit"
+    echo ""
+    echo "  <new-version>  Bump all declared files to the given version"
+    echo "  --check        Show current versions, detect drift"
+    echo "  --audit        Check + scan repo for undeclared version references"
+    exit 0
+    ;;
+  "")
     echo "Usage: bump-version.sh <new-version> | --check | --audit"
     echo ""
     echo "  <new-version>  Bump all declared files to the given version"
@@ -301,6 +322,7 @@ case "${1:-}" in
     exit 1
     ;;
   *)
+    require_arg_count 1 "$@"
     validate_config
     cmd_bump "$1"
     ;;

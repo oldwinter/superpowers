@@ -15,6 +15,7 @@ tests=(
   "bash tests/antigravity/run-tests.sh"
   "bash tests/systematic-debugging/test-find-polluter.sh"
   "bash tests/using-superpowers/test-platform-adaptation.sh"
+  "bash tests/version-bump/test-json-only.sh"
 )
 
 for test_command in "${tests[@]}"; do

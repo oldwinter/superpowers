@@ -226,8 +226,8 @@ cmd_audit() {
 cmd_bump() {
   local new_version="$1"
 
-  # Validate semver-ish format
-  if ! echo "$new_version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+'; then
+  # Validate semantic version format before touching any manifest.
+  if ! echo "$new_version" | grep -qE '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$'; then
     echo "error: '$new_version' doesn't look like a version (expected X.Y.Z)" >&2
     exit 1
   fi

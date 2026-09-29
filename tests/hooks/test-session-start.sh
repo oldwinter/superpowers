@@ -193,6 +193,23 @@ else
     echo "    output: $missing_name_output"
 fi
 
+traversal_root="$TEST_ROOT/run-hook-traversal"
+mkdir -p "$traversal_root/hooks"
+cp "$WRAPPER_UNDER_TEST" "$traversal_root/hooks/run-hook.cmd"
+printf '%s\n' '#!/usr/bin/env bash' 'printf executed > "$1"' > "$traversal_root/outside"
+traversal_sentinel="$traversal_root/sentinel"
+if traversal_output=$(bash "$traversal_root/hooks/run-hook.cmd" ../outside "$traversal_sentinel" 2>&1); then
+    fail "run-hook.cmd rejects traversal outside hooks"
+elif [[ -f "$traversal_sentinel" ]]; then
+    fail "run-hook.cmd rejects traversal outside hooks"
+    echo "    outside script executed"
+elif [[ "$traversal_output" == "run-hook.cmd: invalid script name: ../outside" ]]; then
+    pass "run-hook.cmd rejects traversal outside hooks"
+else
+    fail "run-hook.cmd rejects traversal outside hooks"
+    echo "    output: $traversal_output"
+fi
+
 cursor_home="$(make_home cursor)"
 assert_command_output \
     "Cursor emits top-level additional_context only" \

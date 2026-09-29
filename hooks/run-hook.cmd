@@ -41,6 +41,10 @@ CMDBLOCK
 
 # Unix: run the named script directly
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [[ "$#" -eq 0 ]]; then
+    echo "run-hook.cmd: missing script name" >&2
+    exit 1
+fi
 SCRIPT_NAME="$1"
 shift
 exec bash "${SCRIPT_DIR}/${SCRIPT_NAME}" "$@"

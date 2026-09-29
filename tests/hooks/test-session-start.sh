@@ -174,6 +174,31 @@ assert_command_output \
     CLAUDE_PLUGIN_ROOT="$REPO_ROOT" \
     bash "$HOOK_UNDER_TEST"
 
+control_root="$TEST_ROOT/control-json"
+mkdir -p "$control_root/hooks" "$control_root/skills/using-superpowers"
+cp "$HOOK_UNDER_TEST" "$control_root/hooks/session-start"
+node -e '
+const fs = require("fs");
+const controls = Buffer.from(Array.from({ length: 31 }, (_, index) => index + 1));
+fs.writeFileSync(process.argv[1], Buffer.concat([Buffer.from("before"), controls, Buffer.from("after")]));
+' "$control_root/skills/using-superpowers/SKILL.md"
+if control_output=$(CLAUDE_PLUGIN_ROOT="$control_root" bash "$control_root/hooks/session-start" 2>&1) && \
+   printf '%s' "$control_output" | node -e '
+const fs = require("fs");
+const payload = JSON.parse(fs.readFileSync(0, "utf8"));
+const context = payload.hookSpecificOutput.additionalContext;
+for (let code = 1; code <= 31; code += 1) {
+  if (!context.includes(String.fromCharCode(code))) {
+    throw new Error(`missing control character U+${code.toString(16).padStart(4, "0")}`);
+  }
+}
+'; then
+    pass "SessionStart emits valid JSON for control characters"
+else
+    fail "SessionStart emits valid JSON for control characters"
+    echo "    output could not be parsed or lost control characters"
+fi
+
 wrapper_home="$(make_home run-hook-wrapper)"
 assert_command_output \
     "run-hook.cmd wrapper dispatches to the named session-start script" \

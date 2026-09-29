@@ -52,4 +52,14 @@ if bash "$drift_repo/scripts/bump-version.sh" --audit >/dev/null 2>&1; then
   fail "audit exited zero with declared manifest drift"
 fi
 
+empty_repo="$TEST_ROOT/empty-config"
+mkdir -p "$empty_repo/scripts"
+cp "$SCRIPT_SOURCE" "$empty_repo/scripts/bump-version.sh"
+printf '%s\n' '{"files":[],"audit":{"exclude":[]}}' > "$empty_repo/.version-bump.json"
+if empty_output=$(bash "$empty_repo/scripts/bump-version.sh" --check 2>&1); then
+  fail "empty files config exited zero"
+fi
+[[ "$empty_output" == *"files must be a non-empty array"* ]] || fail "empty files config lacked an actionable error"
+[[ "$empty_output" != *"unbound variable"* ]] || fail "empty files config crashed with an unbound variable"
+
 echo "JSON-only version boundaries passed"

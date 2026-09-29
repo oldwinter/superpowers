@@ -184,6 +184,15 @@ assert_command_output \
     CLAUDE_PLUGIN_ROOT="$REPO_ROOT" \
     bash "$WRAPPER_UNDER_TEST" session-start
 
+if missing_name_output=$(bash "$WRAPPER_UNDER_TEST" 2>&1); then
+    fail "run-hook.cmd rejects a missing script name"
+elif [[ "$missing_name_output" == "run-hook.cmd: missing script name" ]]; then
+    pass "run-hook.cmd rejects a missing script name"
+else
+    fail "run-hook.cmd rejects a missing script name"
+    echo "    output: $missing_name_output"
+fi
+
 cursor_home="$(make_home cursor)"
 assert_command_output \
     "Cursor emits top-level additional_context only" \

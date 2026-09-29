@@ -62,4 +62,15 @@ fi
 [[ "$empty_output" == *"files must be a non-empty array"* ]] || fail "empty files config lacked an actionable error"
 [[ "$empty_output" != *"unbound variable"* ]] || fail "empty files config crashed with an unbound variable"
 
+for extra_args in '--check unexpected' '--audit unexpected' '--help unexpected' '2.0.0 unexpected'; do
+  arity_repo="$TEST_ROOT/arity-${extra_args//[^A-Za-z0-9]/-}"
+  make_fixture "$arity_repo"
+  before="$(cat "$arity_repo/package.json")"
+  read -r -a invocation <<< "$extra_args"
+  if bash "$arity_repo/scripts/bump-version.sh" "${invocation[@]}" >/dev/null 2>&1; then
+    fail "accepted extra arguments: $extra_args"
+  fi
+  [[ "$(cat "$arity_repo/package.json")" == "$before" ]] || fail "extra arguments changed package.json: $extra_args"
+done
+
 echo "JSON-only version boundaries passed"

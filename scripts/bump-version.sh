@@ -153,7 +153,8 @@ cmd_check() {
 
 cmd_audit() {
   # First run check
-  cmd_check || true
+  local check_status=0
+  cmd_check || check_status=$?
   echo ""
 
   # Determine the current version (most common across declared files)
@@ -222,7 +223,9 @@ cmd_audit() {
     echo "If they should be skipped, add them to the audit.exclude list."
   fi
 
-  return "$found_undeclared"
+  if [[ "$check_status" -ne 0 || "$found_undeclared" -ne 0 ]]; then
+    return 1
+  fi
 }
 
 cmd_bump() {

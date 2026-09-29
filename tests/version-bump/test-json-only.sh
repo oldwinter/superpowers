@@ -42,4 +42,14 @@ if bash "$audit_repo/scripts/bump-version.sh" --audit >/dev/null 2>&1; then
   fail "audit exited zero with an undeclared version reference"
 fi
 
+drift_repo="$TEST_ROOT/audit-drift"
+mkdir -p "$drift_repo/scripts"
+cp "$SCRIPT_SOURCE" "$drift_repo/scripts/bump-version.sh"
+printf '%s\n' '{"files":[{"path":"one.json","field":"version"},{"path":"two.json","field":"version"}],"audit":{"exclude":[]}}' > "$drift_repo/.version-bump.json"
+printf '%s\n' '{"version":"1.2.3"}' > "$drift_repo/one.json"
+printf '%s\n' '{"version":"1.2.4"}' > "$drift_repo/two.json"
+if bash "$drift_repo/scripts/bump-version.sh" --audit >/dev/null 2>&1; then
+  fail "audit exited zero with declared manifest drift"
+fi
+
 echo "JSON-only version boundaries passed"

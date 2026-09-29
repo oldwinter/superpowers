@@ -221,6 +221,8 @@ cmd_audit() {
     echo "Review the above files — if they should be bumped, add them to .version-bump.json"
     echo "If they should be skipped, add them to the audit.exclude list."
   fi
+
+  return "$found_undeclared"
 }
 
 cmd_bump() {

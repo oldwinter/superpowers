@@ -35,4 +35,11 @@ make_fixture "$valid_repo"
 bash "$valid_repo/scripts/bump-version.sh" '2.3.4-rc.1+build.5' >/dev/null
 [[ "$(jq -r .version "$valid_repo/package.json")" == '2.3.4-rc.1+build.5' ]] || fail "valid semantic version was not written"
 
+audit_repo="$TEST_ROOT/audit-undeclared"
+make_fixture "$audit_repo"
+printf '%s\n' 'Undeclared release reference: 1.2.3' > "$audit_repo/release-note.txt"
+if bash "$audit_repo/scripts/bump-version.sh" --audit >/dev/null 2>&1; then
+  fail "audit exited zero with an undeclared version reference"
+fi
+
 echo "JSON-only version boundaries passed"

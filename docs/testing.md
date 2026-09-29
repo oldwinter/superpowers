@@ -19,7 +19,7 @@ Superpowers 有两种不同类型的测试，每种测试都在自己的目录�
 - `tests/claude-code/test-worktree-native-preference.sh` — 工作树技能的红绿重构验证（练习涵盖压力阶段；bash 还涵盖红/GREEN 基线）。
 - `tests/explicit-skill-requests/` — 俳句特定的、多轮的、技能名称提示的测试，不包括在练习中。
 
-通过相关目录的 `run-*.sh` 或 `npm test` 运行插件测试。
+通过相关目录的 `run-*.sh` 运行单个插件测试，或用根目录的 `npm test` 运行不需要外部服务、LLM session、额外 npm install、`yq`、Graphviz 或 ShellCheck 的快速基础门禁。需要这些依赖的套件仍应直接运行其目录中的入口。
 
 ## Skill behavior evals
 

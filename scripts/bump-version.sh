@@ -47,6 +47,23 @@ require_tool() {
   }
 }
 
+validate_config() {
+  require_tool jq || return 1
+
+  if ! jq -e '
+    .files |
+    type == "array" and
+    length > 0 and
+    all(.[];
+      (.path | type == "string" and length > 0) and
+      (.field | type == "string" and length > 0)
+    )
+  ' "$CONFIG" >/dev/null; then
+    echo "error: .version-bump.json files must be a non-empty array of path/field entries" >&2
+    return 1
+  fi
+}
+
 read_yaml_field() {
   local file="$1" field="$2"
   require_tool yq || return 1
@@ -264,9 +281,11 @@ cmd_bump() {
 
 case "${1:-}" in
   --check)
+    validate_config
     cmd_check
     ;;
   --audit)
+    validate_config
     cmd_audit
     ;;
   --help|-h|"")
@@ -282,6 +301,7 @@ case "${1:-}" in
     exit 1
     ;;
   *)
+    validate_config
     cmd_bump "$1"
     ;;
 esac

@@ -25,7 +25,7 @@ description: 在完成任务、实现主要功能时或在合并之前使用以�
 
 **1.获取 git SHA：**
 ```bash
-BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
+BASE_SHA=$(git rev-parse HEAD~1)  # or: git merge-base origin/main HEAD
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 

@@ -317,8 +317,8 @@ digraph when_flowchart {
 
 **为您的人类伙伴可视化：** 使用此目录中的 `render-graphs.js` 将技能的流程图渲染为 SVG：
 ```bash
-./render-graphs.js ../some-skill           # Each diagram separately
-./render-graphs.js ../some-skill --combine # All diagrams in one SVG
+node ./render-graphs.js ../some-skill           # Each diagram separately
+node ./render-graphs.js ../some-skill --combine # All diagrams in one SVG
 ```
 
 ## Code Examples
@@ -370,6 +370,8 @@ pptx/
   scripts/       # Executable tools
 ```
 何时：参考资料对于内联来说太大
+
+在正文中通过对应解释器调用 bundled scripts（`bash scripts/tool.sh`、`node scripts/tool.js`），绝不要直接使用裸路径：某些 harness plugin packager 会去掉 executable bit，直接调用 `scripts/tool.sh` 会以 `Permission denied` 失败。
 
 ## 铁律（与 TDD 相同）
 

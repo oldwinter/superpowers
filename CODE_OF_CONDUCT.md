@@ -1,83 +1,130 @@
-# Contributor Covenant Code of Conduct
+# Prime Radiant 社区行为准则
 
-## Our Pledge
+## 我们的承诺
 
-作为 members、contributors 和 leaders，我们承诺让每个人参与社区时都免于 harassment，无论年龄、体型、可见或不可见 disability、ethnicity、sex characteristics、gender identity and expression、experience level、education、socio-economic status、nationality、personal appearance、race、religion，或 sexual identity and orientation。
+我们承诺让社区对所有人都友好、安全且公平。
 
-我们承诺以有助于 open、welcoming、diverse、inclusive 和 healthy community 的方式行动和互动。
+我们致力于营造尊重并促进所有人的尊严、权利和贡献的环境，不因种族、族裔、种姓、肤色、年龄、身体特征、神经多样性、残障、性别、性别认同或表达、性取向、语言、哲学或宗教、民族或社会出身、社会经济地位、教育程度或其他身份而区别对待。所有善意参与且遵守本准则的人都享有同等参与权利。
 
-## Our Standards
+Prime Radiant 社区行为准则的指导原则和执行方式平等适用于 Prime Radiant 社区的每一位参与者，包括 Prime Radiant 团队成员。
 
-有助于为社区创造 positive environment 的行为包括：
+## 鼓励的行为
 
-* 对他人展现 empathy 和 kindness
-* 尊重不同 opinions、viewpoints 和 experiences
-* 提供并优雅接受 constructive feedback
-* 对自己的 mistakes 承担责任，向受影响者道歉，并从经验中学习
-* 不只关注作为个人对我们最好的事情，也关注 overall community 的最佳利益
+我们承认社会规范存在差异，同时共同努力达到社区对积极行为的期望。我们也理解，文化、背景或母语差异可能使他人对我们的言行产生与原意不同的理解。
 
-不可接受行为包括：
+基于这些考虑，我们同意彼此谨慎相待，并以共同价值为中心采取行动，包括：
 
-* 使用 sexualized language 或 imagery，以及任何形式的 sexual attention 或 advances
-* Trolling、insulting 或 derogatory comments，以及 personal 或 political attacks
-* Public 或 private harassment
-* 未经明确许可发布他人的 private information，例如 physical 或 email address
-* 其他在 professional setting 中可被合理视为不合适的 conduct
+1. 尊重**社区的宗旨**、活动和聚集方式。
+2. **友善、诚实地**与他人互动。
+3. 尊重**不同的观点**和经历。
+4. 为自己的行为和贡献**承担责任**。
+5. 得体地提出并接受**建设性反馈**。
+6. 在伤害发生时致力于**修复伤害**。
+7. 以其他能促进和维持**社区福祉**的方式行事。
 
-## Enforcement Responsibilities
+## 受限制的行为
 
-Community leaders 负责澄清并执行 acceptable behavior standards，并会对他们认为 inappropriate、threatening、offensive 或 harmful 的行为采取适当且公平的 corrective action。
+我们同意限制社区中的以下行为。这些行为的实例、威胁或宣扬均违反本行为准则。
 
-Community leaders 有权利和责任移除、编辑或拒绝不符合本 Code of Conduct 的 comments、commits、code、wiki edits、issues 和其他 contributions，并在适当时说明 moderation decisions 的理由。
+1. **骚扰。** 违反他人明确表达的界限，或在收到任何明确停止请求后仍给予不必要的个人关注。
+2. **人身攻击。** 针对社区成员或群体发表侮辱、贬低或轻蔑的评论。
+3. **煽动冲突。** 故意参与旨在引发争吵或敌对环境的讨论。
+4. **刻板印象或歧视。** 根据不可改变的身份或特征评判任何人的性格或行为。
+5. **性化行为。** 在社区情境或宗旨下做出通常会被视为不恰当亲密的行为。
+6. **违反保密义务。** 未经许可分享他人的个人或私密信息，或依据这些信息采取行动。
+7. **危害安全。** 对任何个人或群体造成、鼓励或威胁实施暴力或其他伤害。
+8. 以其他**威胁社区福祉**的方式行事。
 
-## Scope
+### 其他限制
 
-本 Code of Conduct 适用于所有 community spaces，也适用于个人在 public spaces 中 officially representing the community 的情形。代表社区的例子包括使用 official e-mail address、通过 official social media account 发布，或作为 appointed representative 参加 online 或 offline event。
+1. **分裂性话题。** 讨论与整个社区无关、容易激化矛盾的话题。
+2. **冒犯性内容。** 任何具有冒犯性或违反其他受限行为的文本或图片，包括将其用于用户名、个人资料、状态、头像或其他公开标识。
+3. **误导身份。** 出于任何原因冒充他人，虚假声称与 Prime Radiant 或任何公司有关联，或为规避执行措施而假扮他人。
+4. **未注明来源。** 未正确注明所贡献内容的来源，或把他人创作的作品冒充为自己的作品。
+5. **广告和宣传材料。** 分享营销或其他商业内容、邀请链接、无关的自我宣传，以及买卖、交易或索取捐赠。
+6. **垃圾信息。** 包括但不限于短时间内大量发帖、发布无关内容或过多链接。
+7. **未经请求的提及和私信。** 通过过度提及用户名、回复，或在没有明确邀请时发送私信实施骚扰。
+8. **不负责任的沟通。** 未能以负责任的方式呈现包含、链接到或描述其他受限行为的内容。
+9. 其他可被合理视为**不专业**或**不恰当**的行为。
 
-## Enforcement
+## 报告问题
 
-Abusive、harassing 或其他 unacceptable behavior 的 instances 可报告给负责 enforcement 的 community leaders：jesse@primeradiant.com。
-所有 complaints 都会被及时、公平地 review 和 investigate。
+即使社区成员都尽力合作，彼此之间仍可能出现紧张关系。并非每次冲突都构成行为准则违规；本准则强调的鼓励行为和规范有助于避免冲突、减少伤害。即使疑虑看起来很轻微，也欢迎报告，因为单独看不严重的事件合在一起可能揭示更重要的行为模式。
 
-所有 community leaders 都有义务尊重任何 incident reporter 的 privacy 和 security。
+事件发生时，及时报告很重要。若要报告社区任何地方可能存在的违规，请发送邮件至 [conduct@primeradiant.com](mailto:conduct@primeradiant.com)。在 Prime Radiant Discord server 中，可以在公共 channel 提及 `@moderators`，或通过 `#support-ticket` channel 创建支持工单。若要报告 Prime Radiant 团队成员，可以联系 Kattni：[kattni@primeradiant.com](mailto:kattni@primeradiant.com)，或 Drew：[drew@primeradiant.com](mailto:drew@primeradiant.com)。
 
-## Enforcement Guidelines
+社区 moderators 会认真对待违规报告，并尽力及时回应。他们会调查所有行为准则违规报告，包括审查消息、日志和录音，或访谈证人及其他参与者。Moderators 会在优先保障安全和保密的同时，尽可能保持调查和执行措施透明。为坚持这些价值，执行措施会与相关当事人私下进行，但向整个社区沟通也可能成为双方同意的解决方案之一。如果 moderators 认为需要公开声明，除非受害者或报告人另有指示，所有受害者和报告人的身份都会保密。
 
-Community leaders 会按照以下 Community Impact Guidelines，决定任何被他们认定违反本 Code of Conduct 的 action 的 consequences：
+报告中请包含：
 
-### 1. Correction
+- **你的联系信息**，以便团队需要跟进时与你联系。
+- **所有相关人员的姓名**（真实姓名、昵称或化名）。如有其他证人，也请尽量列出。
+- **事件发生的时间和地点。** 请尽可能具体。
+- **你对事件经过的说明。** 如有公开记录（例如 Discord 或 GitHub 消息），请附链接。
+- 你认为事件存在的**任何额外背景**。
+- **你是否认为事件仍在持续。**
+- **你是否认为团队中任何成员在裁决事件时存在利益冲突。**
+- 你认为适当的**纠正措施**（如有）。
+- 你认为团队应掌握的**其他信息**。
 
-**Community Impact**: 使用 inappropriate language，或其他被认为在社区中 unprofessional 或 unwelcome 的 behavior。
+Moderators 有义务对报告人和事件细节保密。
 
-**Consequence**: Community leaders 发出 private written warning，说明 violation 的性质，并解释为什么 behavior 不合适。可能会要求 public apology。
+## 报告后续
 
-### 2. Warning
+你将在 24 个工作小时内收到确认报告已收到的回复。
 
-**Community Impact**: 单一 incident 或一系列 actions 造成的 violation。
+如果团队成员是被点名的当事人之一，他们不会参与任何讨论，也不会获得报告人的任何保密细节。
 
-**Consequence**: 带有后续 consequences 的 warning。在指定时间内，不得与 involved people 互动，包括不得 unsolicited interaction with those enforcing the Code of Conduct。这包括避免在 community spaces 以及 social media 等 external channels 中互动。违反这些 terms 可能导致 temporary 或 permanent ban。
+如果 moderation 团队中的任何人认为自己在裁决报告时存在利益冲突，会通知其他团队成员并回避所有相关讨论。作出声明后，他们不会获得报告人的任何保密细节。
 
-### 3. Temporary Ban
+团队会立即审查事件并确定：
 
-**Community Impact**: 对 community standards 的 serious violation，包括持续 inappropriate behavior。
+- 发生了什么。
+- 事件是否构成行为准则违规。
+- 被报告者是谁。
+- 情况是否仍在持续，或是否威胁任何人的人身安全。
 
-**Consequence**: 在指定时间内 temporary ban，禁止与 community 进行任何形式的 interaction 或 public communication。在此期间，不允许与 involved people 进行 public 或 private interaction，包括 unsolicited interaction with those enforcing the Code of Conduct。违反这些 terms 可能导致 permanent ban。
+如果认定事件仍在持续或威胁人身安全，团队的首要任务是保护所有相关人员。这意味着他们可能推迟正式回应，直到确认情况已经结束且所有人都已安全。
 
-### 4. Permanent Ban
+Moderation 团队会在一周内向报告人提供解决结果，或说明问题尚未解决的原因。
 
-**Community Impact**: 展现违反 community standards 的 pattern，包括持续 inappropriate behavior、harassment of an individual，或 aggression toward or disparagement of classes of individuals。
+团队确定最终措施后，会联系报告人，告知将采取什么措施（如有）。他们会考虑报告人对措施是否恰当的反馈，但不保证一定照此执行。
 
-**Consequence**: Permanent ban，禁止在 community 内进行任何形式的 public interaction。
+最后，为保持报告和执行流程透明，只要条件允许，就会发布事件的公开透明度报告。如果事件细节无法在保持匿名的情况下公开，或仍可能造成持续伤害，则可能不发布公开报告。
 
-## Attribution
+## 处理和修复伤害
 
-本 Code of Conduct 改编自 [Contributor Covenant][homepage] version 2.0，原文可见：
-https://www.contributor-covenant.org/version/2/0/code_of_conduct.html。
+如果社区 moderators 调查发现本行为准则遭到违反，可以根据事件对相关个人和整个社区的影响，使用以下执行阶梯决定如何修复伤害。根据违规严重程度，可以跳过较低层级。
 
-Community Impact Guidelines 受 [Mozilla's code of conduct enforcement ladder](https://github.com/mozilla/diversity) 启发。
+1. 警告
+   1. 事件：涉及单次事件或一系列事件的违规。
+   2. 后果：社区 moderators 发出私下书面警告。
+   3. 修复：例如私下书面道歉、承认责任，以及主动明确行为期望。
+2. 临时限制活动
+   1. 事件：此前已被警告的违规再次发生，或首次发生较严重违规。
+   2. 后果：私下书面警告，并设定有时限的冷静期，以强调情况的严重性并让相关社区成员有时间消化事件。冷静期可以只限制特定沟通渠道或与特定社区成员的互动。
+   3. 修复：例如道歉、利用冷静期反思行为和影响，以及在期限结束后审慎重返社区空间。
+3. 临时停权
+   1. 事件：社区 moderators 已尝试通过警告处理的重复违规模式，或单次严重违规。
+   2. 后果：私下书面警告，并附带解除停权的条件。通常，临时停权让被停权者有时间反思自身行为和可能的纠正措施。
+   3. 修复：例如尊重停权的精神、满足指定的恢复条件，以及在停权解除后审慎考虑如何重新融入社区。
+4. 永久封禁
+   1. 事件：其他执行层级未能解决的重复违规模式，或严重到社区 moderators 认为无法在此人继续作为成员时保障社区安全的违规。
+   2. 后果：移除其访问所有社区空间、工具和沟通渠道的权限。一般而言，永久封禁应极少使用，必须有充分理由，且仅在其他补救方式都未能改变行为时采用。
+   3. 修复：严重到这一程度时不存在可行的修复。
 
-[homepage]: https://www.contributor-covenant.org
+此执行阶梯仅作为指导，不限制社区 managers 根据社区最佳利益行使裁量和判断。
 
-关于本 code of conduct 的常见问题，见 FAQ：
-https://www.contributor-covenant.org/faq。Translations 可见：
-https://www.contributor-covenant.org/translations。
+## 适用范围
+
+本行为准则适用于所有社区空间，包括 GitHub 和 Prime Radiant Discord server。个人在公共场合或其他空间正式代表社区时也适用。代表社区的例子包括使用官方 email address、通过官方 social media account 发帖，或作为指定代表参加线上或线下活动。
+
+如果官方 Prime Radiant 空间之外的行为形成某种模式，或对 Prime Radiant 社区构成潜在风险，也可作为报告的佐证。
+
+## 来源
+
+本行为准则改编自 Contributor Covenant 3.0 版，其永久地址为 [https://www.contributor-covenant.org/version/3/0/](https://www.contributor-covenant.org/version/3/0/)。
+
+Contributor Covenant 由 Organization for Ethical Source 维护，并采用 CC BY-SA 4.0 许可证。许可证副本见 [https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.org/licenses/by-sa/4.0/)。
+
+有关 Contributor Covenant 常见问题的解答见 [FAQ](https://www.contributor-covenant.org/faq)，翻译见 [translations](https://www.contributor-covenant.org/translations)，更多执行和社区准则资源见 [resources](https://www.contributor-covenant.org/resources)。执行阶梯受 [Mozilla 行为准则团队](https://github.com/mozilla/inclusion)的工作启发。

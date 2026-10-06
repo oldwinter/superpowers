@@ -1,0 +1,20 @@
+{
+  "name": "superpowers-dev",
+  "description": "Superpowers 核心 skills library 的开发 marketplace",
+  "owner": {
+    "name": "Jesse Vincent",
+    "email": "jesse@fsck.com"
+  },
+  "plugins": [
+    {
+      "name": "superpowers",
+      "description": "面向 Muse 的核心 skills library：TDD、debugging、collaboration patterns 和经过验证的 techniques",
+      "version": "6.4.2",
+      "source": "./",
+      "author": {
+        "name": "Jesse Vincent",
+        "email": "jesse@fsck.com"
+      }
+    }
+  ]
+}

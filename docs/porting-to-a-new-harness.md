@@ -711,6 +711,7 @@ Then:
   - If neither works, the harness cannot be cleanly supported yet — **say so**
     and raise it, rather than hand-editing the user's config.
 
+- **Packager 可能移除 executable bit，因此 skill prose 必须通过解释器调用 bundled scripts。** 某些 marketplace packaging 和安装路径会丢失 Unix file mode：Codex marketplace cache 曾以 `0644` 交付 SDD helpers（#2040、#2134），MiniMax Code marketplace 则把所有文件作为 mode `600` 发布。于是即使仓库 tree 记录为 `100755`，skill 中裸调用 `scripts/foo.sh` 或 `./foo.js` 仍会在该 harness 上以 `Permission denied` 失败。因此，`skills/**/*.md` 的每个 script invocation 都必须显式使用解释器，例如 `bash scripts/start-server.sh …`、`bash scripts/review-package …`、`node ./render-graphs.js …`；script 调用 sibling script 时同样如此（#2134）。不要为了“整洁”删掉这些 prefix，也不要尝试在 packaging 侧 `chmod`：mode 丢失发生在 consumer 侧，只有调用形式能跨越该问题。
 - **Write install docs.** A `docs/README.<harness>.md` and/or a
   `.<harness>/INSTALL.md` (see `docs/README.opencode.md` and
   `.opencode/INSTALL.md`), plus an install section in the top-level `README.md`.
@@ -790,7 +791,7 @@ Use this as the live index; when in doubt, read the files, not this table.
 | Copilot CLI | (shares Claude Code hook path; `COPILOT_CLI` env) | shell hook → `hooks/session-start` (`additionalContext`) | none needed (Claude Code–compatible tool surface) | `tests/hooks/` | — |
 | Gemini CLI | `gemini-extension.json` + `GEMINI.md` | instructions file `@`-includes bootstrap + mapping | `references/gemini-tools.md` | — | `gemini extensions install` |
 | Kimi Code | `.kimi-plugin/plugin.json` | manifest `sessionStart.skill` loads `using-superpowers` | inline `skillInstructions` in manifest | `tests/kimi/` | marketplace or `/plugins install` GitHub URL |
-| OpenCode | `.opencode/plugins/superpowers.js` (declared via root `package.json` `main`) | in-process: `config` hook registers skills dir; `experimental.chat.messages.transform` injects user message | inline in `superpowers.js` | `tests/opencode/` | `opencode.json` plugin git URL |
+| OpenCode | `.opencode/plugins/superpowers.js` (root `package.json` `main` for package installs; root `index.js` re-export for the V2 directory form) | in-process: `config` hook registers skills dir; `experimental.chat.messages.transform` (V1) / `session.hook("context")` (V2) injects user message | inline in `superpowers.js` | `tests/opencode/` | `opencode.json` `plugin` (V1) / `plugins` (V2) git URL |
 | pi | `.pi/extensions/superpowers.ts` | in-process: `resources_discover` registers skills; `context` event injects user message; lifecycle-flag + compaction-aware | `piToolMapping()` inline **and** `references/pi-tools.md` | `tests/pi/` | repo-root `package.json` fields |
 
 ## Appendix B — Gotchas that have bitten porters
@@ -822,6 +823,7 @@ Use this as the live index; when in doubt, read the files, not this table.
   that mechanism *is* reading `SKILL.md` — say so explicitly in the mapping
   (Part 5).
 - **`.sh` on Windows.** Keep hook scripts extensionless (Part 7).
+- **Skill prose 中裸调用 `scripts/foo.sh`。** Packager 可能移除 exec bit（Part 6）。应使用 `bash scripts/foo.sh` / `node scripts/foo.js` 调用 bundled scripts。
 - **Unregistered version.** A new manifest not added to `.version-bump.json`
   ships stale (Part 6).
 - **Editing skills to fit the harness.** Never. The fix goes in the tool mapping.

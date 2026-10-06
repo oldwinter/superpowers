@@ -35,7 +35,7 @@
 ```bash
 # Start AFTER the user approves the companion. --open auto-opens their browser on
 # the first screen; --project-dir persists mockups and enables same-port restart.
-scripts/start-server.sh --project-dir /path/to/project --open
+bash scripts/start-server.sh --project-dir /path/to/project --open
 
 # Returns: {"type":"server-started","port":52341,
 #           "url":"http://localhost:52341/?key=ab12…",
@@ -62,7 +62,7 @@ scripts/start-server.sh --project-dir /path/to/project --open
 **Claude Code:**
 ```bash
 # Default mode works — the script backgrounds the server itself.
-scripts/start-server.sh --project-dir /path/to/project --open
+bash scripts/start-server.sh --project-dir /path/to/project --open
 ```
 
 在 Windows 上，脚本会自动检测并切换到前台模式（这会阻止工具调用）。在 Bash 工具调用上使用 `run_in_background: true`，以便服务器在会话轮次中存活，然后在下一轮读取 `$STATE_DIR/server-info` 以获取 URL 和端口。
@@ -71,14 +71,14 @@ scripts/start-server.sh --project-dir /path/to/project --open
 ```bash
 # Codex reaps background processes. The script auto-detects CODEX_CI and
 # switches to foreground mode. Run it normally — no extra flags needed.
-scripts/start-server.sh --project-dir /path/to/project --open
+bash scripts/start-server.sh --project-dir /path/to/project --open
 ```
 
 **Gemini CLI:**
 ```bash
 # Use --foreground and set is_background: true on your shell tool call
 # so the process survives across turns
-scripts/start-server.sh --project-dir /path/to/project --open --foreground
+bash scripts/start-server.sh --project-dir /path/to/project --open --foreground
 ```
 
 **Copilot CLI:**
@@ -95,7 +95,7 @@ bash scripts/start-server.sh --project-dir /path/to/project --open --foreground
 如果您的浏览器无法访问该 URL（常见于远程 /containerized 设置），请绑定非环回主机：
 
 ```bash
-scripts/start-server.sh \
+bash scripts/start-server.sh \
   --project-dir /path/to/project \
   --host 0.0.0.0 \
   --url-host localhost
@@ -288,7 +288,7 @@ scripts/start-server.sh \
 ## Cleaning Up
 
 ```bash
-scripts/stop-server.sh $SESSION_DIR
+bash scripts/stop-server.sh $SESSION_DIR
 ```
 
 如果会话使用`--project-dir`，模型文件将保留在`.superpowers/brainstorm/`中以供以后参考。只有 `/tmp` 会话会在停止时被删除。

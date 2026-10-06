@@ -53,11 +53,13 @@ description: 开始任何对话时使用 - 确立如何查找和使用 skills，
 
 如果你的 harness 出现在这里，请读取对应参考文件了解特殊说明：
 
+- Claude Code: `references/claude-code-tools.md`
 - Codex: `references/codex-tools.md`
 - Pi: `references/pi-tools.md`
 - Gemini: `references/gemini-tools.md`
 - Antigravity: `references/antigravity-tools.md`
 - Hermes Agent: `references/hermes-tools.md`
+- Muse: `references/muse-tools.md`
 
 ## User Instructions
 

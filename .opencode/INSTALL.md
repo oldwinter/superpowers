@@ -6,7 +6,11 @@
 
 ## Installation
 
-将超级能力添加到 `opencode.json` 中的 `plugin` 数组（全局或项目级别）：
+OpenCode V2 需要 2.0.4 或更高版本。
+
+### OpenCode V1
+
+使用现有的 V1 plugin 配置：
 
 ```json
 {
@@ -14,8 +18,21 @@
 }
 ```
 
-重新启动 OpenCode。该插件通过 OpenCode 的插件管理器安装，
-注册所有技能。
+### OpenCode V2 (2.0.4 or later)
+
+使用 V2 plugin 配置：
+
+```json
+{
+  "plugins": ["superpowers@git+https://github.com/obra/superpowers.git"]
+}
+```
+
+对于本地 V2 安装，请配置包含 `index.js` 的仓库目录。OpenCode 2.0.4 和
+2.0.7 会拒绝直接配置 JavaScript 文件路径；自动发现的 plugin 符号链接仍受支持。
+
+重启 OpenCode。V2 使用 `opencode` 命令；`opencode2` 可能作为别名提供。
+该 plugin 通过 OpenCode 的 plugin manager 安装，并注册所有 skills。
 
 通过询问来验证："告诉我你的超能力"
 
@@ -55,21 +72,27 @@ OpenCode 通过 git 支持的包规范安装 Superpowers。一些开放代码
 重新启动可能无法获取最新的 Superpowers 提交。如果没有出现更新，
 清除 OpenCode 的包缓存或重新安装插件。
 
-要固定特定版本：
+要固定特定版本，请在规范中添加 tag 或 commit（V1 的 `plugin` key 与 V2 的
+`plugins` key 使用相同形式）：
 
 ```json
 {
-  "plugin": ["superpowers@git+https://github.com/obra/superpowers.git#v5.0.3"]
+  "plugin": ["superpowers@git+https://github.com/obra/superpowers.git#v6.4.2"]
 }
 ```
+
+在 V2 上应固定到 `v6.4.1` 或更高版本；`v6.3.0` 及更早版本只能在 V1 上加载。
 
 ## Troubleshooting
 
 ### Plugin not loading
 
-1. 检查日志：`opencode run --print-logs "hello" 2>&1 | grep -i superpowers`
-2. 验证您的 `opencode.json` 中的插件行
-3. 确保您运行的是最新版本的 OpenCode
+1. 检查日志。V1：`opencode run --print-logs "hello" 2>&1 | grep -i superpowers`。
+   V2 在后台 server 中加载 plugins，因此需添加 `--standalone`：
+   `opencode run --standalone --print-logs "hello" 2>&1 | grep -i superpowers`,
+   或检查 `~/.local/share/opencode/log/opencode.log` 并筛选 `role=server`。
+2. 验证 `opencode.json` 中的 plugin 配置行。
+3. 确保运行的是较新版本的 OpenCode。
 
 ### Windows install issues
 
@@ -83,11 +106,22 @@ package:
 npm install superpowers@git+https://github.com/obra/superpowers.git --prefix "$HOME\.config\opencode"
 ```
 
-然后使用`opencode.json`中安装的包路径：
+然后针对所用 OpenCode 版本，在 `opencode.json` 中使用已安装 package 的绝对路径。
+OpenCode 不会展开 `~`；`~/...` 条目会被当作 package name，而不是本地目录。
+
+**V1:**
 
 ```json
 {
-  "plugin": ["~/.config/opencode/node_modules/superpowers"]
+  "plugin": ["C:\\Users\\<you>\\.config\\opencode\\node_modules\\superpowers"]
+}
+```
+
+**V2 (2.0.4 or later):**
+
+```json
+{
+  "plugins": ["C:\\Users\\<you>\\.config\\opencode\\node_modules\\superpowers"]
 }
 ```
 
@@ -98,7 +132,9 @@ npm install superpowers@git+https://github.com/obra/superpowers.git --prefix "$H
 
 ### Tool mapping
 
-技能用行动说话（"创建待办事项"、"派遣子代理"、"读取文件"）。在 OpenCode 上，这些解析为：
+Skills 用动作表达（“创建 todo”、“派遣 subagent”、“读取文件”）。Plugin 会注入针对版本的映射，请确认所用 OpenCode 版本：
+
+**V1 (`opencode` 1.x):**
 
 - "创建待办事项"/"在待办事项列表中标记完成"→ `todowrite`
 - `Subagent (general-purpose):` 模板 → `task` 工具和 `subagent_type: "general"` （或 `"explore"` 用于代码库探索）
@@ -108,6 +144,18 @@ npm install superpowers@git+https://github.com/obra/superpowers.git --prefix "$H
 - "运行 shell 命令"→ `bash`
 - "搜索文件内容"/"按名称查找文件"→ `grep`, `glob`
 - "获取 URL"→ `webfetch`
+
+**V2 (`opencode` 2.0.4 or later; `opencode2` may be available as an alias):**
+
+- “创建 todo” → V2 没有 todo 工具；改为在 Markdown 文件中跟踪计划
+- `Subagent (general-purpose):` 模板 → 使用 `agent: "general"`（或 `"explore"`）的 `subagent` 工具；传入 `sessionID` 以继续之前的 subagent
+- “调用 skill” → OpenCode 原生 `skill` 工具
+- “读取文件” → `read`
+- “创建、编辑或删除文件” → 可用时使用带 `patchText` 的 `patch`；否则使用 `write` 创建或覆盖文件、`edit` 定点修改、`shell` 删除
+- “运行 shell 命令” → `shell`（`command`、`workdir`、`timeout`、`background`）
+- “搜索文件内容”/“按名称查找文件” → `grep`、`glob`
+- “获取 URL” → `webfetch`
+- “搜索 web” → `websearch`
 
 ## Getting Help
 

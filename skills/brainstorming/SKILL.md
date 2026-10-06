@@ -15,12 +15,24 @@ Start by classifying how much process the request needs, then work
 through your path: understand the context, refine the idea, present a
 design, and get your human partner's approval.
 
+## 建立共同理解
+
+Brainstorming 的成果必须建立在 human partner 想实现的目标上，并形成他们能够识别和纠正的共同理解。
+
+1. **发现意图。** 利用请求和可用 context 确认预期结果、服务对象和成功标准。缺少这些信息时，在提出功能或方案前，只问一个关于目的或预期用途的聚焦问题。知道 app 类型并不能说明 partner 为什么想要它。补充缺失 requirements 不等于再次要求他们授权任务。
+2. **复述你的理解。** 用简短 note 总结预期结果、相关 constraints 和成功标准，供 partner 判断。把他们明确说过的内容与 assumptions 分开。在把它当作 design brief 前，邀请纠正并吸收回答。
+3. **把意图带入设计。** 在所选 path 的 design artifact 中保留已达成的理解：architectural work 写入 spec，bounded work 和 spike 写入 chat design/probe。依据该理解检查拟议功能和技术选择。
+
+若请求已提供目的和 constraints，应复述理解，而不是重复提问。Note 要简洁；准确性和纠正机会才重要。
+
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any
-project, or take any implementation action until you have told your
-human partner what you intend and they have approved it. This applies
-to EVERY task on EVERY path below — the ceremony scales with the task;
-the approval gate never does.
+采取任何 implementation action 前，包括调用 implementation skill、编写 product code、scaffolding、安装 product dependencies 或创建外部项目，必须先完成所选 path 的 prerequisites：
+
+- Spike：human partner 批准问题和 probe。
+- Bounded：human partner 批准简短的 in-chat design。
+- Architectural：human partner review 并批准书面 spec，然后 review 书面 implementation plan 并选择执行方式。对话中的 design approval 只允许编写 spec；written-spec approval 只允许调用 writing-plans。
+
+回复只批准实际展示的阶段。批准想法或 feature scope 并不批准尚不存在的 artifacts。应从最早未完成阶段恢复，不要把一次批准解释成跳过所选 path 剩余步骤的许可。Prerequisites 尚未完成时，允许只读探索项目。
 </HARD-GATE>
 
 ## Three Paths
@@ -57,18 +69,13 @@ stop, say so, and step up. Nothing downgrades mid-task.
 
 ## Anti-Pattern: "Too Simple To Need Approval"
 
-Every path ends with your human partner approving your intent before
-implementation. A todo list, a single-function utility, a config
-change — the design may be two sentences in chat, but you MUST present
-it and get approval. "Simple" tasks are where unexamined assumptions
-cause the most wasted work. What scales with simplicity is the
-artifact, never the approval.
+每条 path 都必须以 human partner 在实现前批准所需 design 结束。Bounded change 可能只需 chat 中两句话。新的 todo-list 项目属于 architectural，需要书面 spec 和 planning handoffs。让 artifact 与所选 path 匹配，并在实现前完成该 path 的 reviews。
 
 ## Red Flags
 
 | Thought | Reality |
 |---------|---------|
-| "This is too simple to need a design" | Simple means a short design, not no design. Two sentences in chat, then approval. |
+| "This is too simple to need a design" | Follow the selected path: a bounded change gets a short chat design; an architectural change gets the written spec and planning handoffs. |
 | "I'll call it bounded and skip the spec" | Reaching for a label to skip work IS the doubt — take the heavier path. |
 | "It's bounded and the design is obvious — I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop until you hear yes. |
 | "I understand this kind of app, so it's bounded" | Bounded measures the repo, not your familiarity. A new project has no existing flow — it is architectural. |

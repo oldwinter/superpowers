@@ -1,5 +1,80 @@
 # Superpowers Release Notes
 
+## v6.4.2 (2026-09-25)
+
+`writing-plans` 能更快地产出更精简的 plans。现在 plan 记录 implementer 所需的决定（signatures、test assertions、spec 的值），不再直接写出代码。包括 Opus 5.5 在内的一些 frontier models 在编写 plan 时可能过度积极，在特定 prompting 下甚至会一边设计 plan 一边实现整个项目。新版 skill 让 planning 聚焦于 plan。本次复现原始报告时，不再出现 scratch build，plan 耗时降到四分之一，token 约降到三分之一。感谢 Harper Reed 提供报告和 session bundle。 (#2333)
+
+### Writing Plans
+
+- **Plan 记录决定，不是代码转录稿。** “What a Step Contains” 取代 “No Placeholders”。测试 step 给出测试名和 assertions；代码 step 给出精确 signature、文件和 spec 值，仅在这些信息无法确定算法时才包含函数体；验证 step 给出命令和通过输出；引用其他 task 时通过该 task 的 Interfaces block。Placeholders 仍被明确列为相反方向的失败。 (#2333)
+- **Self-review 检查比例。** Plan 会比较自身与 spec 的长度。比 spec 长数倍的 plan 属于转录稿；当 code block 占主导时，函数体会改为 signatures 和 test assertions。 (#2333)
+- **Plan 的读者被视为有能力的工程师：** 知道精确接口和测试后能写出惯用代码，取代“零 context、品味可疑”的描述。Steps 的尺度从“2-5 分钟”改为“一个具有可检查结果的动作”。 (#2333)
+- 新 skill 编写的每个 plan 在 Sonnet 5 的 planted-defect probes 中均达到 9/9，与 full-code plans 相同。 (#2333)
+- 删除无人引用的 `plan-document-reviewer-prompt.md`。 (#2333)
+
+### Documentation
+
+- 删除 `CLAUDE.md`。Claude Code 现在会直接读取 `AGENTS.md`，但仅在没有 `CLAUDE.md` 时如此；保留单行 pointer 反而会隐藏真正的 guidelines。
+
+## v6.4.1 (2026-09-18)
+
+v6.4.0 从未发布，v6.4.1 是包含这些变更的首个版本。新的 `proving-it-works-with-a-movie` skill 暂缓发布，待完成清理和健壮性工作后会在后续版本回归。
+
+新的 `diagnosing-superpowers` skill 用于分析 session 中出了什么问题。`executing-plans` 被重建为 Native execution，作为 subagent-driven development 的低成本替代。本版还新增 OpenCode 2.0、Muse 和 Qwen Code 三种 harness 支持。
+
+### New Skills
+
+- **`diagnosing-superpowers`：** 当 session 出错（重复工作、忽略 plan、skill 未触发、账单异常）时，让 agent “分析这个 session 中 superpowers 出了什么问题”。它会与你共同明确问题、读取磁盘 transcript，并为每项 finding 提供 `path:line` 证据。按需构建 scrubbed bundle，或起草 GitHub issue 供你批准，同时保留 cited evidence。当前和历史 session 均适用。 (#2236, #2287)
+
+### Executing Plans
+
+**注意：** `executing-plans` 不再每隔几个 tasks 停下来确认，而是执行完整 plan，最后统一 review 一次。
+
+- **Native（inline）execution 现在是真正的模式。** `executing-plans` 原本只是 64 行 stub，测量结果与未安装 plugin 相同。现在它会在与 subagent-driven development 相同的 workspace、ledger 和停止规则下由当前 session 亲自实现每个 task，再用最强 model dispatch 一次 fresh whole-branch review。`task-start` 和 `task-done` helpers 保证 ledger 和 test log 真实。这是执行 plan 成本最低的方式，在 mid-tier session model 上表现良好。 (#2318)
+- **Plan handoff 提供 Subagent-driven 和 Native 两种方式，** 说明各自成本，并根据 plan 给出有依据的推荐。如果你已选择一种，会保留原选择。 (#2258, #2318)
+
+### Writing Plans
+
+- **运行任何内容前先 review 已保存 plan。** 批准 idea 或 scope 不再等于批准一份你尚未看到的 plan。 (#2258)
+- **Plans 包含 Review Focus section：** 最多五个由 spec 暗示、但所有 task tests 都未覆盖的 input/failure mode，并由负责该代码的 task 添加测试。在 eval 中，每个 implementer 都会在一个 spec 暗示却未点名的输入上交付同一种 crash；此 section 用于捕获它。 (#2319)
+
+### Brainstorming
+
+- **Brainstorming 在提出功能前先了解你为何需要它，** 复述意图供纠正，并把批准绑定到实际 design 和 planning 阶段。促成本变更的 session 曾把 “that scope is ok” 当作允许 scaffolding。 (#2258)
+
+### Code Review
+
+- **Reviewer 按合理用户预期判断 spec 未提及的行为，** 未命名输入导致的 crash 不再自动降为 Minor。“Declined to judge” 列表会显示 reviewer 跳过的内容，由执行 plan 的 session 逐项决定。 (#2319)
+- Multi-commit `BASE_SHA` 的替代命令改为 `git merge-base origin/main HEAD`。当 main 已越过分支点时，裸 `origin/main` 会把 main 的新文件误显示为 phantom deletions。 (#2133, #2118)
+
+### Test-Driven Development
+
+- **项目 suite 决定是否为绿，而不只是你的测试文件。** 当 task 只指定一个测试文件时，12 次 probe 中有 11 次 session 只运行该文件，使相邻损坏测试未被发现。Skill 现在要求运行项目测试命令，并点名报告每项失败，包括并非由本次变更造成的失败。 (#2110)
+
+### Subagent-Driven Development
+
+- **Basename 相同的 plans 不再共享 workspace。** `docs/alpha/plan.md` 和 `docs/beta/plan.md` 曾解析到同一目录，使 `task-brief` 静默覆盖另一 plan 的 brief。现在每个 workspace 都记录所属 plan，冲突时使用独立目录；现有 workspace 会原地接管。 (#2138, #2045)
+- **`review-package` 拒绝空的或非 descendant 的 `BASE..HEAD` range**（exit 3），避免 implementer 提交到错误分支后仍生成内容为空却显示“clean”的 review。 (#2136, #2050)
+- **Claude Code 的 controller 可以下沉一层运行，** 作为 mid-tier model 上的 nested subagent，实测成本和 wall clock 约减半。该模式为 opt-in：明确要求使用，或告诉 agent session model 太昂贵，不应消耗在协调上。 (#2320)
+
+### New Harness Support
+
+- **OpenCode 2.0.4+** 与 V1 同时受支持。Skills 通过 V2 原生 API 注册，bootstrap 可跨 continuation、restart、fork 和 compaction；delegated child sessions 不再接收 controller bootstrap。 (#2106, #2306)
+- **Muse：** 原生 plugin manifest 和 SessionStart hook。依次运行 `muse plugins install ./`、`muse plugins approve superpowers`。 (#2317)
+- **Qwen Code：** 安装文档新增 `qwen extensions install obra/superpowers`。 (#2132)
+
+### Fixes
+
+- **Packager 移除 executable bit 时 skills 仍能工作。** Codex marketplace 和 MiniMax Code 的重新打包都曾把 scripts 作为不可执行文件发布，导致每条文档命令都以 `Permission denied` 失败。Skill prose 现在通过解释器调用 bundled scripts（`bash scripts/foo.sh`、`node render-graphs.js`），SDD helpers 之间也采用相同方式调用。 (#2301, #2134, #2040)
+- Platform-support issue template 改用实际存在的 label（`new-harness`）。 (#2250)
+
+### Documentation
+
+- `docs/testing.md` 现在描述 Quorum eval lab，取代过时的 Drill references 和命令。 (#2135)
+- README 新增指向 `diagnosing-superpowers` 的“出现问题时”section。
+- **`AGENTS.md` 现在是 canonical contributor guidelines。** 删除 `CLAUDE.md`，因为 Claude Code 可直接读取 `AGENTS.md`，且 Muse installer 不接受原来的 symlink。 (#2317)
+- 采用 Prime Radiant 社区行为准则。 (#2122)
+
 ## v6.3.0 (2026-08-12)
 
 ### Harness Support

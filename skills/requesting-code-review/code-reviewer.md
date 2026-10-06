@@ -30,6 +30,14 @@ Subagent (general-purpose):
     git diff [BASE_SHA]..[HEAD_SHA]
     ```
 
+    ## Spec 是愿景文档
+
+    Spec 说明软件必须做什么，但不会枚举软件会遇到的每种 input、environment 或 condition。对于 spec 未提及的行为，依据合理使用者的预期判断：合理预期就是 requirement，spec 沉默不代表许可。此类 findings 应按对该用户的影响定级，而不是按 spec 是否提到触发条件定级。
+
+    ## 拒绝判断的事项
+
+    Verdict 前，逐行列出你考虑过、但因超出 plan 或 spec 范围而暂不判断的每项行为，并说明原因。Executor 会逐项裁决；不得静默丢弃任何暂不判断项。空列表表示确实没有暂不判断项。
+
     ## Read-Only Review
 
     Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way. Use tools like `git show`, `git diff`, and `git log` to inspect history. If you need a working copy of a different revision, check it out into a separate temporary directory (e.g. `git worktree add /tmp/review-[SHA] [SHA]`) — never move HEAD on this checkout.

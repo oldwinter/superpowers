@@ -101,7 +101,7 @@ npm test 2>&1 | grep 'DEBUG git init'
 使用本目录的 bisection script `find-polluter.sh`：
 
 ```bash
-./find-polluter.sh '.git' 'src/**/*.test.ts'
+bash ./find-polluter.sh '.git' 'src/**/*.test.ts'
 ```
 
 它会逐个运行 tests，并在第一个 polluter 处停止。Usage 见 script。

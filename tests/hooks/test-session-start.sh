@@ -174,6 +174,31 @@ assert_command_output \
     CLAUDE_PLUGIN_ROOT="$REPO_ROOT" \
     bash "$HOOK_UNDER_TEST"
 
+control_root="$TEST_ROOT/control-json"
+mkdir -p "$control_root/hooks" "$control_root/skills/using-superpowers"
+cp "$HOOK_UNDER_TEST" "$control_root/hooks/session-start"
+node -e '
+const fs = require("fs");
+const controls = Buffer.from(Array.from({ length: 31 }, (_, index) => index + 1));
+fs.writeFileSync(process.argv[1], Buffer.concat([Buffer.from("before"), controls, Buffer.from("after")]));
+' "$control_root/skills/using-superpowers/SKILL.md"
+if control_output=$(CLAUDE_PLUGIN_ROOT="$control_root" bash "$control_root/hooks/session-start" 2>&1) && \
+   printf '%s' "$control_output" | node -e '
+const fs = require("fs");
+const payload = JSON.parse(fs.readFileSync(0, "utf8"));
+const context = payload.hookSpecificOutput.additionalContext;
+for (let code = 1; code <= 31; code += 1) {
+  if (!context.includes(String.fromCharCode(code))) {
+    throw new Error(`missing control character U+${code.toString(16).padStart(4, "0")}`);
+  }
+}
+'; then
+    pass "SessionStart emits valid JSON for control characters"
+else
+    fail "SessionStart emits valid JSON for control characters"
+    echo "    output could not be parsed or lost control characters"
+fi
+
 wrapper_home="$(make_home run-hook-wrapper)"
 assert_command_output \
     "run-hook.cmd wrapper dispatches to the named session-start script" \
@@ -183,6 +208,32 @@ assert_command_output \
     "$wrapper_home" \
     CLAUDE_PLUGIN_ROOT="$REPO_ROOT" \
     bash "$WRAPPER_UNDER_TEST" session-start
+
+if missing_name_output=$(bash "$WRAPPER_UNDER_TEST" 2>&1); then
+    fail "run-hook.cmd rejects a missing script name"
+elif [[ "$missing_name_output" == "run-hook.cmd: missing script name" ]]; then
+    pass "run-hook.cmd rejects a missing script name"
+else
+    fail "run-hook.cmd rejects a missing script name"
+    echo "    output: $missing_name_output"
+fi
+
+traversal_root="$TEST_ROOT/run-hook-traversal"
+mkdir -p "$traversal_root/hooks"
+cp "$WRAPPER_UNDER_TEST" "$traversal_root/hooks/run-hook.cmd"
+printf '%s\n' '#!/usr/bin/env bash' 'printf executed > "$1"' > "$traversal_root/outside"
+traversal_sentinel="$traversal_root/sentinel"
+if traversal_output=$(bash "$traversal_root/hooks/run-hook.cmd" ../outside "$traversal_sentinel" 2>&1); then
+    fail "run-hook.cmd rejects traversal outside hooks"
+elif [[ -f "$traversal_sentinel" ]]; then
+    fail "run-hook.cmd rejects traversal outside hooks"
+    echo "    outside script executed"
+elif [[ "$traversal_output" == "run-hook.cmd: invalid script name: ../outside" ]]; then
+    pass "run-hook.cmd rejects traversal outside hooks"
+else
+    fail "run-hook.cmd rejects traversal outside hooks"
+    echo "    output: $traversal_output"
+fi
 
 cursor_home="$(make_home cursor)"
 assert_command_output \

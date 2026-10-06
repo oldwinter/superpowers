@@ -47,6 +47,33 @@ require_tool() {
   }
 }
 
+validate_config() {
+  require_tool jq || return 1
+
+  if ! jq -e '
+    .files |
+    type == "array" and
+    length > 0 and
+    all(.[];
+      (.path | type == "string" and length > 0) and
+      (.field | type == "string" and length > 0)
+    )
+  ' "$CONFIG" >/dev/null; then
+    echo "error: .version-bump.json files must be a non-empty array of path/field entries" >&2
+    return 1
+  fi
+}
+
+require_arg_count() {
+  local expected="$1"
+  shift
+
+  if [[ "$#" -ne "$expected" ]]; then
+    echo "error: expected exactly $expected argument(s), got $#" >&2
+    return 1
+  fi
+}
+
 read_yaml_field() {
   local file="$1" field="$2"
   require_tool yq || return 1
@@ -153,7 +180,8 @@ cmd_check() {
 
 cmd_audit() {
   # First run check
-  cmd_check || true
+  local check_status=0
+  cmd_check || check_status=$?
   echo ""
 
   # Determine the current version (most common across declared files)
@@ -221,13 +249,17 @@ cmd_audit() {
     echo "Review the above files — if they should be bumped, add them to .version-bump.json"
     echo "If they should be skipped, add them to the audit.exclude list."
   fi
+
+  if [[ "$check_status" -ne 0 || "$found_undeclared" -ne 0 ]]; then
+    return 1
+  fi
 }
 
 cmd_bump() {
   local new_version="$1"
 
-  # Validate semver-ish format
-  if ! echo "$new_version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+'; then
+  # Validate semantic version format before touching any manifest.
+  if ! echo "$new_version" | grep -qE '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$'; then
     echo "error: '$new_version' doesn't look like a version (expected X.Y.Z)" >&2
     exit 1
   fi
@@ -259,12 +291,25 @@ cmd_bump() {
 
 case "${1:-}" in
   --check)
+    require_arg_count 1 "$@"
+    validate_config
     cmd_check
     ;;
   --audit)
+    require_arg_count 1 "$@"
+    validate_config
     cmd_audit
     ;;
-  --help|-h|"")
+  --help|-h)
+    require_arg_count 1 "$@"
+    echo "Usage: bump-version.sh <new-version> | --check | --audit"
+    echo ""
+    echo "  <new-version>  Bump all declared files to the given version"
+    echo "  --check        Show current versions, detect drift"
+    echo "  --audit        Check + scan repo for undeclared version references"
+    exit 0
+    ;;
+  "")
     echo "Usage: bump-version.sh <new-version> | --check | --audit"
     echo ""
     echo "  <new-version>  Bump all declared files to the given version"
@@ -277,6 +322,8 @@ case "${1:-}" in
     exit 1
     ;;
   *)
+    require_arg_count 1 "$@"
+    validate_config
     cmd_bump "$1"
     ;;
 esac

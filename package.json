@@ -19,5 +19,8 @@
     "skills": [
       "./skills"
     ]
+  },
+  "scripts": {
+    "test": "bash tests/run-fast.sh"
   }
 }

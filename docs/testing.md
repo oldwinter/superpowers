@@ -20,7 +20,7 @@ Superpowers 有两种不同类型的测试，每种测试都在自己的目录�
 - `tests/explicit-skill-requests/` — 俳句特定的、多轮的、技能名称提示的测试，不包括在练习中。
 - `tests/diagnosing-superpowers/test-skill-structure.sh` — `diagnosing-superpowers` skill 的结构检查（frontmatter、引用文件、泄漏扫描、词数预算）；行为场景 eval 记录由维护者保存在仓库外。
 
-通过相关目录的 `run-*.sh` 或 `npm test` 运行插件测试。
+通过相关目录的 `run-*.sh` 运行单个插件测试，或用根目录的 `npm test` 运行不需要外部服务、LLM session、额外 npm install、`yq`、Graphviz 或 ShellCheck 的快速基础门禁。需要这些依赖的套件仍应直接运行其目录中的入口。
 
 ## Skill behavior evals
 

@@ -45,6 +45,7 @@ hooks/
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start",
+            "powershell": "& \"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start",
             "shell": "bash",
             "async": false
           }
@@ -57,7 +58,16 @@ hooks/
 
 该路径被引用是因为 `${CLAUDE_PLUGIN_ROOT}` 可能包含空格。
 
-## `run-hook.cmd` 如何在高水平上工作
+### The `powershell` key
+
+Windows 上的 GitHub Copilot（CLI 和 VS Code）无论 `shell` key 是什么，
+都会通过 PowerShell 运行 hook 命令（#2189）。在 PowerShell 中，前置的
+带引号路径会被解析为字符串表达式，末尾的裸词会报错
+（"Unexpected token 'session-start'"）。存在 `powershell` key 时，
+Copilot 会使用它而不是 `command`，并用 `&` 调用运算符执行同样的分发。
+Claude Code 会忽略该 key。
+
+## `run-hook.cmd` 如何在高层次上工作
 
 `run-hook.cmd` 是一个多语言脚本：Windows 将第一个块视为批处理
 命令，而 Unix shell 将该块视为无操作定界符并继续
@@ -71,14 +81,21 @@ afterward.
 
 1. 批处理部分验证脚本名称并解析挂钩目录
    从调度员自己的位置。
-2. 它在三个地方尝试 bash：
+2. 它按顺序在四个地方尝试 bash：
    - `C:\Program Files\Git\bin\bash.exe`
    - `C:\Program Files (x86)\Git\bin\bash.exe`
-   - `PATH` 上的 `bash`（MSYS2、Cygwin 或非默认 Git 安装）
-3. 如果找到 bash，它将从钩子运行命名的无扩展钩子脚本
-   directory.
-4. 如果没有找到 bash，调度程序会默默退出 `0` — 插件
-   继续工作，它只是跳过钩子。
+   - `%LOCALAPPDATA%\Programs\Git\bin\bash.exe`（按用户安装的
+     Git for Windows），仅在设置了 `LOCALAPPDATA` 时尝试
+   - `PATH` 上的 `bash`（MSYS2、Cygwin 或非默认 Git 安装），通过运行
+     `%SystemRoot%\System32\where.exe $PATH:bash` 查找，因此 `where`
+     和 `bash` 都不会从当前目录获取。WSL 启动器（`System32`、
+     `Sysnative` 或 `%LOCALAPPDATA%\Microsoft\WindowsApps` 中的
+     `bash.exe`）和无扩展名匹配会被跳过，因为未安装 Linux 发行版时
+     这些启动器会失败。
+3. 如果找到 bash，它会从 hooks 目录运行指定的无扩展名 hook 脚本，
+   并以脚本的退出码退出。
+4. 如果没有找到 bash，调度程序会静默退出 `0` — 插件
+   继续工作，只是跳过 hook。
 5. `exit /b` 在 CMD 到达 Unix 部分之前停止它。
 
 ### 它如何在 Unix 上工作（bash/sh）
@@ -136,7 +153,9 @@ escape_for_json() {
 
 ### "bash 未被识别"
 
-CMD 在调度程序尝试的三个位置中的任何一个位置都找不到 bash。调度程序静默退出 (0) 而不是出错，因此会跳过挂钩。在标准路径安装适用于 Windows 的 Git 或确保 `bash` 位于 `PATH` 上。
+CMD 在调度程序尝试的四个位置中都找不到 bash。调度程序会静默退出 (0)
+而不是报错，因此 hook 被跳过。请安装 Git for Windows（系统级或按用户），
+或确保 `PATH` 上有一个非 WSL 的 `bash`。
 
 ### Hook runs on Unix but does nothing on Windows
 

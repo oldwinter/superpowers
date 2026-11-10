@@ -5,7 +5,7 @@ Superpowers 是一种适用于编码代理的完整软件开发方法，建立�
 > [!IMPORTANT]
 > **安装中文版（社区维护 fork）**
 >
-> 本仓库是 `obra/superpowers` 的中文 fork，不是上游官方发行，当前同步到上游 `8ca22db`。通过 Codex plugin marketplace 安装本 fork 后，runtime 会直接读取已中文化的 `skills/**/SKILL.md` 和 hooks：
+> 本仓库是 `obra/superpowers` 的中文 fork，不是上游官方发行，当前同步到上游 `22f0b46`（v7.0.2）。通过 Codex plugin marketplace 安装本 fork 后，runtime 会直接读取已中文化的 `skills/**/SKILL.md` 和 hooks：
 >
 > ```bash
 > codex plugin marketplace add oldwinter/superpowers
@@ -101,8 +101,9 @@ Superpowers 市场为 Claude Code 提供 Superpowers 和其他一些相关插件
 agy plugin install https://github.com/obra/superpowers
 ```
 
-Antigravity 运行插件的会话启动挂钩，因此 Superpowers 从
-第一条消息。使用相同的更新命令重新安装。
+Antigravity 会列出每个已安装 skill 的 description，而
+`using-superpowers` skill 的 description 会提示 model 在对话开始时加载
+该 skill。使用相同的命令重新安装即可更新。
 
 ### Codex App
 
@@ -142,13 +143,13 @@ Superpowers可通过[official Codex plugin marketplace](https://github.com/opena
 
 ### Devin CLI
 
-- Install the plugin from this repository:
+- 从此仓库安装 plugin：
 
   ```bash
   devin plugins install obra/superpowers
   ```
 
-- Update to the latest version with:
+- 更新到最新版本：
 
   ```bash
   devin plugins update superpowers
@@ -198,15 +199,15 @@ Superpowers可通过[official Codex plugin marketplace](https://github.com/opena
 
 ### Grok Build CLI
 
-Superpowers is available via the [official Grok plugin marketplace](https://github.com/xai-org/plugin-marketplace).
+Superpowers 可通过 [Grok 官方 plugin marketplace](https://github.com/xai-org/plugin-marketplace) 获取。
 
-- Install the plugin from xAI's official marketplace:
+- 从 xAI 官方 marketplace 安装 plugin：
 
   ```bash
   grok plugin install superpowers@xai-official --trust
   ```
 
-- Or open the marketplace in the TUI, search for Superpowers, and install it:
+- 或者在 TUI 中打开 marketplace，搜索 Superpowers 并安装：
 
   ```text
   /marketplace
@@ -317,6 +318,7 @@ Superpowers 可作为原生 Muse plugin 使用：同一仓库、同一组 skills
 ## 基本工作流
 
 1. **[`brainstorming`](skills/brainstorming/SKILL.md)**（头脑风暴） - 在编写代码之前激活。通过问题提炼粗略的想法，探索替代方案，分段展示设计以供验证。保存设计文档。
+1. **[`brainstorming`](skills/brainstorming/SKILL.md)**（头脑风暴） - 在构建任何东西之前激活。通过让你描述的问题，提炼你真正想要什么以及为什么，然后复述它的理解供你纠正。小改动在 chat 中达成一致；项目会产出一份 builder 可以据此制定计划的书面设计文档。
 
 2. **[`using-git-worktrees`](skills/using-git-worktrees/SKILL.md)** - 设计批准后激活。在新分支上创建独立的工作区，运行项目设置，验证干净的测试基线。
 
@@ -372,14 +374,10 @@ Skill 身份是目录名（slug）。译名只是说明，不是路径。点 slu
 | Meta | 写作技能 | [`writing-skills`](skills/writing-skills/SKILL.md) | `skills/writing-skills/` |
 | Meta | 使用 Superpowers | [`using-superpowers`](skills/using-superpowers/SKILL.md) | `skills/using-superpowers/` |
 
-### 文档地图
+`docs/superpowers/` 不是子项目。历史设计稿位于 [`docs/plans/`](docs/plans/)，
+不是当前行为真源；对应规格在 [`docs/superpowers/specs/`](docs/superpowers/specs/)。
 
-`docs/superpowers/` 不是子项目。下面两套 `plans/` 都是历史设计稿，不是当前行为真源：
-
-- [`docs/plans/`](docs/plans/) — 2025 年起的设计稿
-- [`docs/superpowers/plans/`](docs/superpowers/plans/) — 2026 年设计稿；对应规格在 [`docs/superpowers/specs/`](docs/superpowers/specs/)
-
-## Philosophy
+## 理念
 
 - **测试驱动开发** - 始终首先编写测试
 - **系统性优于临时性** - 流程优于猜测
@@ -388,36 +386,30 @@ Skill 身份是目录名（slug）。译名只是说明，不是路径。点 slu
 
 阅读[the original release announcement](https://blog.fsck.com/2025/10/09/superpowers/)。
 
-## Contributing
+## 贡献
 
-Superpowers 的一般贡献流程如下。请记住，我们通常不接受新技能的贡献，并且任何技能更新都必须适用于我们支持的所有编码代理。
+Superpowers 的一般贡献流程如下。
 
 1. 分叉存储库
 2. 切换到"dev"分支
 3. 为您的工作创建一个分支
 4. 遵循`writing-skills`技能来创建和测试新的和修改的技能
-5. 提交 PR，确保填写拉取请求模板。
+5. 提交 PR，填写 pull request template 的每个 section，包括由 human 用自己的话撰写的摘要。
+
+我们通常不接受新技能的贡献，并且任何技能更新都必须适用于我们支持的所有编码代理。除非 maintainer 要求，否则我们也不接受由 agent 编写、用于修复他人提交 issue 的 PR，即使你遇到了相同问题；请改为把你的报告添加到现有 issue。
 
 技能行为测试使用来自[superpowers-evals](https://github.com/prime-radiant-inc/superpowers-evals/)的演练评估工具，克隆到`evals/` - 请参阅`evals/README.md`进行设置。插件基础设施测试位于 `tests/` 并通过相关的 `run-*.sh` 或 `npm test` 运行。
 
 完整指南请参阅`skills/writing-skills/SKILL.md`。
 
-## Updating
+## 更新
 
 Superpowers更新在某种程度上依赖于编码代理，但通常是自动的。
 
-## License
+## 许可证
 
 MIT 许可证 - 有关详细信息，请参阅许可证文件
 
-## Visual companion telemetry
+## Visual companion 遥测
 
 由于技能和插件不会向创作者提供任何反馈，因此我们不知道有多少人正在使用Superpowers。默认情况下，头脑风暴的可选视觉伴随功能上的 Prime Radiant 徽标是从我们的网站加载的。它包括正在使用的 Superpowers 版本。它不包含有关您的项目、提示或编码代理的任何详细信息。我们看不到您的点击次数或任何有关您正在构建的内容的信息。这有助于我们大致了解有多少人正在使用 Superpowers 以及他们正在使用哪个版本的 Superpowers。它是 100% 可选的。要禁用此功能，请将环境变量 `SUPERPOWERS_DISABLE_TELEMETRY` 设置为任何真实值。 Superpowers 还尊重克劳德·科德 (Claude Code) 的`DISABLE_TELEMETRY` 和 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 选择退出。
-
-## Community
-
-Superpowers 是由 [Jesse Vincent](https://blog.fsck.com) 和 [Prime Radiant](https://primeradiant.com) 的其他人员创建的。
-
-- **Discord**：[Join us](https://discord.gg/35wsABTejz) 用于社区支持、提问以及分享您与 Superpowers 一起构建的内容
-- **Issues**: https://github.com/obra/superpowers/issues
-- **发布公告**：[Sign up](https://primeradiant.com/superpowers/) 获取有关新版本的通知

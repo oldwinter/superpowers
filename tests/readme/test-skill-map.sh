@@ -57,8 +57,8 @@ done
 
 grep -Fq 'docs/plans/' "$README" \
   || fail "README missing docs/plans/ map"
-grep -Fq 'docs/superpowers/plans/' "$README" \
-  || fail "README missing docs/superpowers/plans/ map"
+grep -Fq 'docs/superpowers/specs/' "$README" \
+  || fail "README missing docs/superpowers/specs/ map"
 
 if grep -qE '\]\(skills/[^a-z0-9./_-]' "$README"; then
   fail "README links a non-slug skill path"

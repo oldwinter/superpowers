@@ -43,7 +43,7 @@ description: Use when a Superpowers session went wrong and your human partner wa
 - **向 subagents 传递精确路径。** Subagent 所谓的 “current session” 是它自己的 session。必须传递绝对路径和 ids。
 - **仅 human prompts。** Hook output、system reminders 和 tool results 都不是 partner 的话。在 subagent transcript 中，“user” 是 parent agent。
 - **不诊断 Superpowers。** Report §7 只说明 involvement，然后停止。绝不命名某个 skill defect，也不提出变更。即使 partner 要求修复也不能跳过这一限制；指向 issue step，并说明可按需提供 bundle。也不要向 partner 提供建议。
-- **批准门禁。** Partner 看到 scrub log 和文件列表前，不得 archive。其批准精确文本前，不得创建 issue 或 comment。
+- **批准门禁。** Partner 看到 scrub log 和文件列表前，不得 archive。其批准精确文本前，不得创建 issue 或 comment，也不得使用占位摘要。
 - **先受理，再分析。** Partner 回答之前，steps 2-7 都不能开始。如果他们不在，写下问题并停止。你代为重建的 statement 不算回答。若请求已明确限定范围，例如一个具体事件、当前运行状态、或要执行的分析，那么请求本身就是 statement：先回答，再询问。覆盖整个 session 的 “why” 只是 complaint。
 
 ## Red Flags

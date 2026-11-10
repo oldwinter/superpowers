@@ -1,6 +1,6 @@
 {
   "name": "superpowers",
-  "version": "6.4.2",
+  "version": "7.0.2",
   "description": "一套真正可用的 agentic skills framework 和软件开发方法论：planning、TDD、debugging 与 collaboration workflows。",
   "author": {
     "name": "Jesse Vincent",
@@ -34,8 +34,8 @@
       "Write"
     ],
     "defaultPrompt": [
-      "I've got an idea for something I'd like to build.",
-      "Let's add a feature to this project."
+      "我有个想构建的点子。",
+      "我们来给这个项目加个功能。"
     ],
     "websiteURL": "https://github.com/obra/superpowers",
     "privacyPolicyURL": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",

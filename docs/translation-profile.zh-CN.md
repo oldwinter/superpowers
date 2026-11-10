@@ -10,7 +10,7 @@
 - 目标用户：希望在 coding agent 中直接使用中文 Superpowers 工作流的开发者
 - 用户安装后实际读取的入口文件：`skills/**/SKILL.md`、`hooks/` 与各 harness 的启动集成
 - 不应宣传为中文版安装的入口：官方 marketplace、`obra/superpowers` URL 和上游 release
-- 当前同步上游 commit：`8ca22dba9a94f28898bbce59f2537ff4d87c747d`
+- 当前同步上游 commit：`22f0b463e7a5e579904dd6211a520321035526f7`
 
 ## 本地化目标
 

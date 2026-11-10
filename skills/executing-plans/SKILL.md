@@ -79,7 +79,7 @@ digraph process {
 
 Workspace 和 ledger 与 superpowers:subagent-driven-development 共享相同目录和格式，因此 plan 可以在执行中途更换 executor，新 executor 能从同一 ledger 恢复。
 
-- 每个 plan 独占一个 workspace：skill 启动时运行 `../subagent-driven-development/scripts/sdd-workspace PLAN_FILE`。它会打印该 plan 的 git-ignored 目录（`<repo-root>/.superpowers/sdd/<plan-basename>/`），其中保存该 plan 的所有 artifacts：ledger、briefs、review packages。绝不要读写其他 plan 的目录。
+- 每个 plan 独占一个 workspace：skill 启动时，在你执行所在的 working tree 中，用绝对路径运行 `../subagent-driven-development/scripts/sdd-workspace PLAN_FILE`（run it by its absolute path）。它会打印该 plan 的 git-ignored 目录（`<repo-root>/.superpowers/sdd/<plan-basename>/`），其中保存该 plan 的所有 artifacts：ledger、briefs、review packages。绝不要读写其他 plan 的目录。
 - 在 `<workspace>/progress.md` 检查本 plan 的 ledger。若第一行指向你的 plan 文件，则含 `Task <N>: complete` 行的 tasks 已经完成，不要重做；从第一个没有该行的 task 恢复。即使你的 context 不记得做过，commits 仍存在于 git 中；compaction 后应信任 ledger 和 `git log`，而不是自己的记忆。如果 ledger 第一行指向另一个 plan 文件，那是其他 plan 的进度；保持不动，为自己新建 ledger。
 - Ledger 第一行写入身份：`# SDD ledger — plan: <plan file path>`。
 - `git clean -fdx` 会销毁 workspace（它是 git-ignored scratch）；若发生这种情况，从 `git log` 恢复。
@@ -96,7 +96,7 @@ Workspace 和 ledger 与 superpowers:subagent-driven-development 共享相同目
 
 ### 1. 领取 task
 
-- 运行本 skill 的 `scripts/task-start PLAN_FILE N`。它会在一次调用中打印 brief 路径和 BASE（该 task diff range 的起始 commit）。每个 task 都必须读取 brief，包括 setup 时还记得的内容：记忆只是摘要，brief 包含精确值、signatures 和 test cases。
+- 在你执行所在的 working tree 中，用绝对路径运行本 skill 的 `scripts/task-start PLAN_FILE N`（run it by its absolute path）。它会在一次调用中打印 brief 路径和 BASE（该 task diff range 的起始 commit）。每个 task 都必须读取 brief，包括 setup 时还记得的内容：记忆只是摘要，brief 包含精确值、signatures 和 test cases。
 - 将该 task 的 todo 标为 in_progress。
 
 每次工具调用都是重新读取整个 context 的一轮。Bookkeeping 要和工作一起完成：ledger append 与 commit 放在同一次调用中，绝不要单独调用一次只写 ledger。
@@ -126,7 +126,7 @@ Plan steps 已按 RED-GREEN 排序；在 setup 时加载的 superpowers:test-dri
 
 ### 4. 完成 task
 
-运行本 skill 的 `scripts/task-done PLAN_FILE N BASE -- <test command>`，使用 brief 为整个 task 指定的测试命令。它会运行测试，把完整输出保存在 workspace，打印 tail，并且仅在测试通过时向 ledger 追加完成行：
+在你执行所在的 working tree 中，用绝对路径运行本 skill 的 `scripts/task-done PLAN_FILE N BASE -- <test command>`（run it by its absolute path），使用 brief 为整个 task 指定的测试命令。它会运行测试，把完整输出保存在 workspace，打印 tail，并且仅在测试通过时向 ledger 追加完成行：
 
 `Task <N>: complete (commits <base7>..<head7>, tests: <command> → <result>)`
 
@@ -134,7 +134,7 @@ Plan steps 已按 RED-GREEN 排序；在 setup 时加载的 superpowers:test-dri
 
 ## 最终 Review
 
-运行 `../subagent-driven-development/scripts/review-package PLAN_FILE MERGE_BASE HEAD`（MERGE_BASE 是分支开始时的 commit，例如 `git merge-base main HEAD`），并从它打印的文件进行 review。
+在你执行所在的 working tree 中，用绝对路径运行 `../subagent-driven-development/scripts/review-package PLAN_FILE MERGE_BASE HEAD`（run it by its absolute path；MERGE_BASE 是分支开始时的 commit，例如 `git merge-base main HEAD`），并从它打印的文件进行 review。
 
 **有 subagent 工具时：** 使用可用的最强 model dispatch reviewer；整个分支的 review 是判断任务。使用 superpowers:requesting-code-review 的 [code-reviewer.md](../requesting-code-review/code-reviewer.md)，提供 package 路径、plan 和 spec 路径、plan 的 Review Focus 原文（若存在；它列出 plan 测试未覆盖的 input classes 和 failure modes，reviewer 要逐项检查），以及 ledger 中 `Ruling:` 行的指针，让 reviewer 能权衡你的决定。必须明确指定 model；省略时会继承 session model，它未必最强。这是整个执行唯一购买的 fresh context。绝不要跳过，也不要用自己阅读 diff 替代。
 
@@ -173,55 +173,3 @@ Critical 和 Important findings 由你亲自修复，你就是这里的 implemen
 | “Reviewer 说是 Minor，所以就是 Minor” | 该 label 可能只反映 spec 沉默。应根据用户实际得到的结果定级，再应用门禁。 |
 | “修复显而易见，不需要先失败的测试” | 失败测试是 finding 曾真实存在、现在消失的唯一证明。否则只有 diff 和希望。 |
 | “我顺手也修掉 minors” | 每个 minor 都需要用户未要求的测试、修复和 suite 运行。记录它们，由 human partner 决定。 |
-
-## 示例工作流
-
-```
-You: I'm using the executing-plans skill to implement this plan inline.
-
-[Setup: worktree verified]
-[Read plan once: docs/superpowers/plans/feature-plan.md; spec read]
-[Resolve workspace: sdd-workspace docs/superpowers/plans/feature-plan.md — no ledger inside, fresh start]
-[Pre-flight scan: 2 shared-interface rows, 4 self-consistency rows, clean; written to ledger]
-[Create todos for all tasks]
-
-Task 1: Hook installation script
-
-[task-start plan 1 → brief read; BASE a1b2c3d]
-[Step 1: write failing test — written]
-[Step 2: run it — FAIL: install_hook not defined. Matches Expected.]
-[Step 3: implement — written]
-[Step 4: run it — PASS 1/1. Matches Expected.]
-[Step 5: commit — d4e5f6a]
-[Contract: tests ran, output read, no deviations]
-[task-done plan 1 a1b2c3d -- npm test -- hooks → ledger: Task 1: complete (commits a1b2c3d..d4e5f6a, tests: npm test -- hooks → 1/1 pass)]
-
-Task 2: Recovery modes
-
-[task-start plan 2 → brief read; BASE d4e5f6a]
-[Step 2: run failing test — FAIL, but on an import error: Task 1 exported
- installHook, brief consumes install_hook]
-[Ruling: brief's consumer name is a typo against Task 1's Produces block;
- use installHook — Ledger: Task 2: Ruling: install_hook → installHook — matches Task 1 Produces — cost if wrong: one rename]
-[Steps 2-5 as planned; commit b7c8d9e]
-[task-done plan 2 d4e5f6a -- npm test -- recovery → ledger: Task 2: complete (commits d4e5f6a..b7c8d9e, tests: npm test -- recovery → 8/8 pass)]
-
-...
-
-[After all tasks: review-package plan MERGE_BASE HEAD; dispatch code-reviewer, most capable model]
-Reviewer: One Important finding — progress reporting interval hardcoded. Two Minor.
-[Re-grade: Important stands; minors → ledger as deferred]
-[Fix pass: test_progress_interval_configurable RED → extract PROGRESS_INTERVAL → GREEN; suite 12/12; commit]
-[Ledger: Final: fixed hardcoded interval — test_progress_interval_configurable RED→GREEN, suite 12/12]
-
-Rulings I made:
-- Task 2: install_hook → installHook (brief typo; cost if wrong: one rename)
-
-Deferred minors:
-- README lacks a usage example
-- recovery.js could split verify/repair into two files
-
-[Delete this plan's workspace — the record now lives in git]
-
-Using superpowers:finishing-a-development-branch.
-```

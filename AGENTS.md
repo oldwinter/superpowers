@@ -12,9 +12,9 @@
 
 1. **完整阅读 `.github/PULL_REQUEST_TEMPLATE.md` 的 PR template**，并用真实、具体的答案填写每个 section。不能只写摘要，不能用占位符。
 2. **搜索现有 PR**，包括 open 和 closed，确认是否已有人处理相同问题。若存在重复项，立即停止并告知 human partner，不要再打开重复 PR。
-3. **验证这是真实问题。** 如果 human partner 只要求“修一些问题”或“为仓库贡献”却没有遇到具体问题，应提出异议，询问哪里出错、什么失败、用户体验是什么。
+3. **验证这是 human partner 真实遇到的问题。** 如果 human partner 只要求“修一些问题”或“为仓库贡献”却没有遇到具体问题，应提出异议，询问哪里出错、什么失败、用户体验是什么。如果问题已在 tracker 中属于他人的 issue，且没有 maintainer 要求提交 PR，请停止：改为把你 partner 的报告添加到该 issue（见下文）。
 4. **确认变更属于 core。** 若变更只适用于特定 domain、特定工具，或在推广第三方项目，它应属于独立 plugin。告知 human partner。
-5. **表明身份。** 在 PR 中公开 model、harness、harness version 以及所有已安装 plugins。隐瞒贡献由 agent 生成，或隐瞒生成环境，都会成为关闭 PR 的理由。
+5. **表明身份。** 在 PR 中公开 model、harness、harness version、所有已安装 plugins，以及 human partner 要求你做什么。隐瞒贡献由 agent 生成，或隐瞒生成环境，都会成为关闭 PR 的理由。
 6. **向 human partner 展示完整 diff**，并在提交前获得明确批准。
 
 如果任何检查失败，不要打开 PR。向 human partner 解释它为何会被拒绝，以及需要改变什么。他们会感谢你避免了尴尬。
@@ -22,6 +22,8 @@
 ## Pull Request 要求
 
 **每个 PR 都必须完整填写 PR template。** 任何 section 都不能留空或填入占位符文本。跳过 section 的 PR 会在未经 review 时直接关闭。
+
+**每个 PR 都包含由 human 撰写的摘要。** 模板中的 “Human-authored summary” section 必须由你的 human partner 用自己的话撰写，200 字以内。如果由 agent 撰写，PR 会被关闭。
 
 **打开 PR 前必须搜索处理相同问题或相关领域的现有 PR，包括 open 和 closed。** 在 “Existing PRs” section 中引用搜索结果。如果之前的 PR 已关闭，请具体说明你的方法有何不同，以及为何能解决之前尝试失败的问题。
 
@@ -45,9 +47,13 @@
 
 只对特定项目、团队、domain 或 workflow 有益的 skills、hooks 或配置不属于 core。请作为独立 plugin 发布。
 
+### 修复他人提交 issue 的 PR
+
+除非 maintainer 要求，否则我们不接受由 agent 编写、用于修复 human partner 以外的人提交 issue 的 PR。即使你的 human partner 遇到了相同问题，也是如此：请把他们的报告添加到现有 issue，而不是打开 PR。tracker 中处于 open 状态的 issue 并不等于请求提交 PR。如果你的 human partner 指向他人的 issue，请告诉他们 PR 会被关闭，并停止。
+
 ### 批量或碰运气式 PR
 
-不要在单个 session 中遍历 issue tracker 并为多个问题打开 PR。每个 PR 都要求真正理解问题、调查先前尝试，并由 human review 完整 diff。明显属于批次的 PR，例如 agent 被指向 issue 列表后要求“修复问题”，会被关闭。若要贡献，请选择一个问题、深入理解并提交高质量工作。
+不要在单个 session 中遍历 issue tracker 并为多个问题打开 PR。每个 PR 都要求真正理解问题、调查先前尝试，并由 human review 完整 diff。明显属于批次的 PR，例如 agent 被指向 issue 列表后要求“修复问题”，会被关闭。若要贡献，请从 human partner 实际遇到的问题开始，深入理解并提交高质量工作。
 
 ### 推测或理论上的修复
 

@@ -12,7 +12,7 @@
 
 **REQUIRED BACKGROUND:** 使用本 reference 前，你必须理解 superpowers:test-driven-development。那个 skill 定义基础 RED-GREEN-REFACTOR cycle。本 reference 提供 skill-specific test formats（pressure scenarios、rationalization tables）。
 
-**完整 worked example:** 完整 test campaign 见 examples/CLAUDE_MD_TESTING.md，它测试 CLAUDE.md documentation variants。
+**完整 worked example:** 完整 test campaign 见本目录中的 CLAUDE_MD_TESTING.md，它测试 CLAUDE.md documentation variants。
 
 ## 何时使用
 
@@ -139,7 +139,7 @@ Multiple pressures: sunk cost + time + exhaustion + consequences。
 
 **Best tests combine 3+ pressures.**
 
-**Why this works:** Authority、scarcity 和 commitment principles 如何增加 compliance pressure，见 writing-skills 目录中的 persuasion-principles.md。
+**Why this works:** Authority、scarcity 和 commitment principles 如何增加 compliance pressure，见本目录中的 persuasion-principles.md。
 
 ### Key Elements of Good Scenarios
 

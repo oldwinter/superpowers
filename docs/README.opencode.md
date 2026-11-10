@@ -111,7 +111,7 @@ OpenCode 通过 git 支持的包规范安装 Superpowers。一些开放代码
 
 ```json
 {
-  "plugin": ["superpowers@git+https://github.com/obra/superpowers.git#v6.4.2"]
+  "plugin": ["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"]
 }
 ```
 
@@ -126,7 +126,7 @@ OpenCode 通过 git 支持的包规范安装 Superpowers。一些开放代码
     - **V2：** 通过使用 `ctx.skill.transform()` 的 `setup()` 函数（V2 原生 API，已确认 runtime 生效）
 2. **注入 bootstrap 上下文**并附带版本对应的工具映射：V1 session 获得下方 V1 工具名，V2 session 获得 V2 工具名。
     - **V1：** 通过 `experimental.chat.messages.transform` hook
-    - **V2：** 通过 `ctx.session.hook("context")`，即 V2 对应机制（已确认 runtime 生效）
+    - **V2：** 通过 `ctx.session.hook()` 注册 `context`、`compaction` 和 `generate`，即 V2 对应机制（已确认 runtime 生效）。三者全部注册可让 compaction 请求与普通轮次使用相同的缓存 prompt 前缀。
 
 Controller session 会在临时 model context 中接收 `using-superpowers` bootstrap。
 被委派的 child session 仍可使用原生 skills，但不会接收 controller bootstrap。
@@ -146,18 +146,18 @@ Skills 用动作表达，而不是指定某个 runtime 的工具。Bootstrap 会
 
 - "创建待办事项"/"在待办事项列表中标记完成"→ `todowrite`
 - `Subagent (general-purpose):` 模板 → OpenCode 的 `task` 工具以及 `subagent_type: "general"`（或用于代码库探索的 `"explore"`）
-- "调用技能" → OpenCode 原生的`skill`工具
-- "读取文件"→`read`
-- "创建文件"/"编辑文件"/"删除文件"→ `apply_patch`
-- "运行 shell 命令"→ `bash`
-- "搜索文件内容"/"按名称查找文件"→ `grep`, `glob`
-- "获取 URL"→ `webfetch`
+- "调用 skill" → OpenCode 原生 `skill` 工具，使用裸 skill 名（`superpowers:brainstorming` → `name: "brainstorming"`）
+- "读取文件" → `read`
+- "创建文件"/"编辑文件"/"删除文件" → `apply_patch`
+- "运行 shell 命令" → `bash`
+- "搜索文件内容"/"按名称查找文件" → `grep`, `glob`
+- "获取 URL" → `webfetch`
 
 **V2 (`opencode` 2.0.4 or later; `opencode2` may be available as an alias):**
 
 - “创建 todo” → V2 完全没有 todo 工具；映射会让 model 改用 Markdown 文件（或 harness 的 plan 功能）跟踪计划
 - `Subagent (general-purpose):` 模板 → OpenCode 的 `subagent` 工具，使用 `agent: "general"`（或 `"explore"`）；传入 `sessionID` 以继续之前的 subagent
-- “调用 skill” → OpenCode 原生 `skill` 工具
+- “调用 skill” → OpenCode 原生 `skill` 工具，使用裸 skill id（`superpowers:brainstorming` → `id: "brainstorming"`）
 - “读取文件” → `read`
 - “创建、编辑或删除文件” → 可用时使用带 `patchText` 的 `patch`；否则用 `write` 创建或覆盖、`edit` 定点修改、`shell` 删除
 - “运行 shell 命令” → `shell`（`command`、`workdir`、`timeout`、`background`）
@@ -230,7 +230,7 @@ OpenCode 不会展开 `~`；`~/...` 条目会被当作 package name，而不是�
 ### Bootstrap not appearing
 
 - **V1：** 检查 OpenCode 版本是否支持 `experimental.chat.messages.transform` hook；配置更改后重启 OpenCode。
-- **V2：** Plugin 使用 `ctx.session.hook("context")` 注入 bootstrap。通过 `opencode api get /api/plugin` 验证 plugin 已加载；配置更改后用 `opencode service restart` 重启。`opencode2` 命令可能作为别名提供。
+- **V2：** Plugin 在 `context`、`compaction` 和 `generate` 上使用 `ctx.session.hook()` 注入 bootstrap。通过 `opencode api get /api/plugin` 验证 plugin 已加载；配置更改后用 `opencode service restart` 重启。`opencode2` 命令可能作为别名提供。
 
 ## Getting Help
 

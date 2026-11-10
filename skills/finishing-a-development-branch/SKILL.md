@@ -1,6 +1,6 @@
 ---
 name: finishing-a-development-branch
-description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work
+description: 当实现完成、所有测试通过，且需要决定如何集成工作时使用
 ---
 
 > **中文导读（canonical contract 保留下方英文）：** 完成分支前先跑完整测试，再检测普通仓库、命名 worktree 或 detached HEAD。根据环境只展示规范规定的 3 个或 2 个选项；不要主动提供丢弃工作。只有用户明确选择后才执行 merge、push/PR 或保留，并按 provenance 安全清理由本流程创建的 worktree。以下英文菜单和命令是精确执行合同。

@@ -1,5 +1,141 @@
 # Superpowers Release Notes
 
+## v7.0.2 (2026-11-03)
+
+本版进一步调优 brainstorming 的提问。它问得更少，先问为什么；当存在需要选择的地方时，会给出选项供你挑选。本版还修复了六个 harness 上的 bootstrap 问题，并让 SDD 与 executing-plans 的辅助脚本更难指向错误的仓库或错误的任务。
+
+### Brainstorming
+
+- **只有当答案会改变构建内容，且现有信息无法回答时，它才提问。** 否则，它把自己的判断作为你可以纠正的提议说出来。它也不再询问流程问题：写文档、文件放哪、是否进一步查看、如何展示，都是它自己的决定，并会告诉你它决定了什么。(#2644)
+- **当你还没说明为什么想要某物时，这是它首先问的问题。** 它开放地问，不提供示例答案供选择。(#2644)
+- **当存在可以命名的选择时，它会展示选项并给出推荐。** 在我们的一个测试场景中，spec 把 Ctrl+K 分配给两个功能；7.0.1 每次都能发现冲突，但在 8/8 次运行中只问了光秃秃的“哪一个？”。本版在 8/8 次运行中列出选项并推荐了一个。(#2644)
+- **它会从你的说话方式判断你是否想讨论技术选择，** 当你的请求没有留下未决问题时，它的第一条消息就是一份供你批准的简短设计。(#2644)
+- 在盲评测试对话中，填充问题从 7.0.1 的 41 个降到 23 个；请求背后的原因在任何方案之前被问出，从 28/33 提升到 33/33；批准前没有构建任何东西（此前有 4 次）。在相同场景下与 6.4.2 的 brainstorming 相比，填充问题更少（23 对 34），问出 why 的次数多得多（33/33 对 19/33），并在批准前不构建任何东西上持平。(#2644)
+- **`start-server.sh --project-dir .` 现在可用。** 脚本在启动服务器前会 `cd` 到自己的目录，因此从相对 `--project-dir` 推导出的每个路径都指向错误位置，服务器从未启动。现在它会先解析目录。感谢 @anchore-jesset 的报告。(#2524, #2608)
+
+感谢 @mbcrawfo 以及 #2530 中所有提供 transcript 并测试 7.0.1 的人。如果 brainstorming 仍然问了不该问的问题，请在那里告诉我们你问了什么、它回了什么。
+
+### Hooks
+
+- **Windows 上的 Copilot 现在能获得 bootstrap。** Copilot CLI 和 VS Code Copilot 通过 PowerShell 运行 hook 命令，PowerShell 以 ParserError 拒绝了 SessionStart 命令。`hooks.json` 现在包含该命令的 `powershell` 形式。感谢 @ronpieper-engcp 和 @orty 的报告。(#2189, #1225, #2592)
+- **SessionStart hook 不再启动子进程。** 在 Git Bash 上，每个子进程要花费数十毫秒，而该 hook 在每次启动、`/clear` 和 compaction 时都会启动六个。感谢 @midirectiekade14-debug 的报告和测量。(#2081, #2593)
+- **在没有 bash 的 Unix 系统上，`run-hook.cmd` 回退到 zsh，或安静退出。** 它过去会以 `bash: not found` 退出 127，导致 bootstrap 丢失。(#2503, #2594)
+
+### Pi
+
+- **现在每个 prompt 都能获得 bootstrap。** 该 extension 在 session 的第一个 prompt 后关闭 bootstrap，导致之后每个 prompt 都没有它。由于请求的第一条消息发生变化，Anthropic prompt caching 也会在第二个 prompt 时重写整个对话的缓存。在一天的 sessions 中，@sjawhar 测得 83% 的 first-to-second-prompt 转换重写了缓存。感谢 @DKnight927 的报告。(#2083, #2595)
+- **Superpowers package 条目上的 `skills` 过滤器生效了。** 在 pi 应用过滤器后，extension 又重新添加了整个 `skills/` 目录，因此 `"skills": []` 仍然加载全部 15 个 skills。感谢 @adrian-85 的报告和 @m2dumpling 的修复。(#2394, #2402, #2598)
+
+### Hermes Agent
+
+- **`delegate_task` subagents 不再获得 controller 的 bootstrap。** 每个子 agent 都以空历史启动，因此每个都看起来像新 session 并获得完整 bootstrap，有些还以加载 `using-superpowers` 开始，而不是执行自己的任务。感谢 @thealps01-netizen 的报告。(#2536, #2596)
+
+### OpenCode
+
+- **Bootstrap 告诉 model 使用裸 skill id。** OpenCode 把 skills 注册为 `brainstorming`，而不是 `superpowers:brainstorming`，因此从 bootstrap 复制命名空间形式的 model 会得到 "skill not found"，然后不使用该 skill 继续。感谢 @shiluoluo16 的报告。(#2583, #2597)
+- **提到 `EXTREMELY_IMPORTANT` 的 prompt 不再关闭 bootstrap。** Plugin 过去只要第一条消息包含该词，就认为 bootstrap 已存在，因此问一句“你的 context 里有 EXTREMELY_IMPORTANT 块吗？”就足以让它被丢弃。现在它会查找 bootstrap 自己的第一行。感谢 @Swift22 的报告。(#2197, #2600)
+- **OpenCode 2 的 compaction 和 generate 请求会携带 bootstrap。** 没有它，session 中最大的 compaction 请求会错过 prompt cache。感谢 @tpischke 的报告和测量。(#2391, #2601)
+
+### Muse
+
+- **SessionStart hook 现在能在 Debian 和 Ubuntu 上运行。** Muse 的 manifest 用 `sh` 运行 `hooks/session-start`（一个 bash 脚本）。当 `sh` 是 dash 时，hook 以退出码 2 失败，bootstrap 从未加载。现在它用 `bash` 运行。感谢 @rahul05ranjan 的报告和 @twotnguyen 的修复。(#2528, #2533)
+
+### Subagent-Driven Development 与 Executing Plans
+
+- **辅助脚本像 `git` 一样作用于当前目录的仓库，并接受 `-C DIR` 指向另一个仓库。** 在仓库外，`sdd-workspace` 过去会把 workspace 写到 agent 所在的任意目录，常常是 plugin cache。现在全部五个辅助脚本都会以退出码 2 停止，并给出告诉 agent 该怎么做的消息。在尚无 commit 的新项目中，agent 需要先运行 `git init` 并创建第一个 commit 才能开始。`-C` 还让 controller 可以在没有 `cd … ;` 前缀的情况下 review worktree，而 Claude Code 无法把该前缀加入 allowlist。感谢 @abat-kek、@rz1989s 和 @jiyimeta 的报告。(#2429, #2242, #1799, #2606)
+- **Skills 要求从你的 working tree 用绝对路径运行辅助脚本。** 它们过去说“从该 skill 的目录运行”，而 `cd` 到那里的 agent 会让辅助脚本作用于 plugin 自己的文件。现在如果 skill 用相对路径命名辅助脚本，测试会失败。感谢 @anchore-jesset 的报告。(#2525, #2607)
+- **`task-brief` 能找到 ID 形如 `A1`、`6b` 和 `2.1` 的 tasks。** 它过去完全拒绝字母开头的 ID，而且请求 Task 6 也会把 Task 6b 带上。当 plan 的 task 标题不是英文时，它现在会说明必须使用单词 "Task"，并展示它找到的标题。感谢 @rhuthik、@jnrod03-rgb、@christopherpconway 和 @ferrous26 的报告。(#2459, #2496, #2175, #2405, #2604)
+- **`task-brief` 会拒绝因未闭合代码围栏而一直延伸到 plan 末尾的 brief。** 一个缺失的闭合围栏隐藏了之后所有 task 标题，报告者 177 行的 task 返回成了包含五个 tasks 的 1,159 行 brief。感谢 @bobbykim89 的报告。(#2436, #2605)
+- **在 Windows 上，辅助脚本打印 PowerShell 能打开的路径。** 它们过去打印 `/c/Users/…`，PowerShell 会读成 `C:\c\Users\…`。感谢 @sean-parent 的报告。(#2307, #2602)
+
+### Systematic Debugging
+
+- **该 skill 不再安装自己的测试场景。** `CREATION-LOG.md` 和四个压力测试 prompt 以 "This is a real scenario. You must choose and act" 开头，过去安装在 `SKILL.md` 旁边，可能被 agent 在任务中途发现。它们现在位于 `tests/` 下，并有测试确保这类文件不会出现在任何 skill 中。感谢 @Caarles00 的报告。(#2277, #2654)
+
+### Maintenance
+
+- `scripts/package-codex-plugin.sh` 和 `scripts/sync-to-codex-plugin.sh` 现在能从 linked git worktree 运行。(#2609)
+
+## v7.0.1 (2026-10-21)
+
+本版在 v7.0.0 重建 brainstorming 后再次调优。许多人正确地告诉我们，新的默认问题很快变得烦人且公式化。Brainstorming 现在会先挖掘上下文再提问，并尝试问更好的问题。我们会继续调优，但认为它比之前更好了。
+
+本版还精简了三个长 skills，使它们更能经受 Claude Code 上的 compaction，并修改 issue 和 PR 模板，要求由 human 撰写摘要。
+
+### Brainstorming
+
+- **它先挖掘上下文。** 在现有项目中，或当你指向 spec、plan 或文件时，它会在第一条消息前阅读它们，不问它们已经回答的问题。(#2560)
+- **它尝试问更好的问题。** v7.0.0 以相同方式开启每个 session：先提议跳过问题，再问一个关于“你希望它存在的那个时刻”的泛泛问题。现在，当你已经说明想要什么时，它会复述你的请求以及它在项目中的发现，并询问仍然未决的那一件事。后续问题建立在你回答和它的发现上，并说明答案会改变什么。(#2560, #2571)
+- **只有当它自行启动时，才提议跳过问题。** 如果你点名或使用 `/brainstorming` 请求 brainstorming，它不再提议跳过。(#2560)
+- **它在构建前列出方案并编写设计文档。** 它提出两三种构建方式，推荐一种，并请你选择。然后编写设计文档，小改动写短版，在你批准前不构建任何东西。有些人看到它跳过文档直接开始构建；在我们的一个测试场景中，此变更前 24/24 次运行都会未经询问跳过文档，变更后为 3/24。(#2571)
+
+感谢 @mbcrawfo 发起 #2530，以及 @katyatitkova、@ertra、@blorenz、@Biomaj、@fsalum、@technicalpickles、@orochi235、@alexxburg、@fcavalieri、@CelesteCunha 和 @zzzzz9999 在那里提供报告、transcripts 和测试。
+
+如果 7.0.1 中 brainstorming 的问题仍感觉不对，请在 #2530 评论。示例最有帮助：你问了什么、它回了什么，以及你希望它问什么。
+
+### Skills 更能经受 Claude Code 上的 compaction
+
+Compaction 后，Claude Code 会重新附加每个被截断到 20,000 字符的 skill，因此超过该点的内容在 session 剩余期间都会丢失。在一个报告的 session 中，subagent-driven development 丢失了五轮上限，在一个 task 上运行了 18 轮 fix。感谢 @dan-1492 的报告。(#2481)
+
+- **`subagent-driven-development`** 把 fix loop、final review、report handling、resuming、preflight、batching 和 cannot-verify 指导移到 `references/`。它在需要的那一步从磁盘读取每个文件。(#2565)
+- **`writing-skills`** 把支持文档、SKILL.md 模板和 discovery 指导、bulletproofing 以及 flowchart 约定移到 `references/`。(#2564)
+- **`executing-plans`** 删除了 Example Workflow，因为它重复了上方已陈述的规则。(#2563)
+- 当任何 `SKILL.md` 达到 20,000 字节时，`tests/skill-size/test-skill-size.sh` 会失败。(#2565)
+
+### Contributing
+
+- **Issue 和 PR 模板现在会询问谁在提交、他们的 human partner 要求了什么，以及一段 200 字以内、由 human 撰写的摘要。** Bug report 还会询问你如何确认问题在未安装 Superpowers 时不会发生。(#2569)
+- **除非 maintainer 要求，否则我们不接受由 agent 编写、用于修复他人 issue 的 PR。** 如果你的 human partner 遇到了相同问题，请把他们的报告添加到现有 issue。PR 模板、`AGENTS.md` 和 README 都这样说明。(#2569)
+- **`diagnosing-superpowers` 会在它起草的 issue 中加入同样的两个 section，** 并且摘要仍是占位符时不会提交。它的预填链接现在打开 Bug Report 模板；我们移除了 Session Diagnosis Report 模板。(#2569)
+
+## v7.0.0 (2026-10-09)
+
+我们从头重建了 brainstorming，使它更好地完成一直以来的目标：在构建任何东西之前，帮助你弄清楚真正想要什么，并把它用语言表达出来。新 skill 要求你描述想要什么以及为什么，复述它听到的内容供你纠正，并持续提出好问题直到图景清晰。然后它让流程匹配工作规模，从直接动手到编写完整设计。
+
+本版还为 Antigravity Marketplace 添加了原生 plugin manifest，并修复了 Windows hook 发现、Git Bash 路径、Hermes skill descriptions 以及若干较小 bug。
+
+### Brainstorming
+
+- **Brainstorming 在提出任何方案前先引出你想要什么。** 它的第一条消息提议跳过问题，并问一个关于真实时刻或具体画面的开放问题。只有当你卡住时才提供菜单。过程中，它提议查看先前工作、你的项目或网络。当它理解某一部分时，会用几百字复述该部分，并把猜测标记为猜测。(#2463)
+- **它在理解你想要什么之后确定工作规模，并用平实的话说明。** 它立即完成快速、清晰的任务；小改动在 chat 中与你商定；项目则编写设计文档。你可以推翻它的判断，工作变大时它会提升一个规模。(#2463)
+- **Builder check 取代了 spec-document reviewer。** 一个全新 subagent 以构建者的身份阅读设计，并列出它仍需要问的问题。Brainstorming 回答能回答的，自行作出次要判断并标记为自己的判断，并在一轮中把会改变构建内容的问题带给你。(#2463)
+- **它会弄清关于制作方式的选择中，哪些你想自己掌握。** Platform、语言、库、媒介：如果你有强烈看法，它会与你讨论；如果你交给它，它选择合理默认值并告诉你选了什么。即使你跳过问题，它也会这样做。我们做出此变更，是因为一个 session 设计了 iOS app，却从未询问 platform，最后构建了 web app。(#2482, #2483)
+- **只要看到比读到更有帮助，它就提供 visual companion：** 屏幕、布局、流程、看起来不同的选项、图表。该提议不再包含 token 成本警告。(#2463)
+- **Visual companion 现在能完整显示包含 `$'`、`$&` 及类似序列的屏幕。** 服务器用 `String.replace` 插入内容，而它会把那些序列当作替换模式。现在它按字面插入内容。感谢 @andrew-yian 的报告和 @luochen211 的修复。(#2362, #2364)
+
+### Antigravity
+
+- **`agy plugin install https://github.com/obra/superpowers` 现在把 Superpowers 安装为原生 Antigravity plugin。** 我们添加了 `.antigravity-plugin/plugin.json`，包含 Marketplace 显示名、logo 和建议 prompts。此前，agy 会回退为把仓库作为 Gemini CLI extension 导入，然后在每个 session 以 `invalid hook "hooks": command hook must specify 'command'` 拒绝复制过来的 Claude 格式 hooks 文件。安装命令保持不变。(#2479)
+- **Superpowers 在 Antigravity 上通过 skill discovery 完成 bootstrap。** Antigravity 没有 session-start hook 事件，但它会向 model 展示每个已安装 skill 的 description，而 `using-superpowers` 的 "Use when starting any conversation" 会提示 model 加载它。我们在 agy 1.3.1 上通过 12 次运行验证："Let's make a react todo list" 和 "add a settings page" 在任何代码前触发了 brainstorming，失败的测试在任何编辑前触发了 systematic-debugging。我们还修正了 README 和 porting guide，它们描述了从未存在过的 session-start hook 和 install script。(#2479)
+
+### Hooks
+
+- **当 harness 用损坏的 `PATH` 启动 SessionStart 时，它现在能工作。** Hooks 不再在 `PATH` 上查找 `dirname`、`cat` 或 `bash`，因此无法解析它们的启动 `PATH`（anthropics/claude-code#43127）不再导致 bootstrap 丢失。感谢 @kannan983 的报告和 Ada Sen 的修复。(#2310, #2349)
+- **Windows：`run-hook.cmd` 能找到按用户安装的 Git for Windows，并跳过 WSL 启动器。** 它现在检查 `%LOCALAPPDATA%\Programs\Git`，在搜索 `PATH` 时跳过 WSL 的 `bash.exe` 启动器，因为未安装 Linux 发行版时它们会失败。感谢 @jp5247 的报告，以及 @citizen204（#1864）和 @KaiyiQuan（#2365）的修复，我们在此合并了它们。(#1863, #2393)
+- **Windows：`run-hook.cmd` 忽略当前目录中的 `bash` 和 `where`。** 此前，仓库可以放置 `bash.cmd` 或 `where.bat`，让它在 session 启动时运行。(#2393)
+- **Windows：`run-hook.cmd` 现在把 hook 退出码传给 harness。** 它过去即使 hook 失败也会报告成功。(#2393)
+
+### Subagent-Driven Development
+
+- **`sdd-workspace` 不再动仓库自己的 `.superpowers/sdd/.gitignore`。** 它过去每次运行都用 `*` 覆盖该文件，回退仓库提交的任何版本（例如用于跟踪 `progress.md` ledgers）。现在只有在文件不存在时才写入默认值。感谢 @aruizcu1989 的修复。(#2161, #2399)
+- **Plan markers 在 Windows 上保持 repo-relative。** 在 Git Bash 上，`sdd-workspace` 把 `git rev-parse` 的 `C:/…` 根与 plan 的 `/c/…` 路径比较，因此每个 workspace marker 都记录了绝对、机器特定的路径。现在它用与 plan 路径相同的方式解析根。我们在落地 @t0domanh 的 Windows 测试修复时发现了这一点（#2149）。
+
+### Executing Plans
+
+- **`task-done` 现在会记录测试命令静默通过的 tasks。** 当通过的命令没有输出时，`task-done` 会以退出码 1 退出且不写 ledger 行，导致已完成的 task 看起来未完成。现在它会记录 `→ (no output)`。感谢 @KenM-BT 的报告和 Ada Sen 的修复。(#2385, #2388)
+
+### Requesting Code Review
+
+- **示例中的 base-SHA 命令现在能经受 skill 参数。** Claude Code 会把 skill 正文中的 `$1` 替换为第二个参数字，因此带参数调用该 skill 会把 `awk '{print $1}'` 变成 `awk '{print <word>}'`。示例现在使用不含 `$` 的 `cut -d' ' -f1`。感谢 @errmakov 的报告和 @klemens-floege 的修复。(#2311, #2361)
+
+### Systematic Debugging
+
+- **多层诊断示例不再打印它要检查的 secret。** `${IDENTITY:+SET}${IDENTITY:-UNSET}` 和 `env | grep IDENTITY` 都会把签名身份的值回显到日志中。示例现在只报告变量是否已设置。感谢 @kennyg-g 的报告和 @m2dumpling 的修复。(#2375, #2380)
+
+### Hermes Agent
+
+- **Hermes 的 skill 列表现在显示 Superpowers skill descriptions。** Hermes 列出每个 plugin skill 时使用传给 `register_skill` 的 description，该参数默认为空。Plugin 过去只传名称和路径，因此每个 skill 都显示为空白，model 没有可选项。Plugin 现在传递每个 skill 的 frontmatter description。感谢 @pepijn-blom 的修复。(#2284)
+
 ## v6.4.2 (2026-09-25)
 
 `writing-plans` 能更快地产出更精简的 plans。现在 plan 记录 implementer 所需的决定（signatures、test assertions、spec 的值），不再直接写出代码。包括 Opus 5.5 在内的一些 frontier models 在编写 plan 时可能过度积极，在特定 prompting 下甚至会一边设计 plan 一边实现整个项目。新版 skill 让 planning 聚焦于 plan。本次复现原始报告时，不再出现 scratch build，plan 耗时降到四分之一，token 约降到三分之一。感谢 Harper Reed 提供报告和 session bundle。 (#2333)

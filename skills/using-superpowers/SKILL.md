@@ -1,6 +1,6 @@
 ---
 name: using-superpowers
-description: 开始任何对话时使用 - 确立如何查找和使用 skills，要求在任何响应之前调用 skill，包括澄清问题
+description: Use when starting any conversation - 开始任何对话时使用；确立如何查找和使用 skills，要求在任何响应之前调用 skill，包括澄清问题
 ---
 
 <SUBAGENT-STOP>

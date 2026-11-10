@@ -1,45 +1,52 @@
 ---
 name: Feature Request
-about: Propose a change or addition to Superpowers
+about: 提议对 Superpowers 的变更或改进
 labels: enhancement
 ---
 
 <!--
-FILING 前：搜索 open AND closed issues。许多 features 以前被请求过：
-有些以不同方式实现了，有些正在进行，有些被有意拒绝。
+提交前：搜索 open 和 closed issues。许多功能此前已被请求过——
+有些以不同方式实现，有些正在进行，有些被有意拒绝。
 -->
 
-- [ ] 我已搜索 existing issues，确认这个需求以前没有被提出过
+- [ ] 我已搜索现有 issues，确认此前没有提出过此功能
+
+## 谁在提交此请求？（必填）
+<!-- 你是谁？是否代表他人提交？如果 human partner 要求你做某件事，
+     最终导致你提交此请求，他们是谁，你的指令是什么？请尽量贴近他们的原话。 -->
+
+## Human 撰写的摘要（必填，200 字以内）
+<!-- 由 human 用自己的话撰写：他们想做什么，以及希望 Superpowers
+     改做什么。如果由 agent 提交，这里的 human 指你的 human partner，而不是你。 -->
 
 ## 这解决什么问题？
-<!-- 从你自己的经验描述 problem。你当时在做什么，
-     什么出了问题或缺失，为什么重要？
+<!-- 从你自己的经验描述问题。你当时在做什么，什么出了问题或缺失，
+     为什么重要？
 
-     "It would be cool if..." 不是问题陈述。 -->
+     “如果能……就好了”不是问题陈述。 -->
 
-## Proposed solution
-<!-- 你具体希望发生什么？请 concrete。 -->
+## 建议的解决方案
+<!-- 你具体希望发生什么？请具体说明。 -->
 
-## 你考虑过哪些 alternatives？
-<!-- 还有哪些 approach 可以解决同一问题？为什么你的 proposal 更好？ -->
+## 你考虑过哪些替代方案？
+<!-- 还有哪些方法可以解决同一问题？为什么你的提议更好？ -->
 
-## 这适合 core Superpowers 吗？
-<!-- 这是否会让正在做完全不同类型项目的人受益？
-     如果它特定于你的 domain、workflow 或 third-party tool，
-     它可能更适合成为自己的 plugin。 -->
+## 这是否适合 Superpowers core？
+<!-- 这对从事完全不同类型项目的人有帮助吗？如果它只适用于你的
+     domain、workflow 或第三方工具，可能应该作为独立 plugin。 -->
 
-## Environment（required）
-<!-- Required。我们假设这是 agent 写的 request：请告诉我们是哪一个，
-     以及它在哪里运行。我们会不同对待从 documentation 推理出的 proposals
-     和来自真实 session、实际遇到问题的 proposals。 -->
+## 环境（必填）
+<!-- 必填。我们假设这是 agent 提交的请求——请告诉我们是哪一个，
+     以及它在哪里运行。我们会区别对待仅从文档推理的提议，以及
+     基于问题真实发生的 session 的提议。 -->
 
-| Field | Value |
+| 字段 | 值 |
 |-------|-------|
-| Superpowers version | |
-| Harness (Claude Code, Cursor, etc.) | |
-| Harness version | |
-| Your model + version | |
-| All plugins installed | |
+| Superpowers 版本 | |
+| Harness（Claude Code、Cursor 等） | |
+| Harness 版本 | |
+| 你的 model + 版本 | |
+| 已安装的所有 plugins | |
 
-## Context
-<!-- Optional：你遇到这个问题的 workflow、links、transcripts。 -->
+## 背景
+<!-- 可选：你遇到此问题的 workflow、链接、transcripts。 -->

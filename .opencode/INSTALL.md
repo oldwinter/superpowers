@@ -77,7 +77,7 @@ OpenCode 通过 git 支持的包规范安装 Superpowers。一些开放代码
 
 ```json
 {
-  "plugin": ["superpowers@git+https://github.com/obra/superpowers.git#v6.4.2"]
+  "plugin": ["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"]
 }
 ```
 
